@@ -1,9 +1,9 @@
 extends RigidBody2D
 
 
-const FORCE_AMOUNT = 1000
-const LINEAR_DAMP = 10
-const SCREEN_WRAPAROUND_MARGIN = 10
+const FORCE_AMOUNT: int             = 1000
+const LINEAR_DAMP: int              = 10
+const SCREEN_WRAPAROUND_MARGIN: int = 10
 
 var screen_size: Vector2
 
@@ -33,17 +33,13 @@ func _process(delta: float) -> void:
 		apply_central_force(Vector2(0, FORCE_AMOUNT))
 		
 	# get angle from linear velocity and rotate the ship halfway towards that target
-	var target_angle = linear_velocity.angle()
+	var target_angle: float = linear_velocity.angle()
 	rotation = target_angle
+
+	# ship position wraps around the screen edges
+	position.x = wrapf(position.x, -SCREEN_WRAPAROUND_MARGIN, screen_size.x + SCREEN_WRAPAROUND_MARGIN)
+	position.y = wrapf(position.y, -SCREEN_WRAPAROUND_MARGIN, screen_size.y + SCREEN_WRAPAROUND_MARGIN)
 	
-	# if ship leaves the screen, wrap around
-	if position.x < -SCREEN_WRAPAROUND_MARGIN:
-		position.x += screen_size.x + SCREEN_WRAPAROUND_MARGIN * 2
-	elif position.x > screen_size.x + SCREEN_WRAPAROUND_MARGIN:
-		position.x -= screen_size.x  + SCREEN_WRAPAROUND_MARGIN * 2
-	elif position.y < -SCREEN_WRAPAROUND_MARGIN:
-		position.y += screen_size.y + SCREEN_WRAPAROUND_MARGIN * 2
-	elif position.y > screen_size.y + SCREEN_WRAPAROUND_MARGIN:
-		position.y -= screen_size.y + SCREEN_WRAPAROUND_MARGIN * 2
-			
 	pass
+
+			
