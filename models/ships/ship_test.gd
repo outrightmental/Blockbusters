@@ -21,7 +21,7 @@ func _on_viewport_resize() -> void:
 
  
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# listen for ASDW keys and apply acceleration to this rigid body 2d physics object
 	if Input.is_action_pressed("ui_right"):
 		apply_central_force(Vector2(FORCE_AMOUNT, 0))
