@@ -1,9 +1,9 @@
 extends RigidBody2D
 
 
-const FORCE_AMOUNT: int             = 1000
-const LINEAR_DAMP: int              = 10
-const SCREEN_WRAPAROUND_MARGIN: int = 10
+const FORCE_AMOUNT: int       = 1000
+const LINEAR_DAMP: int        = 10
+const SCREEN_WRAP_MARGIN: int = 15
 
 var screen_size: Vector2
 
@@ -37,8 +37,8 @@ func _process(_delta: float) -> void:
 	rotation = target_angle
 
 	# ship position wraps around the screen edges
-	position.x = wrapf(position.x, -SCREEN_WRAPAROUND_MARGIN, screen_size.x + SCREEN_WRAPAROUND_MARGIN)
-	position.y = wrapf(position.y, -SCREEN_WRAPAROUND_MARGIN, screen_size.y + SCREEN_WRAPAROUND_MARGIN)
+	position.x = wrapf(position.x, -SCREEN_WRAP_MARGIN, screen_size.x + SCREEN_WRAP_MARGIN)
+	position.y = wrapf(position.y, -SCREEN_WRAP_MARGIN, screen_size.y + SCREEN_WRAP_MARGIN)
 	
 	pass
 
