@@ -1,9 +1,15 @@
 [gd_scene load_steps=2 format=3 uid="uid://cmijftuchxf62"]
 
-[ext_resource type="PackedScene" uid="uid://bg7dqpj5bjc6x" path="res://models/ships/ship_test.tscn" id="1_0qs6r"]
+[ext_resource type="PackedScene" uid="uid://bg7dqpj5bjc6x" path="res://models/ships/ship.tscn" id="1_0qs6r"]
 
 [node name="Main" type="Node2D"]
 
-[node name="ShipTest" parent="." instance=ExtResource("1_0qs6r")]
+[node name="ShipPlayer1" parent="." instance=ExtResource("1_0qs6r")]
 z_index = 1
 position = Vector2(161, 61)
+player_num = 1
+
+[node name="ShipPlayer2" parent="." instance=ExtResource("1_0qs6r")]
+z_index = 1
+position = Vector2(755, 225)
+player_num = 2
