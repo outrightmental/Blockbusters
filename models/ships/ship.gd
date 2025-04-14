@@ -2,7 +2,7 @@ extends RigidBody2D
 
 
 const FORCE_AMOUNT: int       = 1000
-const LINEAR_DAMP: int        = 1
+const LINEAR_DAMP: int        = 2
 const SCREEN_WRAP_MARGIN: int = 15
 
 var screen_size: Vector2
@@ -22,6 +22,12 @@ var input_mapping_format: Dictionary = {
 
 @export var player_num: int = 0
 
+# Map player_num to textures
+var player_textures: Dictionary = {
+									  1: preload("res://assets/ships/ship1.png"),
+									  2: preload("res://assets/ships/ship2.png")
+								  }
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(LINEAR_DAMP)
@@ -34,7 +40,14 @@ func _ready() -> void:
 			input_mapping[key] = action_name
 		else:
 			print("Input action not found: ", action_name)
-	pass # Replace with function body.
+		
+	# Set the sprite texture based on player_num
+	if player_num in player_textures:
+		$Sprite2D.texture = player_textures[player_num]
+	else:
+		print("No texture found for player_num: ", player_num)		
+
+	pass
 
 
 func _on_viewport_resize() -> void:
