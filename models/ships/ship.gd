@@ -27,13 +27,23 @@ const dir_vectors := {
 					   "down": Vector2(0, 1),
 				   }
 
-@export var player_num: int = 0
+# keep track of the time when the input was pressed
+var input_start_time : float = 0.0
+
+# whether the input is pressed
+var input_pressed : bool = false
+
+# threshold that's rotation only (strafe) before applying force
+const STRAFE_THRESHOLD: float = 0.2
 
 # Map player_num to textures
 var player_textures: Dictionary = {
 									  1: preload("res://assets/ships/ship1.png"),
 									  2: preload("res://assets/ships/ship2.png")
 								  }
+
+# Player number to identify the ship
+@export var player_num: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -74,15 +84,33 @@ func _process(_delta: float) -> void:
 #	if Input.is_action_pressed(input_mapping["down"]):
 #		apply_central_force(Vector2(0, FORCE_AMOUNT))
 
+	# Get input vector from which keys are pressed
+	var input_vector: Vector2 = Vector2.ZERO
 	for key in dir_vectors.keys():
-		# Tap to rotate (strafe)
-		if Input.is_action_just_pressed(input_mapping[key]):
-			rotation = dir_vectors[key].angle()
-
-		# Hold to move and rotate to velocity
 		if Input.is_action_pressed(input_mapping[key]):
-			apply_central_force(dir_vectors[key] * FORCE_AMOUNT)
-			rotation = linear_velocity.angle()
+			input_vector += dir_vectors[key]
+		
+	# Normalize the input vector to avoid faster diagonal movement
+	if input_vector.length() > 1:
+		input_vector = input_vector.normalized()
+	
+	# Reset input pressed state if no keys are pressed		
+	if input_vector == Vector2.ZERO:
+		input_pressed = false
+		input_start_time = 0.0
+	else:
+		# If the input vector is not zero, set the pressed state and start time
+		if not input_pressed:
+			input_pressed = true
+			input_start_time = OS.get_ticks_msec() / 1000.0
+
+	# Apply force in the direction of the input vector
+	if input_vector != Vector2.ZERO:
+		apply_central_force(input_vector * FORCE_AMOUNT)
+		
+	# apply / rotate
+#	apply_central_force(dir_vectors[key] * FORCE_AMOUNT)
+#	rotation = linear_velocity.angle()
 		
 	# get angle from linear velocity and rotate the ship halfway towards that target
 	var target_angle: float = linear_velocity.angle()
