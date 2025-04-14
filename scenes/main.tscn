@@ -6,10 +6,12 @@
 
 [node name="ShipPlayer1" parent="." instance=ExtResource("1_0qs6r")]
 z_index = 1
+y_sort_enabled = true
 position = Vector2(161, 61)
 player_num = 1
 
 [node name="ShipPlayer2" parent="." instance=ExtResource("1_0qs6r")]
 z_index = 1
+y_sort_enabled = true
 position = Vector2(755, 225)
 player_num = 2
