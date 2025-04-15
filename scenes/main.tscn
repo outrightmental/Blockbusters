@@ -1,17 +1,39 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmijftuchxf62"]
+[gd_scene load_steps=5 format=3 uid="uid://cmijftuchxf62"]
 
-[ext_resource type="PackedScene" uid="uid://bg7dqpj5bjc6x" path="res://models/ships/ship.tscn" id="1_0qs6r"]
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_0pxjd"]
+[ext_resource type="FontFile" uid="uid://cpkj5252remkh" path="res://assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf" id="1_1d83m"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_p3wwr"]
+
+[sub_resource type="FontVariation" id="FontVariation_v7c6u"]
+base_font = ExtResource("1_1d83m")
+variation_opentype = {
+2003265652: 700
+}
+spacing_glyph = -3
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_0pxjd")
 
-[node name="ShipPlayer1" parent="." instance=ExtResource("1_0qs6r")]
-z_index = 1
-y_sort_enabled = true
-position = Vector2(161, 61)
-player_num = 1
+[node name="PlayGameButton" type="TextureButton" parent="."]
+offset_right = 411.0
+offset_bottom = 182.0
 
-[node name="ShipPlayer2" parent="." instance=ExtResource("1_0qs6r")]
-z_index = 1
-y_sort_enabled = true
-position = Vector2(755, 225)
-player_num = 2
+[node name="TextureRect" type="TextureRect" parent="PlayGameButton"]
+layout_mode = 0
+offset_left = 306.0
+offset_top = 188.0
+offset_right = 717.0
+offset_bottom = 373.0
+texture = SubResource("CanvasTexture_p3wwr")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PlayGameButton/TextureRect"]
+layout_mode = 0
+offset_left = 55.0
+offset_top = 65.0
+offset_right = 355.0
+offset_bottom = 145.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = SubResource("FontVariation_v7c6u")
+theme_override_font_sizes/normal_font_size = 50
+text = "PLAY GAME"

@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://q8ooavoorqu5"
-path="res://.godot/imported/Montserrat-ExtraLightItalic.ttf-d0f3a78944ec47debac573cfcb6b84f5.fontdata"
+path="res://.godot/imported/Montserrat-ExtraLightItalic.ttf-948c9359ac0f73506cf6ccc5a80eed09.fontdata"
 
 [deps]
 
-source_file="res://design/Montserrat/static/Montserrat-ExtraLightItalic.ttf"
-dest_files=["res://.godot/imported/Montserrat-ExtraLightItalic.ttf-d0f3a78944ec47debac573cfcb6b84f5.fontdata"]
+source_file="res://assets/fonts/Montserrat/static/Montserrat-ExtraLightItalic.ttf"
+dest_files=["res://.godot/imported/Montserrat-ExtraLightItalic.ttf-948c9359ac0f73506cf6ccc5a80eed09.fontdata"]
 
 [params]
 
