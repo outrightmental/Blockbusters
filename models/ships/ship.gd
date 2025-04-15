@@ -64,6 +64,8 @@ func _ready() -> void:
 	else:
 		print("No texture found for player_num: ", player_num)
 
+	actual_rotation = rotation
+	target_rotation = rotation
 	pass
 
 
