@@ -1,4 +1,4 @@
-extends RigidBody2D
+extends "res://models/collidable/collidable.gd"
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
@@ -116,4 +116,7 @@ func _process(delta: float) -> void:
 	rotation = actual_rotation
 	pass
 
-			
+
+# Called when the ship is instantiated
+func _init():
+	super._init()
