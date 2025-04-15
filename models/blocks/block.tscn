@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjiivayicu2qj"]
+
+[ext_resource type="Script" path="res://models/blocks/block.gd" id="1_okoc5"]
+[ext_resource type="Texture2D" uid="uid://desqq2xisflpl" path="res://assets/blocks/block1.png" id="2_25f0o"]
+
+[node name="Block" type="RigidBody2D"]
+gravity_scale = 0.0
+script = ExtResource("1_okoc5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_25f0o")
