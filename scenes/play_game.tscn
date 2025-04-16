@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://bgvuuvhomj1ox"]
+
+[ext_resource type="Script" path="res://scenes/play_game.gd" id="1_s826b"]
+[ext_resource type="Texture2D" uid="uid://b58y4wj2udywn" path="res://assets/board/background.png" id="2_7jnrg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
+size = Vector2(1024, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xet8o"]
+size = Vector2(16, 544)
+
+[node name="PlayGame" type="Node2D"]
+script = ExtResource("1_s826b")
+
+[node name="Fence" type="RigidBody2D" parent="."]
+gravity_scale = 0.0
+freeze = true
+
+[node name="Top" type="CollisionShape2D" parent="Fence"]
+position = Vector2(512, 8)
+shape = SubResource("RectangleShape2D_4dcan")
+
+[node name="Bottom" type="CollisionShape2D" parent="Fence"]
+position = Vector2(512, 568)
+shape = SubResource("RectangleShape2D_4dcan")
+
+[node name="Left" type="CollisionShape2D" parent="Fence"]
+position = Vector2(8, 288)
+shape = SubResource("RectangleShape2D_xet8o")
+
+[node name="Right" type="CollisionShape2D" parent="Fence"]
+position = Vector2(1016, 288)
+shape = SubResource("RectangleShape2D_xet8o")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_7jnrg")
