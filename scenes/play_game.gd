@@ -9,6 +9,9 @@ enum GridType {
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
 const BLOCK_SIZE: int             = 32
 const BLOCK_CENTER: int           = BLOCK_SIZE/2
+const GRID_COLS = 30
+const GRID_ROWS = 16
+const GRID_MARGIN = 32
 const BLOCK_SHIP_CLEARANCE_RADIUS = 100
 var grid: Dictionary              = {}
 
@@ -20,8 +23,8 @@ func _ready() -> void:
 	var player_2               = _spawn_player(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 
 	#	var grid_pos: Vector2
-	for x in range(32):
-		for y in range(18):
+	for x in range(GRID_COLS):
+		for y in range(GRID_ROWS):
 			if (!grid.has(x)):
 				grid[x] = {}
 			if (_is_clear_of_all(BLOCK_SHIP_CLEARANCE_RADIUS, _grid_position(x, y), [player_1.position, player_2.position])):
@@ -29,8 +32,8 @@ func _ready() -> void:
 			else:
 				grid[x][y] = GridType.EMPTY
 
-	for x in range(32):
-		for y in range(18):
+	for x in range(GRID_COLS):
+		for y in range(GRID_ROWS):
 			if grid[x][y] == GridType.BLOCK:
 				# Spawn a block at the grid position
 				# The blocks are 32x32 pixels, so the grid is 1024x576 pixels
@@ -49,7 +52,7 @@ func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]):
 
 func _grid_position(x: int, y: int) -> Vector2:
 	# Convert grid coordinates to world coordinates
-	return Vector2(BLOCK_CENTER + x * BLOCK_SIZE, BLOCK_CENTER + y * BLOCK_SIZE)
+	return Vector2(GRID_MARGIN + BLOCK_CENTER + x * BLOCK_SIZE, GRID_MARGIN + BLOCK_CENTER + y * BLOCK_SIZE)
 
 
 func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> Node:

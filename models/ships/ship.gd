@@ -2,7 +2,6 @@ extends "res://models/collidable/collidable.gd"
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
-const SCREEN_WRAP_MARGIN: int       = 15
 const TARGET_ROTATION_FACTOR: float = 10
 var screen_size: Vector2
 
@@ -104,10 +103,6 @@ func _process(delta: float) -> void:
 
 	# Apply force in the direction of the input vector
 	apply_central_force(input_vector * FORCE_AMOUNT)
-
-	# ship position wraps around the screen edges
-	position.x = wrapf(position.x, -SCREEN_WRAP_MARGIN, screen_size.x + SCREEN_WRAP_MARGIN)
-	position.y = wrapf(position.y, -SCREEN_WRAP_MARGIN, screen_size.y + SCREEN_WRAP_MARGIN)
 
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
