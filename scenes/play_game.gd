@@ -13,6 +13,7 @@ const GRID_COLS = 30
 const GRID_ROWS = 16
 const GRID_MARGIN = 32
 const BLOCK_SHIP_CLEARANCE_RADIUS = 100
+const GAP_COUNT = 8
 var grid: Dictionary              = {}
 
 
@@ -21,13 +22,21 @@ func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var player_1               = _spawn_player(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_2               = _spawn_player(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
+	
+	# Randomly pick locations for 3 gaps
+	var gap_positions: Array[Vector2] = [player_1.position, player_2.position]
+	for i in range(GAP_COUNT):
+		var gap_x: int = randi() % (GRID_COLS / 2)
+		var gap_y: int = randi() % GRID_ROWS
+		gap_positions.append(_grid_position(gap_x, gap_y))
+		gap_positions.append(_grid_position(GRID_COLS - gap_x, GRID_ROWS - gap_y))
 
 	#	var grid_pos: Vector2
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
 			if (!grid.has(x)):
 				grid[x] = {}
-			if (_is_clear_of_all(BLOCK_SHIP_CLEARANCE_RADIUS, _grid_position(x, y), [player_1.position, player_2.position])):
+			if (_is_clear_of_all(BLOCK_SHIP_CLEARANCE_RADIUS, _grid_position(x, y), gap_positions)):
 				grid[x][y] = GridType.BLOCK
 			else:
 				grid[x][y] = GridType.EMPTY
