@@ -28,9 +28,9 @@ func _ready() -> void:
 	_on_viewport_resize()
 
 	# Set the sprite texture based on player_num
-	if player_num in Colors.PLAYER_COLORS:
-		$TriangleLight.color = Colors.PLAYER_COLORS[player_num][0]
-		$TriangleDark.color = Colors.PLAYER_COLORS[player_num][1]
+	if player_num in Global.PLAYER_COLORS:
+		$TriangleLight.color = Global.PLAYER_COLORS[player_num][0]
+		$TriangleDark.color = Global.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
 
