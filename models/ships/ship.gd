@@ -34,15 +34,8 @@ const STRAFE_THRESHOLD_MSEC: float = 500
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
 
-# Map player_num to textures
-var player_colors: Dictionary = {
-									  1: [Color.hex(0xff00e4ff), Color.hex(0xbb00a7ff)],
-									  2: [Color.hex(0x00b8ffff), Color.hex(0x0087bbff)]
-								  }
-
 # Player number to identify the ship
 @export var player_num: int = 0
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -58,9 +51,9 @@ func _ready() -> void:
 			print("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
-	if player_num in player_colors:
-		$TriangleLight.color = player_colors[player_num][0]
-		$TriangleDark.color = player_colors[player_num][1]
+	if player_num in Colors.PLAYER_COLORS:
+		$TriangleLight.color = Colors.PLAYER_COLORS[player_num][0]
+		$TriangleDark.color = Colors.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
 
