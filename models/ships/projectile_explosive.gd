@@ -6,6 +6,8 @@ extends "res://models/collidable/collidable.gd"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group(Global.GROUP_AFFECTED_BY_EXPLOSION)
+	add_to_group(Global.GROUP_PROJECTILE_EXPLOSIVES)
 
 	# Set the sprite texture based on player_num
 	if player_num in Global.PLAYER_COLORS:

@@ -43,6 +43,8 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group(Global.GROUP_AFFECTED_BY_EXPLOSION)
+	add_to_group(Global.GROUP_SHIPS)
 	set_linear_damp(LINEAR_DAMP)
 	get_tree().root.size_changed.connect(_on_viewport_resize)
 	_on_viewport_resize()
@@ -127,7 +129,6 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.rotation = rotation
 	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.set_owner(self)
-	projectile.add_to_group(Global.GROUP_PROJECTILE_EXPLOSIVES)
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched

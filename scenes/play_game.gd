@@ -69,7 +69,6 @@ func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> 
 	ship_scene.position = start_position
 	ship_scene.player_num = num
 	ship_scene.rotation = start_rotation
-	ship_scene.add_to_group(Global.GROUP_SHIPS)
 	self.add_child(ship_scene)
 	return ship_scene
 
@@ -77,6 +76,5 @@ func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> 
 func _spawn_block(start_position: Vector2) -> Node:
 	var block_scene: Node = preload('res://models/blocks/block.tscn').instantiate()
 	block_scene.position = start_position
-	block_scene.add_to_group(Global.GROUP_BLOCKS)
 	self.add_child(block_scene)
 	return block_scene

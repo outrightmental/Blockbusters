@@ -19,6 +19,7 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET: float = 23.0
 const PLAYER_INITIAL_SCORE: int = 0
 
 # Object groups
+const GROUP_AFFECTED_BY_EXPLOSION: String = "affected_by_explosion"
 const GROUP_SHIPS: String = "ships"
 const GROUP_BLOCKS: String = "blocks"
 const GROUP_PROJECTILE_EXPLOSIVES: String = "projectile_explosives"
