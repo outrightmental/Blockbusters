@@ -1,8 +1,6 @@
 extends "res://models/collidable/collidable.gd"
 
-const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
-const TARGET_ROTATION_FACTOR: float = 10
 var screen_size: Vector2
 
 # Player number to identify the ship
@@ -50,7 +48,7 @@ func _process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
 	if (get_linear_velocity().length() < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship
-		apply_central_force(FORCE_AMOUNT * get_global_transform().x.normalized())
+		apply_central_force(Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
 	pass
 
 
