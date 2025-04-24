@@ -17,3 +17,9 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET: float = 20.0
 # player initial score
 const PLAYER_INITIAL_SCORE: int = 0
+
+# Object groups
+const GROUP_SHIPS: String = "ships"
+const GROUP_BLOCKS: String = "blocks"
+const GROUP_PROJECTILE_EXPLOSIVES: String = "projectile_explosives"
+const GROUP_EXPLOSIONS: String = "explosions"

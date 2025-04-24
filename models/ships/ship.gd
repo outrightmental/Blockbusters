@@ -127,6 +127,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.rotation = rotation
 	projectile.linear_velocity = linear_velocity # + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.set_owner(self)
+	projectile.add_to_group(Global.GROUP_PROJECTILE_EXPLOSIVES)
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched

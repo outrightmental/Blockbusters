@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://qwnrjhu6nfwd"]
+
+[node name="Explosion" type="Node2D"]
+
+[node name="Explosion" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 0.501961)
+polygon = PackedVector2Array(7, -13, 15, -46, 13, -9, 24, -14, 19, -4, 65, -5, 22, 3, 28, 16, 12, 9, 18, 45, 3, 10, -15, 31, -4, 8, -18, 6, -6, 0, -31, -15, -4, -6, -8, -14, 1, -11, 0, -29)

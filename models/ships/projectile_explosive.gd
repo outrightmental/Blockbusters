@@ -33,6 +33,9 @@ func _ready() -> void:
 		$TriangleDark.color = Global.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
+	
+	# Connect the Collision to the on-collision function
+	$CollisionPolygon2D.connect("body_entered", _on_body_entered)
 
 	actual_rotation = rotation
 	target_rotation = rotation
@@ -42,10 +45,23 @@ func _ready() -> void:
 func _on_viewport_resize() -> void:
 	screen_size = get_viewport_rect().size
 	pass
+	
+	
+# Called when another body enters the collision area
+func _on_body_entered(other: Node) -> void:
+	var explosion: Node = preload("res://models/effects/explosion.tscn").instantiate()
+	explosion.position = position
+	explosion.set_owner(owner)
+	explosion.add_to_group(Global.GROUP_EXPLOSIONS)
+	explosion.player_num = player_num
+	self.get_parent().call_deferred("add_child", explosion)
+	# Remove this projectile from the stage
+	self.queue_free()
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
 	if (get_linear_velocity().length() < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship
