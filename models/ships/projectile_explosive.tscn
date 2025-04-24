@@ -1,9 +1,11 @@
 [gd_scene load_steps=2 format=3 uid="uid://b58oyq1o5ha2o"]
 
-[ext_resource type="Script" path="res://models/ships/projectile_explosive.gd" id="1_e1yt5"]
+[ext_resource type="Script" uid="uid://bsqw6ncm8bgdj" path="res://models/ships/projectile_explosive.gd" id="1_e1yt5"]
 
 [node name="ProjectileExplosive" type="RigidBody2D"]
 gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
 script = ExtResource("1_e1yt5")
 metadata/_edit_vertical_guides_ = [10.0]
 

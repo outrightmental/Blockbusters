@@ -5,18 +5,6 @@ const LINEAR_DAMP: int              = 1
 const TARGET_ROTATION_FACTOR: float = 10
 var screen_size: Vector2
 
-
-# keep track of the time when the input was pressed
-var input_start_ticks_msec: float = 0.0
-# whether the input is pressed
-var input_pressed: bool = false
-# threshold that's rotation only (strafe) before applying force
-const STRAFE_THRESHOLD_MSEC: float = 500
-# fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
-var target_rotation: float = 0.0
-var actual_rotation: float = 0.0
-
-
 # Player number to identify the ship
 @export var player_num: int = 0
 
@@ -35,10 +23,7 @@ func _ready() -> void:
 		print("No texture found for player_num: ", player_num)
 	
 	# Connect the Collision to the on-collision function
-	$CollisionPolygon2D.connect("body_entered", _on_body_entered)
-
-	actual_rotation = rotation
-	target_rotation = rotation
+	connect("body_entered", _on_body_entered)
 	pass
 
 
@@ -47,13 +32,13 @@ func _on_viewport_resize() -> void:
 	pass
 	
 	
-# Called when another body enters the collision area
+# Called when another body enters the collission area
 func _on_body_entered(other: Node) -> void:
+	print("PROJECTILE EXPLOSIVE COLLISION")
 	var explosion: Node = preload("res://models/effects/explosion.tscn").instantiate()
 	explosion.position = position
 	explosion.set_owner(owner)
 	explosion.add_to_group(Global.GROUP_EXPLOSIONS)
-	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)
 	# Remove this projectile from the stage
 	self.queue_free()

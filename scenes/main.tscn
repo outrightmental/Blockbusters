@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cmijftuchxf62"]
 
-[ext_resource type="Script" path="res://scenes/main.gd" id="1_0pxjd"]
+[ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
 [ext_resource type="FontFile" uid="uid://cpkj5252remkh" path="res://assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf" id="1_1d83m"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_p3wwr"]
