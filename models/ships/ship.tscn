@@ -5,8 +5,6 @@
 [node name="Ship" type="RigidBody2D"]
 gravity_scale = 0.0
 script = ExtResource("1_yja86")
-player_num = null
-number = null
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
 position = Vector2(-12, 2)

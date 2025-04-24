@@ -1,7 +1,19 @@
 extends Node
 
-
+# This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
-									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.733, 0.0, 0.655, 1.0)],  # Pink
+									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.733, 0.0, 0.655, 1.0)], # Pink
 									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)]   # Blue
 								  }
+# player ship threshold that's rotation only (strafe) before applying force
+const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float = 500
+# player ship threshold of how long to wait between launching projectile explosives
+const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
+# player ship projectile explosive initial velocity, acceleration, and max velocity
+const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
+const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
+const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
+# player ship projectile explosive initial position offset from ship
+const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET: float = 20.0
+# player initial score
+const PLAYER_INITIAL_SCORE: int = 0

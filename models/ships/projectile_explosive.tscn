@@ -5,8 +5,6 @@
 [node name="ProjectileExplosive" type="RigidBody2D"]
 gravity_scale = 0.0
 script = ExtResource("1_e1yt5")
-player_num = null
-number = null
 metadata/_edit_vertical_guides_ = [10.0]
 
 [node name="TriangleLight" type="Polygon2D" parent="."]

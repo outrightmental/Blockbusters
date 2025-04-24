@@ -46,6 +46,10 @@ func _on_viewport_resize() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	# If below the maxiumum velocity, apply force
+	if (get_linear_velocity().length() < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
+		# Apply force in the direction of the ship
+		apply_central_force(FORCE_AMOUNT * get_global_transform().x.normalized())
 	pass
 
 
