@@ -1,17 +1,11 @@
 extends "res://models/collidable/collidable.gd"
 
-const LINEAR_DAMP: int              = 1
-var screen_size: Vector2
-
 # Player number to identify the ship
 @export var player_num: int = 0
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_linear_damp(LINEAR_DAMP)
-	get_tree().root.size_changed.connect(_on_viewport_resize)
-	_on_viewport_resize()
 
 	# Set the sprite texture based on player_num
 	if player_num in Global.PLAYER_COLORS:
@@ -25,14 +19,8 @@ func _ready() -> void:
 	pass
 
 
-func _on_viewport_resize() -> void:
-	screen_size = get_viewport_rect().size
-	pass
-	
-	
 # Called when another body enters the collission area
 func _on_body_entered(other: Node) -> void:
-	print("PROJECTILE EXPLOSIVE COLLISION")
 	var explosion: Node = preload("res://models/effects/explosion.tscn").instantiate()
 	explosion.position = position
 	explosion.set_owner(owner)

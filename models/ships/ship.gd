@@ -125,7 +125,7 @@ func _do_launch_projectile_explosive() -> void:
 	var projectile: Node = preload("res://models/ships/projectile_explosive.tscn").instantiate()
 	projectile.position = position + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET
 	projectile.rotation = rotation
-	projectile.linear_velocity = linear_velocity # + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
+	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.set_owner(self)
 	projectile.add_to_group(Global.GROUP_PROJECTILE_EXPLOSIVES)
 	projectile.player_num = player_num
