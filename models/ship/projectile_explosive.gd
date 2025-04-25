@@ -23,7 +23,7 @@ func _ready() -> void:
 
 # Called when another body enters the collission area
 func _on_body_entered(other: Node) -> void:
-	var explosion: Node = preload("res://models/effects/explosion.tscn").instantiate()
+	var explosion: Node = preload("res://models/effect/explosion.tscn").instantiate()
 	explosion.position = position
 	explosion.set_owner(owner)
 	explosion.add_to_group(Global.GROUP_EXPLOSIONS)

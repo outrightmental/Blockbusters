@@ -17,7 +17,7 @@ const GAP_COUNT                   = 8
 var grid: Dictionary              = {}
 
 
-# Instantiate a models/ships/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
+# Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var player_1               = _spawn_player(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
@@ -65,7 +65,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 
 func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> Node:
-	var ship_scene: Node = preload('res://models/ships/ship.tscn').instantiate()
+	var ship_scene: Node = preload('res://models/ship/ship.tscn').instantiate()
 	ship_scene.position = start_position
 	ship_scene.player_num = num
 	ship_scene.rotation = start_rotation
@@ -74,7 +74,7 @@ func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> 
 
 
 func _spawn_block(start_position: Vector2) -> Node:
-	var block_scene: Node = preload('res://models/blocks/block.tscn').instantiate()
+	var block_scene: Node = preload('res://models/block/block.tscn').instantiate()
 	block_scene.position = start_position
 	self.add_child(block_scene)
 	return block_scene

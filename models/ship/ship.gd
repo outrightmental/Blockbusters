@@ -124,7 +124,7 @@ func _do_launch_projectile_explosive() -> void:
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector : Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
-	var projectile: Node = preload("res://models/ships/projectile_explosive.tscn").instantiate()
+	var projectile: Node = preload("res://models/ship/projectile_explosive.tscn").instantiate()
 	projectile.set_owner(self)
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
