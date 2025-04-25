@@ -13,8 +13,6 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
-# player ship projectile explosive initial position offset from ship
-const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET: float = 23.0
 # player initial score
 const PLAYER_INITIAL_SCORE: int = 0
 

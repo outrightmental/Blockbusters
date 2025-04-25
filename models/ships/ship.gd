@@ -123,12 +123,13 @@ func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
-	var rotation_vector : Vector2 = Vector2(cos(rotation), sin(rotation))
+	var rotation_vector : Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
 	var projectile: Node = preload("res://models/ships/projectile_explosive.tscn").instantiate()
-	projectile.position = position + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_OFFSET
-	projectile.rotation = rotation
-	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.set_owner(self)
+	projectile.add_collision_exception_with(self)
+	projectile.position = position
+	projectile.rotation = actual_rotation
+	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
