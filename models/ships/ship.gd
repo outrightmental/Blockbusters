@@ -9,14 +9,16 @@ var input_mapping: Dictionary = {
 									"left": "ui_left",
 									"right": "ui_right",
 									"up": "ui_up",
-									"down": "ui_down"
+									"down": "ui_down",
+									"action_a": "ui_accept",
 								}
 
 const input_mapping_format: Dictionary =  {
 											  "left": "p%d_left",
 											  "right": "p%d_right",
 											  "up": "p%d_up",
-											  "down": "p%d_down"
+											  "down": "p%d_down",
+											  "action_a": "p%d_action_a",
 										  }
 const dir_vectors                      := {
 											  "right": Vector2(1, 0),
@@ -24,21 +26,16 @@ const dir_vectors                      := {
 											  "up": Vector2(0, -1),
 											  "down": Vector2(0, 1),
 										  }
-# keep track of the time when the input was pressed
-var input_start_ticks_msec: float = 0.0
-# whether the input is pressed
-var input_pressed: bool = false
-# threshold that's rotation only (strafe) before applying force
-const STRAFE_THRESHOLD_MSEC: float = 500
+# keep track of the time when the input direction was pressed
+var input_direction_start_ticks_msec: float = 0.0
+# whether the input direction is pressed
+var input_direction_pressed: bool = false
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
 
-# Map player_num to textures
-var player_colors: Dictionary = {
-									  1: [Color.hex(0xff00e4ff), Color.hex(0xbb00a7ff)],
-									  2: [Color.hex(0x00b8ffff), Color.hex(0x0087bbff)]
-								  }
+# keep track of the time when the projectile explosive was last launched
+var projectile_explosive_start_ticks_msec: float = 0.0
 
 # Player number to identify the ship
 @export var player_num: int = 0
@@ -46,6 +43,8 @@ var player_colors: Dictionary = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group(Global.GROUP_AFFECTED_BY_EXPLOSION)
+	add_to_group(Global.GROUP_SHIPS)
 	set_linear_damp(LINEAR_DAMP)
 	get_tree().root.size_changed.connect(_on_viewport_resize)
 	_on_viewport_resize()
@@ -58,9 +57,9 @@ func _ready() -> void:
 			print("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
-	if player_num in player_colors:
-		$TriangleLight.color = player_colors[player_num][0]
-		$TriangleDark.color = player_colors[player_num][1]
+	if player_num in Global.PLAYER_COLORS:
+		$TriangleLight.color = Global.PLAYER_COLORS[player_num][0]
+		$TriangleDark.color = Global.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
 
@@ -76,6 +75,10 @@ func _on_viewport_resize() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	# Check if input action is pressed
+	if Input.is_action_just_pressed(input_mapping["action_a"]):
+		_do_launch_projectile_explosive()
+	
 	# Get input vector from which keys are pressed
 	var input_vector: Vector2 = Vector2.ZERO
 	for key in dir_vectors.keys():
@@ -88,14 +91,14 @@ func _process(delta: float) -> void:
 
 	# Reset input pressed state if no keys are pressed		
 	if input_vector == Vector2.ZERO:
-		input_pressed = false
+		input_direction_pressed = false
 	else:
 		# If the input vector is not zero, set the pressed state and start time
-		if not input_pressed:
-			input_pressed = true
-			input_start_ticks_msec = Time.get_ticks_msec()
+		if not input_direction_pressed:
+			input_direction_pressed = true
+			input_direction_start_ticks_msec = Time.get_ticks_msec()
 
-		if Time.get_ticks_msec() - input_start_ticks_msec < STRAFE_THRESHOLD_MSEC:
+		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Global.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
 			target_rotation = input_vector.angle()
 		else:
@@ -115,6 +118,25 @@ func _process(delta: float) -> void:
 	pass
 
 
+# Called when the player wants to launch a projectile explosive
+func _do_launch_projectile_explosive() -> void:
+	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
+		return
+	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
+	var rotation_vector : Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
+	var projectile: Node = preload("res://models/ships/projectile_explosive.tscn").instantiate()
+	projectile.set_owner(self)
+	projectile.add_collision_exception_with(self)
+	projectile.position = position
+	projectile.rotation = actual_rotation
+	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
+	projectile.player_num = player_num
+	self.get_parent().call_deferred("add_child", projectile)
+	# Emit a signal to notify that the projectile explosive was launched
+	SignalBus.projectile_explosive_launched.emit(projectile)
+
 # Called when the ship is instantiated
 func _init():
 	super._init()
+
+	

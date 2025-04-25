@@ -9,11 +9,11 @@ enum GridType {
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
 const BLOCK_SIZE: int             = 32
 const BLOCK_CENTER: int           = BLOCK_SIZE/2
-const GRID_COLS = 30
-const GRID_ROWS = 16
-const GRID_MARGIN = 32
+const GRID_COLS                   = 30
+const GRID_ROWS                   = 16
+const GRID_MARGIN                 = 32
 const BLOCK_SHIP_CLEARANCE_RADIUS = 100
-const GAP_COUNT = 8
+const GAP_COUNT                   = 8
 var grid: Dictionary              = {}
 
 
@@ -22,7 +22,7 @@ func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var player_1               = _spawn_player(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_2               = _spawn_player(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
-	
+
 	# Randomly pick locations for 3 gaps
 	var gap_positions: Array[Vector2] = [player_1.position, player_2.position]
 	for i in range(GAP_COUNT):
