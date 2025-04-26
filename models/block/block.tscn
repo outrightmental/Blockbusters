@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bjiivayicu2qj"]
+[gd_scene load_steps=3 format=3 uid="uid://bjiivayicu2qj"]
 
 [ext_resource type="Script" uid="uid://2es8up3haar4" path="res://models/block/block.gd" id="1_okoc5"]
-[ext_resource type="Texture2D" uid="uid://desqq2xisflpl" path="res://assets/blocks/block1.png" id="2_25f0o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_af4ln"]
 size = Vector2(32, 32)
@@ -10,8 +9,24 @@ size = Vector2(32, 32)
 gravity_scale = 0.0
 script = ExtResource("1_okoc5")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_25f0o")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("RectangleShape2D_af4ln")
+
+[node name="TriangleUp" type="Polygon2D" parent="."]
+z_index = 5
+position = Vector2(-12, 2)
+color = Color(0.466667, 0.466667, 0.466667, 1)
+polygon = PackedVector2Array(-3, -17, 27, -17, -3, 13)
+
+[node name="TriangleDown" type="Polygon2D" parent="."]
+z_index = 5
+position = Vector2(-12, 2)
+color = Color(0.372549, 0.372549, 0.372549, 1)
+polygon = PackedVector2Array(27, 13, 27, -17, -3, 13)
+
+[node name="border" type="Polygon2D" parent="."]
+position = Vector2(-12, 3.2)
+scale = Vector2(1, 1.06667)
+color = Color(0.601223, 0.601223, 0.601223, 1)
+polygon = PackedVector2Array(-4, -18, 28, -18, 28, 12, -4, 12)
