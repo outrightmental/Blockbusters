@@ -9,8 +9,9 @@ script = ExtResource("1_s7pcu")
 [node name="TriangleDown" type="Polygon2D" parent="."]
 z_index = 5
 position = Vector2(-12, 2)
-color = Color(0.372549, 0.372549, 0.372549, 1)
+color = Color(0.37, 0.37, 0.37, 0.392157)
 polygon = PackedVector2Array(27, 13, 27, -17, -3, 13)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
 polygon = PackedVector2Array(15, -15, 15, 15, -15, 15)

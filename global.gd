@@ -19,6 +19,7 @@ const PLAYER_INITIAL_SCORE: int = 0
 # Object groups
 const GROUP_AFFECTED_BY_EXPLOSION: String = "affected_by_explosion"
 const GROUP_BLOCKS: String = "blocks"
+const GROUP_BLOCK_FRAGMENTS: String = "block_fragments"
 const GROUP_EXPLOSIONS: String = "explosions"
 const GROUP_GEMS: String = "gems"
 const GROUP_PROJECTILE_EXPLOSIVES: String = "projectile_explosives"

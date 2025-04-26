@@ -9,7 +9,7 @@ script = ExtResource("1_bug8w")
 [node name="TriangleUp" type="Polygon2D" parent="."]
 z_index = 5
 position = Vector2(-12, 2)
-color = Color(0.466667, 0.466667, 0.466667, 1)
+color = Color(0.47, 0.47, 0.47, 0.392157)
 polygon = PackedVector2Array(-3, -17, 27, -17, -3, 13)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
