@@ -20,9 +20,10 @@ func _ready() -> void:
 # Adds a gem inside this block
 func _add_gem() -> void:
 	gem = preload("res://models/gem/gem.tscn").instantiate()
+	gem.position = Vector2(0,0)
 	gem.add_collision_exception_with(self)
-	gem.position = position
-	self.get_parent().call_deferred("add_child", gem)
+	gem.freeze = true
+	self.add_child(gem)
 	pass
 
 	
@@ -40,10 +41,13 @@ func do_break() -> void:
 	frag2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
 	# Gem
 	if gem:
+		gem = preload("res://models/gem/gem.tscn").instantiate()
+		gem.add_collision_exception_with(self)
+		gem.position = position
+		gem.linear_velocity = linear_velocity
 		gem.add_collision_exception_with(frag1)
 		gem.add_collision_exception_with(frag2)
-		frag1.add_collision_exception_with(gem)
-		frag2.add_collision_exception_with(gem)
+		self.get_parent().add_child(gem)
 	# Remove the block from the scene
 	self.get_parent().add_child(frag1)
 	self.get_parent().add_child(frag2)
@@ -53,9 +57,6 @@ func do_break() -> void:
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if gem:
-		gem.position = position
-		gem.rotation = rotation
 	pass
 
 	
