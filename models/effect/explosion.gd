@@ -1,12 +1,11 @@
 extends Node2D
 
 var instantiated_at_ticks_msec: float = 0.0
-var explosive_radius: float = 0.0
-var block_break_radius: float = 0.0
-
-const LIFETIME_MSEC: int              = 200
-const BLOCK_BREAK_RATIO: int         = 0.5
-const EXPLOSION_FORCE: int            = 5000
+var explosive_radius: float           = 0.0
+var block_break_radius: float         = 0.0
+const LIFETIME_MSEC: int       = 200
+const BLOCK_BREAK_RATIO: float = 0.38
+const EXPLOSION_FORCE: int     = 5000
 
 
 # Called when the node enters the scene tree for the first time.
