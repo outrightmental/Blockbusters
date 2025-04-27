@@ -15,3 +15,8 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 # player initial score
 const PLAYER_INITIAL_SCORE: int = 0
+
+# Get a color at a specific saturation ratio relative to the original color
+func color_at_saturation_ratio(color: Color, saturation_ratio: float) -> Color:
+	return Color.from_hsv(color.h, color.s * saturation_ratio, color.v, color.a)
+	
