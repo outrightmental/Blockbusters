@@ -1,7 +1,8 @@
-extends "res://models/collidable/collidable.gd"
+class_name Block
+extends Collidable
 
 
-const BREAK_APART_VELOCITY = 50
+const BREAK_APART_VELOCITY: int = 50
 
 
 var gem: Node = null
@@ -46,6 +47,8 @@ func do_break() -> void:
 	if gem:
 		gem.add_collision_exception_with(frag1)
 		gem.add_collision_exception_with(frag2)
+		frag1.add_collision_exception_with(gem)
+		frag2.add_collision_exception_with(gem)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass

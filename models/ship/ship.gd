@@ -1,4 +1,5 @@
-extends "res://models/collidable/collidable.gd"
+class_name Ship
+extends Collidable
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1

@@ -1,4 +1,4 @@
-extends "res://models/collidable/collidable.gd"
+extends Collidable
 
 
 var gem: Node = null

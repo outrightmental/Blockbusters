@@ -1,4 +1,4 @@
-extends "res://models/collidable/collidable.gd"
+extends Collidable
 
 # Player number to identify the ship
 @export var player_num: int = 0
