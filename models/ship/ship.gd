@@ -3,7 +3,9 @@ extends Collidable
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
-const TARGET_ROTATION_FACTOR: float = 10
+const TARGET_ROTATION_FACTOR: float    = 10
+const DISABLED_MSEC: int               = 3000
+const DISABLED_SATURATION_RATIO: float = 0.38
 var screen_size: Vector2
 
 var input_mapping: Dictionary = {
@@ -34,9 +36,11 @@ var input_direction_pressed: bool = false
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
-
 # keep track of the time when the projectile explosive was last launched
 var projectile_explosive_start_ticks_msec: float = 0.0
+# keep track of whether the ship is disabled, and when
+var is_disabled: bool             = false
+var disabled_at_ticks_msec: float = 0.0
 
 # Player number to identify the ship
 @export var player_num: int = 0
@@ -56,17 +60,23 @@ func _ready() -> void:
 			print("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
-	if player_num in Global.PLAYER_COLORS:
-		$TriangleLight.color = Global.PLAYER_COLORS[player_num][0]
-		$TriangleDark.color = Global.PLAYER_COLORS[player_num][1]
-	else:
-		print("No texture found for player_num: ", player_num)
+	_set_colors(1.0)
 
 	actual_rotation = rotation
 	target_rotation = rotation
 	pass
 
 
+# Set the colors of the ship based on player_num
+func _set_colors(saturation_ratio: float) -> void:
+	if player_num in Global.PLAYER_COLORS:
+		$TriangleLight.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][0], saturation_ratio)
+		$TriangleDark.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][1], saturation_ratio)
+	else:
+		print("No texture found for player_num: ", player_num)
+
+
+# Called on viewport resize
 func _on_viewport_resize() -> void:
 	screen_size = get_viewport_rect().size
 	pass
@@ -74,10 +84,29 @@ func _on_viewport_resize() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if is_disabled:
+		if Time.get_ticks_msec() - disabled_at_ticks_msec > DISABLED_MSEC:
+			do_enable()
+	else:
+		_process_input()
+		
+	# Adjust the rotation towards the target angle by a factor and delta time
+	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
+	if angle_diff > PI:
+		angle_diff -= TAU
+	elif angle_diff < -PI:
+		angle_diff += TAU
+	actual_rotation += angle_diff * TARGET_ROTATION_FACTOR * delta
+	rotation = actual_rotation
+	pass
+
+	
+# Process input for the ship (if not disabled)
+func _process_input() -> void:
 	# Check if input action is pressed
 	if Input.is_action_just_pressed(input_mapping["action_a"]):
 		_do_launch_projectile_explosive()
-	
+
 	# Get input vector from which keys are pressed
 	var input_vector: Vector2 = Vector2.ZERO
 	for key in dir_vectors.keys():
@@ -105,15 +134,22 @@ func _process(delta: float) -> void:
 
 	# Apply force in the direction of the input vector
 	apply_central_force(input_vector * FORCE_AMOUNT)
+	pass
 
-	# Adjust the rotation towards the target angle by a factor and delta time
-	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
-	if angle_diff > PI:
-		angle_diff -= TAU
-	elif angle_diff < -PI:
-		angle_diff += TAU
-	actual_rotation += angle_diff * TARGET_ROTATION_FACTOR * delta
-	rotation = actual_rotation
+
+# Called when the ship is disabled
+func do_disable() -> void:
+	is_disabled = true
+	disabled_at_ticks_msec = Time.get_ticks_msec()
+	_set_colors(DISABLED_SATURATION_RATIO)
+	pass
+
+	
+# Called when the ship is re-enabled
+func do_enable() -> void:
+	is_disabled = false
+	disabled_at_ticks_msec = 0.0
+	_set_colors(1.0)
 	pass
 
 
@@ -122,8 +158,8 @@ func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
-	var rotation_vector : Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
-	var projectile: Node = preload("res://models/ship/projectile_explosive.tscn").instantiate()
+	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
+	var projectile: Node         = preload("res://models/ship/projectile_explosive.tscn").instantiate()
 	projectile.set_owner(self)
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
@@ -133,6 +169,7 @@ func _do_launch_projectile_explosive() -> void:
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
 	SignalBus.projectile_explosive_launched.emit(projectile)
+
 
 # Called when the ship is instantiated
 func _init():
