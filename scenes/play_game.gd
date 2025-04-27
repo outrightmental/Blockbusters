@@ -70,6 +70,11 @@ func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> 
 	ship_scene.player_num = num
 	ship_scene.rotation = start_rotation
 	self.add_child(ship_scene)
+	var home_scene: Home = preload('res://models/ship/home.tscn').instantiate()
+	home_scene.position = start_position
+	home_scene.player_num = num
+	home_scene.rotation = start_rotation
+	self.add_child(home_scene)
 	return ship_scene
 
 
