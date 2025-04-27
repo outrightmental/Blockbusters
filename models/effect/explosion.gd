@@ -2,8 +2,10 @@ extends Node2D
 
 var instantiated_at_ticks_msec: float = 0.0
 var explosive_radius: float = 0.0
+var block_break_radius: float = 0.0
+
 const LIFETIME_MSEC: int              = 200
-const BLOCK_BREAK_RADIUS: int         = 50
+const BLOCK_BREAK_RATIO: int         = 0.5
 const EXPLOSION_FORCE: int            = 5000
 
 
@@ -11,6 +13,7 @@ const EXPLOSION_FORCE: int            = 5000
 func _ready() -> void:
 	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = self.get_node("ExplosiveArea2D/CollisionShape2D").shape.radius
+	block_break_radius = explosive_radius * BLOCK_BREAK_RATIO
 	$ExplosiveArea2D.body_entered.connect(_on_body_entered)
 
 
@@ -18,7 +21,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	var diff: Vector2 = (body.position - position)
 	body.apply_central_force(diff.normalized() * EXPLOSION_FORCE * (1 - diff.length() / explosive_radius))
-	if diff.length() <= BLOCK_BREAK_RADIUS and body is Block:
+	if body is Block and diff.length() <= block_break_radius:
 		body.do_break()
 
 

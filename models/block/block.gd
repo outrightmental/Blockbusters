@@ -33,13 +33,11 @@ func do_break() -> void:
 	frag1.add_collision_exception_with(self)
 	frag1.position = position
 	frag1.linear_velocity = linear_velocity + Vector2(-BREAK_APART_VELOCITY, -BREAK_APART_VELOCITY)
-	self.get_parent().call_deferred("add_child", frag1)
 	# Fragment 2
 	var frag2:Node = preload("res://models/block/block_fragment_2.tscn").instantiate()
 	frag2.add_collision_exception_with(self)
 	frag2.position = position
 	frag2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
-	self.get_parent().call_deferred("add_child", frag2)
 	# Gem
 	if gem:
 		gem.add_collision_exception_with(frag1)
@@ -47,6 +45,8 @@ func do_break() -> void:
 		frag1.add_collision_exception_with(gem)
 		frag2.add_collision_exception_with(gem)
 	# Remove the block from the scene
+	self.get_parent().add_child(frag1)
+	self.get_parent().add_child(frag2)
 	self.call_deferred("queue_free")
 	pass
 
