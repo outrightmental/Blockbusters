@@ -1,3 +1,4 @@
+class_name Gem
 extends Collidable
 
 # Player number to identify the ship
@@ -6,7 +7,6 @@ extends Collidable
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group(Global.GROUP_AFFECTED_BY_EXPLOSION)
 	add_to_group(Global.GROUP_GEMS)
 	pass
 
