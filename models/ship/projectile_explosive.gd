@@ -7,8 +7,6 @@ extends Collidable
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group(Global.GROUP_PROJECTILE_EXPLOSIVES)
-
 	# Set the sprite texture based on player_num
 	if player_num in Global.PLAYER_COLORS:
 		$TriangleLight.color = Global.PLAYER_COLORS[player_num][0]
@@ -26,7 +24,6 @@ func _on_body_entered(other: Node) -> void:
 	var explosion: Node = preload("res://models/effect/explosion.tscn").instantiate()
 	explosion.position = position
 	explosion.set_owner(owner)
-	explosion.add_to_group(Global.GROUP_EXPLOSIONS)
 	self.get_parent().call_deferred("add_child", explosion)
 	# Remove this projectile from the stage
 	self.queue_free()

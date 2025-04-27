@@ -9,8 +9,6 @@ var gem: Node = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group(Global.GROUP_BLOCKS)
-
 	# Roll a D6 and if it's 1, add a gem
 	var random_number: int = randi() % 6 + 1
 	if random_number == 1:
