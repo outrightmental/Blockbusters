@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3 uid="uid://bypqllqv0b2d7"]
+
+[ext_resource type="Script" uid="uid://c4htf546sf332" path="res://models/gem/gem.gd" id="1_ud73v"]
+
+[node name="Gem" type="RigidBody2D"]
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_ud73v")
+metadata/_edit_vertical_guides_ = [10.0]
+
+[node name="TopLeft" type="Polygon2D" parent="."]
+position = Vector2(-22, 2)
+color = Color(1, 0.809584, 0.593649, 1)
+polygon = PackedVector2Array(22, -12, 22, -2, 12, -2)
+
+[node name="TopRight" type="Polygon2D" parent="."]
+position = Vector2(-12, 2)
+color = Color(1, 0.936525, 0.867951, 1)
+polygon = PackedVector2Array(12, -12, 22, -2, 12, -2)
+
+[node name="BtmLeft" type="Polygon2D" parent="."]
+position = Vector2(-22, 2)
+color = Color(0.91, 0.576333, 0, 1)
+polygon = PackedVector2Array(12, -2, 22, -2, 22, 8)
+
+[node name="BtmRight" type="Polygon2D" parent="."]
+position = Vector2(-12, 2)
+color = Color(1, 0.756968, 0.472732, 1)
+polygon = PackedVector2Array(12, -2, 22, -2, 12, 8)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(10, 0, 0, 10, -10, 0, 0, -10)

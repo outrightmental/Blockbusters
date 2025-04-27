@@ -7,21 +7,21 @@ enum GridType {
 }
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-const BLOCK_SIZE: int             = 32
-const BLOCK_CENTER: int           = BLOCK_SIZE/2
-const GRID_COLS                   = 30
-const GRID_ROWS                   = 16
-const GRID_MARGIN                 = 32
-const BLOCK_SHIP_CLEARANCE_RADIUS = 100
-const GAP_COUNT                   = 8
-var grid: Dictionary              = {}
+const BLOCK_SIZE: int                  = 32
+const BLOCK_CENTER: int                = BLOCK_SIZE/2
+const GRID_COLS: int                   = 30
+const GRID_ROWS: int                   = 16
+const GRID_MARGIN: int                 = 32
+const BLOCK_SHIP_CLEARANCE_RADIUS: int = 100
+const GAP_COUNT: int                   = 8
+var grid: Dictionary                   = {}
 
 
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var player_1               = _spawn_player(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
-	var player_2               = _spawn_player(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
+	var player_1: Node         = _spawn_player(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
+	var player_2: Node         = _spawn_player(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 
 	# Randomly pick locations for 3 gaps
 	var gap_positions: Array[Vector2] = [player_1.position, player_2.position]
@@ -52,7 +52,7 @@ func _ready() -> void:
 	pass
 
 
-func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]):
+func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
 	for target in targets:
 		if (source.distance_to(target) < distance):
 			return false
@@ -65,7 +65,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 
 func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> Node:
-	var ship_scene: Node = preload('res://models/ship/ship.tscn').instantiate()
+	var ship_scene: Ship = preload('res://models/ship/ship.tscn').instantiate()
 	ship_scene.position = start_position
 	ship_scene.player_num = num
 	ship_scene.rotation = start_rotation
@@ -74,7 +74,7 @@ func _spawn_player(num: int, start_position: Vector2, start_rotation: float) -> 
 
 
 func _spawn_block(start_position: Vector2) -> Node:
-	var block_scene: Node = preload('res://models/block/block.tscn').instantiate()
+	var block_scene: Block = preload('res://models/block/block.tscn').instantiate()
 	block_scene.position = start_position
 	self.add_child(block_scene)
 	return block_scene

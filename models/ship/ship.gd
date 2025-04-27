@@ -1,4 +1,5 @@
-extends "res://models/collidable/collidable.gd"
+class_name Ship
+extends Collidable
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
@@ -43,8 +44,6 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group(Global.GROUP_AFFECTED_BY_EXPLOSION)
-	add_to_group(Global.GROUP_SHIPS)
 	set_linear_damp(LINEAR_DAMP)
 	get_tree().root.size_changed.connect(_on_viewport_resize)
 	_on_viewport_resize()

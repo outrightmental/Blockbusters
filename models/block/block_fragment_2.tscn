@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqc41damvbs8i"]
+
+[ext_resource type="Script" uid="uid://dg02gqyv1rfn4" path="res://models/block/block_fragment.gd" id="1_s7pcu"]
+
+[node name="Block" type="RigidBody2D"]
+gravity_scale = 0.0
+script = ExtResource("1_s7pcu")
+
+[node name="TriangleDown" type="Polygon2D" parent="."]
+z_index = 5
+position = Vector2(-12, 2)
+color = Color(0.37, 0.37, 0.37, 0.392157)
+polygon = PackedVector2Array(27, 13, 27, -17, -3, 13)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(15, -15, 15, 15, -15, 15)

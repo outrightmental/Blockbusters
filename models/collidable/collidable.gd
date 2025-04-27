@@ -1,3 +1,4 @@
+class_name Collidable
 extends RigidBody2D
 
 # Unique identifier for the collidable object
