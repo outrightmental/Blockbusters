@@ -21,8 +21,8 @@ func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var player_ship_1: Ship    = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_ship_2: Ship    = _spawn_player_ship(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
-	_spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
-	_spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
+	_spawn_player_home(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
+	_spawn_player_home(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 
 	# Randomly pick locations for 3 gaps
 	var gap_positions: Array[Vector2] = [player_ship_1.position, player_ship_2.position]

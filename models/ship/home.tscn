@@ -6,7 +6,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sj5er"]
 resource_local_to_scene = true
 shader = ExtResource("2_77viv")
-shader_parameter/color = Color(0.5, 0.5, 0.5, 1)
+shader_parameter/color = Color(1, 1, 1, 1)
 shader_parameter/diameter = 1.0
 shader_parameter/thickness = 0.01
 shader_parameter/frequency = 40.0
