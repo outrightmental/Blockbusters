@@ -1,6 +1,9 @@
 class_name Home
 extends Node2D
 
+# Constants
+const COLOR_ALPHA_RATIO: float = 0.3
+
 
 # Player number to identify the home
 @export var player_num: int = 0
@@ -15,11 +18,12 @@ func _ready() -> void:
 
 # Set the colors of the ship based on player_num
 func _set_colors() -> void:
-#	if player_num in Global.PLAYER_COLORS:
+	if player_num in Global.PLAYER_COLORS:
+		$CircleLight.material.set_shader_parameter("color", Global.color_at_alpha_ratio(Global.PLAYER_COLORS[player_num][0], COLOR_ALPHA_RATIO))
 #		$CircleLight.ma = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][0], saturation_ratio)
 #		$CircleDark.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][1], saturation_ratio)
-#	else:
-#		print("No colors found for player_num: ", player_num)
+	else:
+		print("No colors found for player_num: ", player_num)
 	pass
 
 

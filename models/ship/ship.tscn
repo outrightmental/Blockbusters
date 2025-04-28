@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/ship/ship.gd" id="1_yja86"]
 
 [node name="Ship" type="RigidBody2D"]
+position = Vector2(3, 0)
 gravity_scale = 0.0
 script = ExtResource("1_yja86")
 
@@ -17,5 +18,4 @@ color = Color(0.733333, 0, 0.654902, 1)
 polygon = PackedVector2Array(0, -2, 29, -2, -5, 15)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PackedVector2Array(-17, -17, 17, 0, -17, 17, -12, 0)

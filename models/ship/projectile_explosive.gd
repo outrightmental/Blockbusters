@@ -20,7 +20,7 @@ func _ready() -> void:
 
 
 # Called when another body enters the collission area
-func _on_body_entered(other: Node) -> void:
+func _on_body_entered(_other: Node) -> void:
 	var explosion: Node = preload("res://models/effect/explosion.tscn").instantiate()
 	explosion.position = position
 	explosion.set_owner(owner)
