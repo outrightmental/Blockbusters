@@ -59,6 +59,14 @@ func _ready() -> void:
 	pass
 
 
+func _process(_delta: float) -> void:
+	# if the escape key is pressed, navigate to this scene to reset the game
+	if Input.is_action_just_pressed('ui_cancel'):
+		print("Escape key pressed, navigating to main menu")
+		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
+		return
+
+
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
 	for target in targets:
 		if not _is_clear_of(distance, source, target):

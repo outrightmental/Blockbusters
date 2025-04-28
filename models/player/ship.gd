@@ -129,10 +129,11 @@ func _process_input() -> void:
 
 
 # Called when the ship is disabled
-func do_disable() -> void:
+func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
 	disabled_at_ticks_msec = Time.get_ticks_msec()
 	_set_colors(DISABLED_SV_RATIO)
+	Game.player_did_harm.emit(responsible_player_num)
 	pass
 
 	
@@ -148,6 +149,8 @@ func do_enable() -> void:
 func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
+	if not Game.player_can_launch_projectile(player_num):
+		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
 	var projectile: Node         = preload("res://models/player/projectile_explosive.tscn").instantiate()
@@ -159,7 +162,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
-	Game.projectile_explosive_launched.emit(projectile)
+	Game.player_did_launch_projectile.emit(player_num)
 
 
 # Called when the ship is instantiated

@@ -18,6 +18,7 @@ func _ready() -> void:
 # Called when another body enters the collission area
 func _on_body_entered(body: Node2D) -> void:
 	if body is Gem:
+		Game.player_did_collect_gem.emit(player_num)
 		body.queue_free()
 	pass
 

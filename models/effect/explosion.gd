@@ -1,11 +1,15 @@
 extends Node2D
 
+# Player number to identify the projectile
+@export var player_num: int = 0
+# Constants
+const LIFETIME_MSEC: int           = 200
+const CRITICAL_RADIUS_RATIO: float = 0.38
+const EXPLOSION_FORCE: int         = 5000
+# Variables
 var instantiated_at_ticks_msec: float = 0.0
 var explosive_radius: float           = 0.0
 var critical_radius: float            = 0.0
-const LIFETIME_MSEC: int              = 200
-const CRITICAL_RADIUS_RATIO: float    = 0.38
-const EXPLOSION_FORCE: int            = 5000
 
 
 # Called when the node enters the scene tree for the first time.
@@ -23,7 +27,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Block and diff.length() <= critical_radius:
 		body.do_break()
 	if body is Ship and diff.length() <= critical_radius:
-		body.do_disable()
+		body.do_disable(player_num)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
