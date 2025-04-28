@@ -15,6 +15,7 @@ func _ready() -> void:
 func _do_reset_game() -> void:
 	score[1] = Config.PLAYER_INITIAL_SCORE
 	score[2] = Config.PLAYER_INITIAL_SCORE
+	print("[SCORE] Did reset game")
 	_update()
 
 

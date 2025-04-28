@@ -5,39 +5,57 @@ enum GridType {
 	EMPTY,
 	BLOCK,
 }
+# Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-const BLOCK_SIZE: int                  = 32
-const BLOCK_CENTER: int                = BLOCK_SIZE/2
-const GRID_COLS: int                   = 32
-const GRID_ROWS: int                   = 18
-const BLOCK_HOME_CLEARANCE_RADIUS: int = 130
-const GAP_COUNT: int                   = 8
-var grid: Dictionary                   = {}
+const BLOCK_CENTER: int              = BLOCK_SIZE/2
+const BLOCK_SIZE: int                = 32
+const GRID_COLS: int                 = 32
+const GRID_ROWS: int                 = 18
+const GAP_COL_MAX: int               = 25
+const GAP_COUNT: int                 = 60
+const GAP_SPACING: int               = 50
+const GAP_CLEARANCE_RADIUS: int      = 40
+const GAP_CURSOR_ANGLE_DELTA3: float = PI / 20
+const HOME_CLEARANCE_RADIUS: int     = 130
+# Variables
+var grid: Dictionary = {}
 
 
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 func _ready() -> void:
+	SignalBus.reset_game.emit()
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_spawn_player_ship(1, Vector2(viewport_size.x * 0.05, viewport_size.y * 0.5), 0)
 	_spawn_player_ship(2, Vector2(viewport_size.x * 0.95, viewport_size.y * 0.5), PI)
-	var player_home_1: Home = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
-	var player_home_2: Home = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
+	var player_home_1: Home            = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
+	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
+	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
 
-	# Randomly pick locations for 3 gaps
-	var gap_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
+	# Pick locations for gaps by winding a snake through the board
+	var gap_cursor_position: Vector2   = player_home_1.position
+	var gap_cursor_angle: float        = PI / 4
+	var gap_cursor_angle_delta: float  = 0.0
+	var gap_cursor_angle_delta2: float = 0.0
+	var gap_positions: Array[Vector2]  = []
 	for i in range(GAP_COUNT):
-		var gap_x: int = randi() % (GRID_COLS / 2 - 2)
-		var gap_y: int = randi() % GRID_ROWS
-		gap_positions.append(_grid_position(gap_x, gap_y))
-		gap_positions.append(_grid_position(GRID_COLS - gap_x, GRID_ROWS - gap_y))
+		gap_cursor_angle_delta2 += GAP_CURSOR_ANGLE_DELTA3 if randi() % 2 == 0 else -GAP_CURSOR_ANGLE_DELTA3
+		gap_cursor_angle_delta += gap_cursor_angle_delta2
+		gap_cursor_angle += gap_cursor_angle_delta
+		gap_cursor_angle = clamp(gap_cursor_angle, -PI, PI)
+		gap_cursor_position += Vector2(GAP_SPACING * cos(gap_cursor_angle), GAP_SPACING * sin(gap_cursor_angle))
+		gap_cursor_position.x = wrapf(gap_cursor_position.x, 0, viewport_size.x)
+		gap_cursor_position.y = wrapf(gap_cursor_position.y, 0, viewport_size.y)
+		gap_positions.append(Vector2(gap_cursor_position.x, gap_cursor_position.y))
+		gap_positions.append(Vector2(viewport_size.x - gap_cursor_position.x, viewport_size.y - gap_cursor_position.y))
 
 	#	var grid_pos: Vector2
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
 			if (!grid.has(x)):
 				grid[x] = {}
-			if (_is_clear_of_all(BLOCK_HOME_CLEARANCE_RADIUS, _grid_position(x, y), gap_positions)):
+			if (_is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions)
+			and _is_clear_of_all(GAP_CLEARANCE_RADIUS, _grid_position(x, y), gap_positions)):
 				grid[x][y] = GridType.BLOCK
 			else:
 				grid[x][y] = GridType.EMPTY
@@ -55,9 +73,13 @@ func _ready() -> void:
 
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
 	for target in targets:
-		if (source.distance_to(target) < distance):
+		if not _is_clear_of(distance, source, target):
 			return false
 	return true
+
+
+func _is_clear_of(distance: int, source: Vector2, target: Vector2) -> bool:
+	return source.distance_to(target) >= distance
 
 
 func _grid_position(x: int, y: int) -> Vector2:
