@@ -3,7 +3,7 @@ extends Collidable
 
 # Constants
 const BREAK_APART_VELOCITY: int = 50
-const INNER_GEM_ALPHA           = 0.2
+const INNER_GEM_ALPHA: float    = 0.3
 # Variables
 var gem: Node = null
 

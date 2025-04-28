@@ -32,6 +32,7 @@ position = Vector2(1032, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+z_index = -10
 offset_right = 1024.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 1)
