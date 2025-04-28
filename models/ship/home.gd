@@ -11,8 +11,14 @@ const COLOR_ALPHA_RATIO: float = 0.3
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Set the sprite texture based on player_num
+	$HomeArea2D.body_entered.connect(_on_body_entered)
 	_set_colors()
+
+
+# Called when another body enters the collission area
+func _on_body_entered(body: Node2D) -> void:
+	if body is Gem:
+		body.queue_free()
 	pass
 
 
@@ -20,8 +26,6 @@ func _ready() -> void:
 func _set_colors() -> void:
 	if player_num in Global.PLAYER_COLORS:
 		$CircleLight.material.set_shader_parameter("color", Global.color_at_alpha_ratio(Global.PLAYER_COLORS[player_num][0], COLOR_ALPHA_RATIO))
-#		$CircleLight.ma = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][0], saturation_ratio)
-#		$CircleDark.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][1], saturation_ratio)
 	else:
 		print("No colors found for player_num: ", player_num)
 	pass
