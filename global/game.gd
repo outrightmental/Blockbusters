@@ -1,5 +1,10 @@
 extends Node
 
+# All available signals -- use these constants to reference them to avoid typos
+signal reset_game
+signal update_score(score: Dictionary)
+signal projectile_explosive_launched(player_num: int, projectile: Node)
+
 # Keeping track of the score
 @onready var score: Dictionary = {
 									 1: 0,
@@ -8,14 +13,13 @@ extends Node
 
 
 func _ready() -> void:
-	SignalBus.reset_game.connect(_do_reset_game)
-	SignalBus.projectile_explosive_launched.connect(_on_projectile_explosive_launched)
+	reset_game.connect(_do_reset_game)
+	projectile_explosive_launched.connect(_on_projectile_explosive_launched)
 
 
 func _do_reset_game() -> void:
 	score[1] = Config.PLAYER_INITIAL_SCORE
 	score[2] = Config.PLAYER_INITIAL_SCORE
-	print("[SCORE] Did reset game")
 	_update()
 
 
@@ -25,4 +29,4 @@ func _on_projectile_explosive_launched(player_num: int) -> void:
 
 
 func _update():
-	SignalBus.update_score.emit(score)
+	update_score.emit(score)

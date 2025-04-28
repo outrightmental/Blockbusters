@@ -159,7 +159,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
-	SignalBus.projectile_explosive_launched.emit(projectile)
+	Game.projectile_explosive_launched.emit(projectile)
 
 
 # Called when the ship is instantiated
