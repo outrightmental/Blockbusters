@@ -3,9 +3,9 @@ extends Collidable
 
 const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: int              = 1
-const TARGET_ROTATION_FACTOR: float    = 10
-const DISABLED_MSEC: int               = 3000
-const DISABLED_SATURATION_RATIO: float = 0.38
+const TARGET_ROTATION_FACTOR: float = 10
+const DISABLED_MSEC: int            = 3000
+const DISABLED_SV_RATIO: float      = 0.38
 
 var input_mapping: Dictionary = {
 									"left": "ui_left",
@@ -65,10 +65,10 @@ func _ready() -> void:
 
 
 # Set the colors of the ship based on player_num
-func _set_colors(saturation_ratio: float) -> void:
+func _set_colors(sv_ratio: float) -> void:
 	if player_num in Config.PLAYER_COLORS:
-		$TriangleLight.color = Util.color_at_saturation_ratio(Config.PLAYER_COLORS[player_num][0], saturation_ratio)
-		$TriangleDark.color = Util.color_at_saturation_ratio(Config.PLAYER_COLORS[player_num][1], saturation_ratio)
+		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], sv_ratio)
+		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], sv_ratio)
 	else:
 		print("No colors found for player_num: ", player_num)
 
@@ -132,7 +132,7 @@ func _process_input() -> void:
 func do_disable() -> void:
 	is_disabled = true
 	disabled_at_ticks_msec = Time.get_ticks_msec()
-	_set_colors(DISABLED_SATURATION_RATIO)
+	_set_colors(DISABLED_SV_RATIO)
 	pass
 
 	

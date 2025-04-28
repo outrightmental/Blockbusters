@@ -2,62 +2,70 @@ extends Node2D
 
 # Enum for whether a grid square is empty, block, or gem
 enum GridType {
-	EMPTY,
 	BLOCK,
+	GEM,
 }
+# Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-const BLOCK_SIZE: int                  = 32
-const BLOCK_CENTER: int                = BLOCK_SIZE/2
-const GRID_COLS: int                   = 32
-const GRID_ROWS: int                   = 18
-const BLOCK_HOME_CLEARANCE_RADIUS: int = 130
-const GAP_COUNT: int                   = 8
-var grid: Dictionary                   = {}
+const GRID_COLS: int             = 32
+const GRID_COUNT_MAX: int        = GRID_COLS * GRID_ROWS
+const GRID_ROWS: int             = 18
+const HOME_CLEARANCE_RADIUS: int = 130
+const BLOCK_CENTER: int          = BLOCK_SIZE/2
+const BLOCK_COUNT_MAX: int       = GRID_COUNT_MAX * BLOCK_COUNT_RATIO
+const BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
+const BLOCK_SIZE: int            = 32
+const GEM_COUNT_RATIO: float     = 0.05 # ratio of the grid that is filled with gems
+const GEM_COUNT_MAX: int         = GRID_COUNT_MAX * GEM_COUNT_RATIO
+# Variables
+var grid: Dictionary = {}
+var block_count: int = 0
+var gem_count: int   = 0
 
 
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 func _ready() -> void:
+	SignalBus.reset_game.emit()
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_spawn_player_ship(1, Vector2(viewport_size.x * 0.05, viewport_size.y * 0.5), 0)
 	_spawn_player_ship(2, Vector2(viewport_size.x * 0.95, viewport_size.y * 0.5), PI)
-	var player_home_1: Home = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
-	var player_home_2: Home = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
+	var player_home_1: Home            = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
+	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
+	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
 
-	# Randomly pick locations for 3 gaps
-	var gap_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
-	for i in range(GAP_COUNT):
-		var gap_x: int = randi() % (GRID_COLS / 2 - 2)
-		var gap_y: int = randi() % GRID_ROWS
-		gap_positions.append(_grid_position(gap_x, gap_y))
-		gap_positions.append(_grid_position(GRID_COLS - gap_x, GRID_ROWS - gap_y))
-
-	#	var grid_pos: Vector2
-	for x in range(GRID_COLS):
-		for y in range(GRID_ROWS):
-			if (!grid.has(x)):
-				grid[x] = {}
-			if (_is_clear_of_all(BLOCK_HOME_CLEARANCE_RADIUS, _grid_position(x, y), gap_positions)):
-				grid[x][y] = GridType.BLOCK
+	while block_count < BLOCK_COUNT_MAX:
+		var x: int = randi() % GRID_COLS
+		var y: int = randi() % GRID_ROWS
+		if not grid.has(x):
+			grid[x] = {}
+		if grid[x].has(y):
+			continue
+		if _is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
+			block_count += 1
+			if gem_count < GEM_COUNT_MAX:
+				grid[x][y] = GridType.GEM
+				gem_count += 1
 			else:
-				grid[x][y] = GridType.EMPTY
+				grid[x][y] = GridType.BLOCK
 
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
-			if grid[x][y] == GridType.BLOCK:
-				# Spawn a block at the grid position
-				# The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-				# The center of the block is at (BLOCK_CENTER + x * BLOCK_SIZE, BLOCK_CENTER + y * BLOCK_SIZE)
-				_spawn_block(_grid_position(x, y))
+			if grid[x].has(y):
+				_spawn_block(_grid_position(x, y), grid[x][y] == GridType.GEM)
 
 	pass
 
 
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
 	for target in targets:
-		if (source.distance_to(target) < distance):
+		if not _is_clear_of(distance, source, target):
 			return false
 	return true
+
+
+func _is_clear_of(distance: int, source: Vector2, target: Vector2) -> bool:
+	return source.distance_to(target) >= distance
 
 
 func _grid_position(x: int, y: int) -> Vector2:
@@ -86,8 +94,9 @@ func _spawn_player_home(num: int, start_position: Vector2, start_rotation: float
 	return home_scene
 
 
-func _spawn_block(start_position: Vector2) -> Node:
+func _spawn_block(start_position: Vector2, has_gem: bool) -> Node:
 	var block_scene: Block = preload('res://models/block/block.tscn').instantiate()
 	block_scene.position = start_position
+	block_scene.has_gem = has_gem
 	self.add_child(block_scene)
 	return block_scene
