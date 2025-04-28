@@ -8,9 +8,9 @@ extends Collidable
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Set the sprite texture based on player_num
-	if player_num in Global.PLAYER_COLORS:
-		$TriangleLight.color = Global.PLAYER_COLORS[player_num][0]
-		$TriangleDark.color = Global.PLAYER_COLORS[player_num][1]
+	if player_num in Config.PLAYER_COLORS:
+		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
+		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
 	
@@ -33,9 +33,9 @@ func _on_body_entered(_other: Node) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
-	if (get_linear_velocity().length() < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
+	if (get_linear_velocity().length() < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship
-		apply_central_force(Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
+		apply_central_force(Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
 	pass
 
 

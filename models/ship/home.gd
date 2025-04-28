@@ -24,8 +24,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 # Set the colors of the ship based on player_num
 func _set_colors() -> void:
-	if player_num in Global.PLAYER_COLORS:
-		$CircleLight.material.set_shader_parameter("color", Global.color_at_alpha_ratio(Global.PLAYER_COLORS[player_num][0], COLOR_ALPHA_RATIO))
+	if player_num in Config.PLAYER_COLORS:
+		$CircleLight.material.set_shader_parameter("color", Util.color_at_alpha_ratio(Config.PLAYER_COLORS[player_num][0], COLOR_ALPHA_RATIO))
 	else:
 		print("No colors found for player_num: ", player_num)
 	pass

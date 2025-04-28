@@ -66,9 +66,9 @@ func _ready() -> void:
 
 # Set the colors of the ship based on player_num
 func _set_colors(saturation_ratio: float) -> void:
-	if player_num in Global.PLAYER_COLORS:
-		$TriangleLight.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][0], saturation_ratio)
-		$TriangleDark.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][1], saturation_ratio)
+	if player_num in Config.PLAYER_COLORS:
+		$TriangleLight.color = Util.color_at_saturation_ratio(Config.PLAYER_COLORS[player_num][0], saturation_ratio)
+		$TriangleDark.color = Util.color_at_saturation_ratio(Config.PLAYER_COLORS[player_num][1], saturation_ratio)
 	else:
 		print("No colors found for player_num: ", player_num)
 
@@ -117,7 +117,7 @@ func _process_input() -> void:
 			input_direction_pressed = true
 			input_direction_start_ticks_msec = Time.get_ticks_msec()
 
-		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Global.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
+		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Config.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
 			target_rotation = input_vector.angle()
 		else:
@@ -146,7 +146,7 @@ func do_enable() -> void:
 
 # Called when the player wants to launch a projectile explosive
 func _do_launch_projectile_explosive() -> void:
-	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
+	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
@@ -155,7 +155,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
 	projectile.rotation = actual_rotation
-	projectile.linear_velocity = linear_velocity + rotation_vector * Global.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
+	projectile.linear_velocity = linear_velocity + rotation_vector * Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched

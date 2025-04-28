@@ -17,8 +17,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://global.gd"
-SignalBus="*res://signal_bus.gd"
+Config="*res://global/config.gd"
+Score="*res://global/score.gd"
+SignalBus="*res://global/signal_bus.gd"
+Util="*res://global/util.gd"
 
 [display]
 
