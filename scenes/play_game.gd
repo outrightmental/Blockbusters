@@ -75,7 +75,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 # Spawn a player ship at the given position and rotation
 func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float) -> Ship:
-	var ship_scene: Ship = preload('res://models/ship/ship.tscn').instantiate()
+	var ship_scene: Ship = preload('res://models/player/ship.tscn').instantiate()
 	ship_scene.position = start_position
 	ship_scene.player_num = num
 	ship_scene.rotation = start_rotation
@@ -85,7 +85,7 @@ func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float
 
 # Spawn a player home at the given position and rotation
 func _spawn_player_home(num: int, start_position: Vector2, start_rotation: float) -> Home:
-	var home_scene: Home = preload('res://models/ship/home.tscn').instantiate()
+	var home_scene: Home = preload('res://models/player/home.tscn').instantiate()
 	home_scene.position = start_position
 	home_scene.player_num = num
 	home_scene.rotation = start_rotation
