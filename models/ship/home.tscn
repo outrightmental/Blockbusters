@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://cxjls2n6gleb4"]
+
+[ext_resource type="Script" uid="uid://c74ya11w7d28b" path="res://models/ship/home.gd" id="1_3kla8"]
+[ext_resource type="Shader" uid="uid://c8045jji6nnmx" path="res://shaders/circle_outline.gdshader" id="2_77viv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sj5er"]
+resource_local_to_scene = true
+shader = ExtResource("2_77viv")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/diameter = 1.0
+shader_parameter/thickness = 0.01
+shader_parameter/frequency = 40.0
+shader_parameter/phase = 0.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3kla8"]
+radius = 108.0
+
+[node name="Home" type="Node2D"]
+script = ExtResource("1_3kla8")
+
+[node name="CircleLight" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_sj5er")
+offset_left = -120.0
+offset_top = -120.0
+offset_right = 120.0
+offset_bottom = 120.0
+color = Color(1, 0, 0, 0.196078)
+
+[node name="HomeArea2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HomeArea2D"]
+shape = SubResource("CircleShape2D_3kla8")

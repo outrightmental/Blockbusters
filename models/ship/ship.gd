@@ -6,7 +6,6 @@ const LINEAR_DAMP: int              = 1
 const TARGET_ROTATION_FACTOR: float    = 10
 const DISABLED_MSEC: int               = 3000
 const DISABLED_SATURATION_RATIO: float = 0.38
-var screen_size: Vector2
 
 var input_mapping: Dictionary = {
 									"left": "ui_left",
@@ -49,8 +48,6 @@ var disabled_at_ticks_msec: float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(LINEAR_DAMP)
-	get_tree().root.size_changed.connect(_on_viewport_resize)
-	_on_viewport_resize()
 	# Set up input mapping for player
 	for key in input_mapping.keys():
 		var action_name: String = input_mapping_format[key] % player_num
@@ -73,13 +70,7 @@ func _set_colors(saturation_ratio: float) -> void:
 		$TriangleLight.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][0], saturation_ratio)
 		$TriangleDark.color = Global.color_at_saturation_ratio(Global.PLAYER_COLORS[player_num][1], saturation_ratio)
 	else:
-		print("No texture found for player_num: ", player_num)
-
-
-# Called on viewport resize
-func _on_viewport_resize() -> void:
-	screen_size = get_viewport_rect().size
-	pass
+		print("No colors found for player_num: ", player_num)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
