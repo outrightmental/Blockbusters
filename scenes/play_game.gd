@@ -34,27 +34,6 @@ func _ready() -> void:
 	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
 	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
 
-	# Pick locations for gaps by winding a snake through the board
-	# for i in range(GAP_COUNT):
-	# 	gap_cursor_angle_delta2 += GAP_CURSOR_ANGLE_DELTA3 if randi() % 2 == 0 else 0.0
-	# 	gap_cursor_angle_delta += gap_cursor_angle_delta2
-	# 	gap_cursor_angle += gap_cursor_angle_delta
-	# 	gap_cursor_angle = clamp(gap_cursor_angle, -PI, PI)
-	# 	gap_cursor_position += Vector2(GAP_SPACING * cos(gap_cursor_angle), GAP_SPACING * sin(gap_cursor_angle))
-	# 	gap_cursor_position.x = wrapf(gap_cursor_position.x, 0, viewport_size.x)
-	# 	gap_cursor_position.y = wrapf(gap_cursor_position.y, 0, viewport_size.y)
-	# 	gap_positions.append(Vector2(gap_cursor_position.x, gap_cursor_position.y))
-	# 	gap_positions.append(Vector2(viewport_size.x - gap_cursor_position.x, viewport_size.y - gap_cursor_position.y))
-
-	#	var grid_pos: Vector2
-	# for x in range(GRID_COLS):
-	# 	for y in range(GRID_ROWS):
-	# 		if (!grid.has(x)):
-	# 			grid[x] = {}
-	# 		if (_is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions)
-	# 			grid[x][y] = GridType.BLOCK
-	# 		else:
-	# 			grid[x][y] = GridType.EMPTY
 	while block_count < BLOCK_COUNT_MAX:
 		var x: int = randi() % GRID_COLS
 		var y: int = randi() % GRID_ROWS
