@@ -7,12 +7,13 @@ const INNER_GEM_ALPHA: float    = 0.3
 # Variables
 var gem: Node = null
 
+# Whether this block has a gem
+@export var has_gem: bool = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Roll a D6 and if it's 1, add a gem
-	var random_number: int = randi() % 6 + 1
-	if random_number == 1:
+	if has_gem:
 		_add_gem()
 	pass
 
