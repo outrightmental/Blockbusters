@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cxjls2n6gleb4"]
 
-[ext_resource type="Script" uid="uid://c74ya11w7d28b" path="res://models/ship/home.gd" id="1_3kla8"]
+[ext_resource type="Script" uid="uid://c74ya11w7d28b" path="res://models/player/home.gd" id="1_3kla8"]
 [ext_resource type="Shader" uid="uid://c8045jji6nnmx" path="res://shaders/circle_outline.gdshader" id="2_77viv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sj5er"]
