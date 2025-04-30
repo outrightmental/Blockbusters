@@ -23,30 +23,37 @@ const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATI
 const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
 const BLOCK_SIZE: int                 = 32
 const GEM_COUNT_RATIO: float          = 0.05 # ratio of the grid that is filled with gems
-const GEM_COUNT_MAX: int              = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GAME_START_COUNTER_DELAY: float = 1.0
+const GAME_DRAW_MODAL_DELAY: float    = 1.0 # in a draw situation, wait before showing the game over modal
 const GAME_OVER_DELAY: float          = 2.5
+const GAME_CHECK_OVER_DELAY: float    = 0.3 # tiny delay before checking game over state, to allow projectiles to finish
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
+const INITIAL_GEMS_IN_BLOCKS: int     = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 # Variables
 var grid: Dictionary           = {}
 var block_count: int           = 0
 var gem_count: int             = 0
 var started_at_ticks_msec: int = 0
+# Signal that never happens, in case the tree is unloaded
+signal never
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.update_score.connect(_on_update_score)
 	started_at_ticks_msec = Time.get_ticks_msec()
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
-	Game.reset_game.emit()
+	Game.reset_game.emit(INITIAL_GEMS_IN_BLOCKS)
+	# Connect the game over signals after resetting the game
+	Game.score_updated.connect(_check_for_game_over)
+	Game.gem_count_updated.connect(_check_for_game_over)
+	Game.projectile_count_updated.connect(_check_for_game_over)
 	# Countdown and then start the game
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
-	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	await _delay(GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
-	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	await _delay(GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
 
@@ -55,24 +62,23 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# if the escape key is pressed, navigate to this scene to reset the game
 	if Input.is_action_just_pressed('ui_cancel'):
-		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
+		_goto_scene('res://scenes/play_game.tscn')
 		return
-	
+
 
 # Show the game over modal for some time, then go back to main screen
 func _game_over(result: GameResult) -> void:
-	$Modal.show()
-	get_tree().paused = true
 	match result:
 		GameResult.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
 		GameResult.PLAYER_2_WINS:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
 		GameResult.DRAW:
+			await _delay(GAME_DRAW_MODAL_DELAY)
 			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
-	await get_tree().create_timer(GAME_OVER_DELAY).timeout
+	await _delay(GAME_OVER_DELAY)
 	_hide_modal()
-	get_tree().change_scene_to_file('res://scenes/main.tscn')
+	_goto_scene('res://scenes/main.tscn')
 	pass
 
 
@@ -81,23 +87,49 @@ func _show_modal(text: String, color: Color) -> void:
 	$Modal.show()
 	$Modal/Text.text = text
 	$Modal/Text.set("theme_override_colors/default_color", color)
-	get_tree().paused = true
+	_pause_game()
 
 
 # Hide the modal
 func _hide_modal() -> void:
 	$Modal.hide()
-	get_tree().paused = false
+	_unpause_game()
 
 
-# When score is updated
-func _on_update_score(score: Dictionary) -> void:
-	if score[2] == 0 or score[1] == Config.PLAYER_VICTORY_SCORE:
+# Check for game over, e.g. when score or gem count is updated
+# ---
+# The game is a stalemate if a state is reached where no player can win based on the number of gems left in play, 
+# ---
+# The game is a stalemate if neither player can afford to launch a projectile, and there are not enough free gems (gems 
+# not enclosed in blocks) for either player to win, BUT deciding stalemate based on whether players don't have enough 
+# points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
+# fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
+func _check_for_game_over() -> void:
+	await _delay(GAME_CHECK_OVER_DELAY)
+	if Game.score[2] == 0 or Game.score[1] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_1_WINS)
-	elif score[1] == 0 or score[2] == Config.PLAYER_VICTORY_SCORE:
+		return
+	if Game.score[1] == 0 or Game.score[2] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_2_WINS)
-	elif score[1] == Config.PLAYER_VICTORY_SCORE and score[2] == Config.PLAYER_VICTORY_SCORE:
+		return
+	if Game.score[1] == Config.PLAYER_VICTORY_SCORE and Game.score[2] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.DRAW)
+		return
+
+	var total_gems_available            = Game.gems_in_blocks + Game.gems_free
+	var min_points_required_for_victory = min(Config.PLAYER_VICTORY_SCORE - Game.score[1], Config.PLAYER_VICTORY_SCORE - Game.score[2])
+	if total_gems_available * Config.PLAYER_COLLECT_GEM_VALUE < min_points_required_for_victory:
+		_game_over(GameResult.DRAW)
+
+	# the rest of these conditions test whether either player can win based on their ability to launch projectiles or
+	# projectiles are in play or there are enough free gems for either player to win
+	if Game.projectiles_in_play > 0:
+		return
+	if Game.player_can_launch_projectile(1) or Game.player_can_launch_projectile(2):
+		return
+	if Game.gems_free * Config.PLAYER_COLLECT_GEM_VALUE >= min_points_required_for_victory:
+		return
+	_game_over(GameResult.DRAW)
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
@@ -122,7 +154,7 @@ func _create_board() -> void:
 			continue
 		if _is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
 			block_count += 1
-			if gem_count < GEM_COUNT_MAX:
+			if gem_count < INITIAL_GEMS_IN_BLOCKS:
 				grid[x][y] = GridType.GEM
 				gem_count += 1
 			else:
@@ -188,3 +220,29 @@ func _spawn_block(start_position: Vector2, has_gem: bool) -> Node:
 	block_scene.has_gem = has_gem
 	self.add_child(block_scene)
 	return block_scene
+
+
+# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
+func _goto_scene(path: String) -> void:
+	if get_tree():
+		get_tree().change_scene_to_file(path)
+
+
+# Delay, guarding against the condition that the tree has been unloaded since the calling thread arrived here
+func _delay(seconds: float) -> Signal:
+	if get_tree():
+		return get_tree().create_timer(seconds).timeout
+	else:
+		return never
+
+
+# Pause game, guarding against the condition that the tree has been unloaded since the calling thread arrived here
+func _pause_game() -> void:
+	if get_tree():
+		get_tree().paused = true
+
+
+# Unpause game, guarding against the condition that the tree has been unloaded since the calling thread arrived here
+func _unpause_game() -> void:
+	if get_tree():
+		get_tree().paused = false
