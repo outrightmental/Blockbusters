@@ -12,20 +12,57 @@ const GRID_COLS: int             = 32
 const GRID_COUNT_MAX: int        = GRID_COLS * GRID_ROWS
 const GRID_ROWS: int             = 18
 const HOME_CLEARANCE_RADIUS: int = 130
-const BLOCK_CENTER: int          = BLOCK_SIZE/2
-const BLOCK_COUNT_MAX: int       = GRID_COUNT_MAX * BLOCK_COUNT_RATIO
+const BLOCK_CENTER: int          = floori(BLOCK_SIZE * 0.5)
+const BLOCK_COUNT_MAX: int       = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
 const BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
 const BLOCK_SIZE: int            = 32
 const GEM_COUNT_RATIO: float     = 0.05 # ratio of the grid that is filled with gems
-const GEM_COUNT_MAX: int         = GRID_COUNT_MAX * GEM_COUNT_RATIO
+const GEM_COUNT_MAX: int         = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
+const GAME_START_COUNTER_DELAY: float = 1.0
 # Variables
-var grid: Dictionary = {}
-var block_count: int = 0
-var gem_count: int   = 0
+var grid: Dictionary           = {}
+var block_count: int           = 0
+var gem_count: int             = 0
+var started_at_ticks_msec: int = 0
 
 
-# Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
+# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	started_at_ticks_msec = Time.get_ticks_msec()
+	# Show the ready modal and pause the game before creating the board
+	$ReadyModal.show()
+	get_tree().paused = true
+	# Create the board before resetting the game (so that scores update on the board)
+	_create_board()
+	# Reset the game
+	Game.reset_game.emit()
+	# Countdown and then start the game
+	$ReadyModal/Text.text = "Ready..."
+	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	$ReadyModal/Text.text = "Set..."
+	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	_start_game()
+	pass
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	# if the escape key is pressed, navigate to this scene to reset the game
+	if Input.is_action_just_pressed('ui_cancel'):
+		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
+		return
+
+
+# Start the game
+func _start_game() -> void:
+	$ReadyModal.hide()
+	get_tree().paused = false
+
+
+# Create the board with blocks and gems, and spawn player homes, ships, and scores
+# Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively
+# Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
+func _create_board() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
 	_spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
@@ -52,19 +89,8 @@ func _ready() -> void:
 
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
-			if grid[x].has(y):
+			if grid.has(x) and grid[x].has(y):
 				_spawn_block(_grid_position(x, y), grid[x][y] == GridType.GEM)
-
-	Game.reset_game.emit()
-	pass
-
-
-func _process(_delta: float) -> void:
-	# if the escape key is pressed, navigate to this scene to reset the game
-	if Input.is_action_just_pressed('ui_cancel'):
-		print("Escape key pressed, navigating to main menu")
-		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
-		return
 
 
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
