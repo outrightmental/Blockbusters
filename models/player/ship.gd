@@ -1,8 +1,8 @@
 class_name Ship
 extends Collidable
 
-const FORCE_AMOUNT: int             = 500
-const LINEAR_DAMP: int              = 1
+const FORCE_AMOUNT: int             = 200
+const LINEAR_DAMP: float            = 0.9
 const TARGET_ROTATION_FACTOR: float = 10
 const DISABLED_MSEC: int            = 3000
 const DISABLED_SV_RATIO: float      = 0.38
@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 			do_enable()
 	else:
 		_process_input()
-		
+
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
 	if angle_diff > PI:
@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 	rotation = actual_rotation
 	pass
 
-	
+
 # Process input for the ship (if not disabled)
 func _process_input() -> void:
 	# Check if input action is pressed
@@ -136,7 +136,7 @@ func do_disable(responsible_player_num: int) -> void:
 	Game.player_did_harm.emit(responsible_player_num)
 	pass
 
-	
+
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false

@@ -4,6 +4,7 @@ extends Collidable
 # Constants
 const BREAK_APART_VELOCITY: int = 50
 const INNER_GEM_ALPHA: float    = 0.3
+const LINEAR_DAMP: float        = 0.1
 # Variables
 var gem: Node = null
 
@@ -13,6 +14,7 @@ var gem: Node = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	set_linear_damp(LINEAR_DAMP)
 	if has_gem:
 		_add_gem()
 	pass
