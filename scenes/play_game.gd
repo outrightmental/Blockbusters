@@ -5,20 +5,28 @@ enum GridType {
 	BLOCK,
 	GEM,
 }
+# Enum for whether Player 1 wins, Player 2 wins, or a draw
+enum GameResult {
+	PLAYER_1_WINS,
+	PLAYER_2_WINS,
+	DRAW,
+}
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-const GRID_COLS: int             = 32
-const GRID_COUNT_MAX: int        = GRID_COLS * GRID_ROWS
-const GRID_ROWS: int             = 18
-const HOME_CLEARANCE_RADIUS: int = 130
-const BLOCK_CENTER: int          = floori(BLOCK_SIZE * 0.5)
-const BLOCK_COUNT_MAX: int       = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
-const BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
-const BLOCK_SIZE: int            = 32
-const GEM_COUNT_RATIO: float     = 0.05 # ratio of the grid that is filled with gems
-const GEM_COUNT_MAX: int         = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
+const GRID_COLS: int                  = 32
+const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
+const GRID_ROWS: int                  = 18
+const HOME_CLEARANCE_RADIUS: int      = 130
+const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
+const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
+const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
+const BLOCK_SIZE: int                 = 32
+const GEM_COUNT_RATIO: float          = 0.05 # ratio of the grid that is filled with gems
+const GEM_COUNT_MAX: int              = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GAME_START_COUNTER_DELAY: float = 1.0
+const GAME_OVER_DELAY: float          = 2.5
+const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 # Variables
 var grid: Dictionary           = {}
 var block_count: int           = 0
@@ -28,20 +36,18 @@ var started_at_ticks_msec: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Game.update_score.connect(_on_update_score)
 	started_at_ticks_msec = Time.get_ticks_msec()
-	# Show the ready modal and pause the game before creating the board
-	$ReadyModal.show()
-	get_tree().paused = true
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
 	Game.reset_game.emit()
 	# Countdown and then start the game
-	$ReadyModal/Text.text = "Ready..."
+	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
 	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
-	$ReadyModal/Text.text = "Set..."
+	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
 	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
-	_start_game()
+	_hide_modal()
 	pass
 
 
@@ -51,12 +57,47 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed('ui_cancel'):
 		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
 		return
+	
+
+# Show the game over modal for some time, then go back to main screen
+func _game_over(result: GameResult) -> void:
+	$Modal.show()
+	get_tree().paused = true
+	match result:
+		GameResult.PLAYER_1_WINS:
+			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
+		GameResult.PLAYER_2_WINS:
+			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
+		GameResult.DRAW:
+			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
+	await get_tree().create_timer(GAME_OVER_DELAY).timeout
+	_hide_modal()
+	get_tree().change_scene_to_file('res://scenes/main.tscn')
+	pass
 
 
-# Start the game
-func _start_game() -> void:
-	$ReadyModal.hide()
+# Show the modal with the given text and color
+func _show_modal(text: String, color: Color) -> void:
+	$Modal.show()
+	$Modal/Text.text = text
+	$Modal/Text.set("theme_override_colors/default_color", color)
+	get_tree().paused = true
+
+
+# Hide the modal
+func _hide_modal() -> void:
+	$Modal.hide()
 	get_tree().paused = false
+
+
+# When score is updated
+func _on_update_score(score: Dictionary) -> void:
+	if score[2] == 0 or score[1] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.PLAYER_1_WINS)
+	elif score[1] == 0 or score[2] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.PLAYER_2_WINS)
+	elif score[1] == Config.PLAYER_VICTORY_SCORE and score[2] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.DRAW)
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores

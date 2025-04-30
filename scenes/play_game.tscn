@@ -32,11 +32,11 @@ shape = SubResource("RectangleShape2D_xet8o")
 position = Vector2(1032, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
-[node name="ReadyModal" type="Node2D" parent="."]
+[node name="Modal" type="Node2D" parent="."]
 visible = false
 z_index = 100
 
-[node name="Text" type="RichTextLabel" parent="ReadyModal"]
+[node name="Text" type="RichTextLabel" parent="Modal"]
 offset_right = 1024.0
 offset_bottom = 576.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
@@ -46,7 +46,7 @@ text = "Get Ready! "
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Base" type="ColorRect" parent="ReadyModal"]
+[node name="Base" type="ColorRect" parent="Modal"]
 z_index = -10
 offset_right = 1024.0
 offset_bottom = 576.0
