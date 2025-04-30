@@ -1,7 +1,7 @@
 class_name ProjectileExplosive
 extends Collidable
 
-# Player number to identify the ship
+# Player number to identify the projectile
 @export var player_num: int = 0
 
 
@@ -13,7 +13,7 @@ func _ready() -> void:
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
 		print("No texture found for player_num: ", player_num)
-	
+
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
 	pass
@@ -23,6 +23,7 @@ func _ready() -> void:
 func _on_body_entered(_other: Node) -> void:
 	var explosion: Node = preload("res://models/effect/explosion.tscn").instantiate()
 	explosion.position = position
+	explosion.player_num = player_num
 	explosion.set_owner(owner)
 	self.get_parent().call_deferred("add_child", explosion)
 	# Remove this projectile from the stage

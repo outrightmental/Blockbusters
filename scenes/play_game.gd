@@ -5,31 +5,110 @@ enum GridType {
 	BLOCK,
 	GEM,
 }
+# Enum for whether Player 1 wins, Player 2 wins, or a draw
+enum GameResult {
+	PLAYER_1_WINS,
+	PLAYER_2_WINS,
+	DRAW,
+}
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are 32x32 pixels, so the grid is 1024x576 pixels
-const GRID_COLS: int             = 32
-const GRID_COUNT_MAX: int        = GRID_COLS * GRID_ROWS
-const GRID_ROWS: int             = 18
-const HOME_CLEARANCE_RADIUS: int = 130
-const BLOCK_CENTER: int          = BLOCK_SIZE/2
-const BLOCK_COUNT_MAX: int       = GRID_COUNT_MAX * BLOCK_COUNT_RATIO
-const BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
-const BLOCK_SIZE: int            = 32
-const GEM_COUNT_RATIO: float     = 0.05 # ratio of the grid that is filled with gems
-const GEM_COUNT_MAX: int         = GRID_COUNT_MAX * GEM_COUNT_RATIO
+const GRID_COLS: int                  = 32
+const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
+const GRID_ROWS: int                  = 18
+const HOME_CLEARANCE_RADIUS: int      = 130
+const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
+const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
+const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
+const BLOCK_SIZE: int                 = 32
+const GEM_COUNT_RATIO: float          = 0.05 # ratio of the grid that is filled with gems
+const GEM_COUNT_MAX: int              = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
+const GAME_START_COUNTER_DELAY: float = 1.0
+const GAME_OVER_DELAY: float          = 2.5
+const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 # Variables
-var grid: Dictionary = {}
-var block_count: int = 0
-var gem_count: int   = 0
+var grid: Dictionary           = {}
+var block_count: int           = 0
+var gem_count: int             = 0
+var started_at_ticks_msec: int = 0
 
 
-# Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively, and Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
+# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	SignalBus.reset_game.emit()
+	Game.update_score.connect(_on_update_score)
+	started_at_ticks_msec = Time.get_ticks_msec()
+	# Create the board before resetting the game (so that scores update on the board)
+	_create_board()
+	# Reset the game
+	Game.reset_game.emit()
+	# Countdown and then start the game
+	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
+	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
+	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
+	_hide_modal()
+	pass
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	# if the escape key is pressed, navigate to this scene to reset the game
+	if Input.is_action_just_pressed('ui_cancel'):
+		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
+		return
+	
+
+# Show the game over modal for some time, then go back to main screen
+func _game_over(result: GameResult) -> void:
+	$Modal.show()
+	get_tree().paused = true
+	match result:
+		GameResult.PLAYER_1_WINS:
+			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
+		GameResult.PLAYER_2_WINS:
+			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
+		GameResult.DRAW:
+			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
+	await get_tree().create_timer(GAME_OVER_DELAY).timeout
+	_hide_modal()
+	get_tree().change_scene_to_file('res://scenes/main.tscn')
+	pass
+
+
+# Show the modal with the given text and color
+func _show_modal(text: String, color: Color) -> void:
+	$Modal.show()
+	$Modal/Text.text = text
+	$Modal/Text.set("theme_override_colors/default_color", color)
+	get_tree().paused = true
+
+
+# Hide the modal
+func _hide_modal() -> void:
+	$Modal.hide()
+	get_tree().paused = false
+
+
+# When score is updated
+func _on_update_score(score: Dictionary) -> void:
+	if score[2] == 0 or score[1] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.PLAYER_1_WINS)
+	elif score[1] == 0 or score[2] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.PLAYER_2_WINS)
+	elif score[1] == Config.PLAYER_VICTORY_SCORE and score[2] == Config.PLAYER_VICTORY_SCORE:
+		_game_over(GameResult.DRAW)
+
+
+# Create the board with blocks and gems, and spawn player homes, ships, and scores
+# Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively
+# Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
+func _create_board() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	_spawn_player_ship(1, Vector2(viewport_size.x * 0.05, viewport_size.y * 0.5), 0)
-	_spawn_player_ship(2, Vector2(viewport_size.x * 0.95, viewport_size.y * 0.5), PI)
+	_spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
+	_spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
+	_spawn_player_score(1, Vector2(viewport_size.x * 0.03, viewport_size.y * 0.5), PI/2)
+	_spawn_player_score(2, Vector2(viewport_size.x * 0.97, viewport_size.y * 0.5), -PI/2)
 	var player_home_1: Home            = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
 	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
 	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
@@ -51,10 +130,8 @@ func _ready() -> void:
 
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
-			if grid[x].has(y):
+			if grid.has(x) and grid[x].has(y):
 				_spawn_block(_grid_position(x, y), grid[x][y] == GridType.GEM)
-
-	pass
 
 
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
@@ -92,6 +169,17 @@ func _spawn_player_home(num: int, start_position: Vector2, start_rotation: float
 	home_scene.z_index = -1
 	self.add_child(home_scene)
 	return home_scene
+
+
+# Spawn a player score at the given position and rotation
+func _spawn_player_score(num: int, start_position: Vector2, start_rotation: float) -> Score:
+	var score_scene: Score = preload('res://models/player/score.tscn').instantiate()
+	score_scene.position = start_position
+	score_scene.player_num = num
+	score_scene.rotation = start_rotation
+	score_scene.z_index = -1
+	self.add_child(score_scene)
+	return score_scene
 
 
 func _spawn_block(start_position: Vector2, has_gem: bool) -> Node:

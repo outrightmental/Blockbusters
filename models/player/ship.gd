@@ -1,8 +1,8 @@
 class_name Ship
 extends Collidable
 
-const FORCE_AMOUNT: int             = 500
-const LINEAR_DAMP: int              = 1
+const FORCE_AMOUNT: int             = 200
+const LINEAR_DAMP: float            = 0.9
 const TARGET_ROTATION_FACTOR: float = 10
 const DISABLED_MSEC: int            = 3000
 const DISABLED_SV_RATIO: float      = 0.38
@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 			do_enable()
 	else:
 		_process_input()
-		
+
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
 	if angle_diff > PI:
@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 	rotation = actual_rotation
 	pass
 
-	
+
 # Process input for the ship (if not disabled)
 func _process_input() -> void:
 	# Check if input action is pressed
@@ -129,13 +129,14 @@ func _process_input() -> void:
 
 
 # Called when the ship is disabled
-func do_disable() -> void:
+func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
 	disabled_at_ticks_msec = Time.get_ticks_msec()
 	_set_colors(DISABLED_SV_RATIO)
+	Game.player_did_harm.emit(responsible_player_num)
 	pass
 
-	
+
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false
@@ -148,6 +149,8 @@ func do_enable() -> void:
 func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
+	if not Game.player_can_launch_projectile(player_num):
+		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
 	var projectile: Node         = preload("res://models/player/projectile_explosive.tscn").instantiate()
@@ -159,7 +162,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
-	SignalBus.projectile_explosive_launched.emit(projectile)
+	Game.player_did_launch_projectile.emit(player_num)
 
 
 # Called when the ship is instantiated
