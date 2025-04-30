@@ -52,6 +52,9 @@ func do_break() -> void:
 		gem.add_collision_exception_with(frag1)
 		gem.add_collision_exception_with(frag2)
 		self.get_parent().add_child(gem)
+		Game.gems_in_blocks -= 1
+		Game.gems_free += 1
+		Game.gem_count_updated.emit()
 	# Remove the block from the scene
 	self.get_parent().add_child(frag1)
 	self.get_parent().add_child(frag2)

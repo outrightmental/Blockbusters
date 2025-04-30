@@ -1,17 +1,26 @@
 extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
-signal reset_game
-signal update_score(score: Dictionary)
+signal reset_game(initial_gems_in_blocks: int)
+signal score_updated(score: Dictionary)
 signal player_did_launch_projectile(player_num: int)
 signal player_did_collect_gem(player_num: int)
 signal player_did_harm(player_num: int)
+signal gem_count_updated
+# groups to keep track of gems enclosed in blocks or free on the board
+const GEM_IN_BLOCK_GROUP: String = "gem_in_block"
+const GEM_FREE_GROUP: String     = "gem_free"
 
 # Keeping track of the score
 @onready var score: Dictionary = {
 									 1: 0,
 									 2: 0,
 								 }
+
+# Keeping track of the gem count
+@onready var gems_in_blocks: int = 0
+@onready var gems_free: int = 0
+@onready var gems_collected: int = 0
 
 
 # Check if the player can launch a projectile
@@ -28,32 +37,39 @@ func _ready() -> void:
 	player_did_launch_projectile.connect(_on_player_launch_projectile)
 	player_did_collect_gem.connect(_on_player_collect_gem)
 	player_did_harm.connect(_on_player_harm)
+	gem_count_updated.connect(_on_gem_count_updated)
 
 
-func _do_reset_game() -> void:
+func _do_reset_game(initial_gems_in_blocks: int) -> void:
+	gems_free = 0
+	gems_in_blocks = initial_gems_in_blocks
+	gems_collected = 0
+	gem_count_updated.emit()
 	score[1] = Config.PLAYER_INITIAL_SCORE
 	score[2] = Config.PLAYER_INITIAL_SCORE
 	print("[GAME] Resetting game score to: ", score)
-	_update()
+	score_updated.emit()
 
 
 func _on_player_launch_projectile(player_num: int) -> void:
 	score[player_num] = clamp(score[player_num] - 1, 0, Config.PLAYER_VICTORY_SCORE)
 	print("[GAME] Player %d launched projectile, new score: %d" % [player_num, score[player_num]])
-	_update()
+	score_updated.emit()
 
 
 func _on_player_collect_gem(player_num: int) -> void:
 	score[player_num] = clamp(score[player_num] + 2, 0, Config.PLAYER_VICTORY_SCORE)
 	print("[GAME] Player %d collected gem, new score: %d" % [player_num, score[player_num]])
-	_update()
-	
-	
+	score_updated.emit()
+
+
 func _on_player_harm(player_num: int) -> void:
 	score[player_num] = clamp(score[player_num] - 3, 0, Config.PLAYER_VICTORY_SCORE)
 	print("[GAME] Player %d did harm, new score: %d" % [player_num, score[player_num]])
-	_update()
+	score_updated.emit()
 
+	
+func _on_gem_count_updated() -> void:
+	print ("[GEMS] in blocks: ", gems_in_blocks, " / free: ", gems_free, " / collected: ", gems_collected)	
 
-func _update():
-	update_score.emit(score)
+	

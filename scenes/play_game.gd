@@ -23,10 +23,11 @@ const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATI
 const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
 const BLOCK_SIZE: int                 = 32
 const GEM_COUNT_RATIO: float          = 0.05 # ratio of the grid that is filled with gems
-const GEM_COUNT_MAX: int              = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GAME_START_COUNTER_DELAY: float = 1.0
+const GAME_DRAW_MODAL_DELAY: float    = 1.0 # in a draw situation, wait before showing the game over modal
 const GAME_OVER_DELAY: float          = 2.5
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
+const INITIAL_GEMS_IN_BLOCKS: int     = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 # Variables
 var grid: Dictionary           = {}
 var block_count: int           = 0
@@ -36,12 +37,14 @@ var started_at_ticks_msec: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.update_score.connect(_on_update_score)
 	started_at_ticks_msec = Time.get_ticks_msec()
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
-	Game.reset_game.emit()
+	Game.reset_game.emit(INITIAL_GEMS_IN_BLOCKS)
+	# Connect the game over signals after resetting the game
+	Game.score_updated.connect(_check_for_game_over)
+	Game.gem_count_updated.connect(_check_for_game_over)
 	# Countdown and then start the game
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
 	await get_tree().create_timer(GAME_START_COUNTER_DELAY).timeout
@@ -57,18 +60,17 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed('ui_cancel'):
 		get_tree().change_scene_to_file('res://scenes/play_game.tscn')
 		return
-	
+
 
 # Show the game over modal for some time, then go back to main screen
 func _game_over(result: GameResult) -> void:
-	$Modal.show()
-	get_tree().paused = true
 	match result:
 		GameResult.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
 		GameResult.PLAYER_2_WINS:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
 		GameResult.DRAW:
+			await get_tree().create_timer(GAME_DRAW_MODAL_DELAY).timeout
 			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
 	await get_tree().create_timer(GAME_OVER_DELAY).timeout
 	_hide_modal()
@@ -90,15 +92,33 @@ func _hide_modal() -> void:
 	get_tree().paused = false
 
 
-# When score is updated
-func _on_update_score(score: Dictionary) -> void:
-	if score[2] == 0 or score[1] == Config.PLAYER_VICTORY_SCORE:
+# Check for game over, e.g. when score or gem count is updated
+# ---
+# The game is a stalemate if a state is reached where no player can win based on the number of gems left in play, 
+# ---
+# The game is a stalemate if neither player can afford to launch a projectile, and there are not enough free gems (gems 
+# not enclosed in blocks) for either player to win, BUT deciding stalemate based on whether players don't have enough 
+# points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
+# fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
+func _check_for_game_over() -> void:
+	if Game.score[2] == 0 or Game.score[1] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_1_WINS)
-	elif score[1] == 0 or score[2] == Config.PLAYER_VICTORY_SCORE:
+		return
+	if Game.score[1] == 0 or Game.score[2] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_2_WINS)
-	elif score[1] == Config.PLAYER_VICTORY_SCORE and score[2] == Config.PLAYER_VICTORY_SCORE:
+		return
+	if Game.score[1] == Config.PLAYER_VICTORY_SCORE and Game.score[2] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.DRAW)
-
+		return
+	
+	var total_gems_available = Game.gems_in_blocks + Game.gems_free
+	var min_gems_required_for_victory = min(Config.PLAYER_VICTORY_SCORE - Game.score[1], Config.PLAYER_VICTORY_SCORE - Game.score[2])
+	if total_gems_available < min_gems_required_for_victory:
+		_game_over(GameResult.DRAW)
+# TODO test if there are any projectiles in play AND if there are enough free gems for a player to win by collecting them
+# TODO 	elif not (Game.player_can_launch_projectile(1) or Game.player_can_launch_projectile(2)):
+# TODO 		_game_over(GameResult.DRAW)
+		
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively
@@ -122,7 +142,7 @@ func _create_board() -> void:
 			continue
 		if _is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
 			block_count += 1
-			if gem_count < GEM_COUNT_MAX:
+			if gem_count < INITIAL_GEMS_IN_BLOCKS:
 				grid[x][y] = GridType.GEM
 				gem_count += 1
 			else:
