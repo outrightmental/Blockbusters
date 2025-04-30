@@ -60,10 +60,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	# if the escape key is pressed, navigate to this scene to reset the game
-	if Input.is_action_just_pressed('ui_cancel'):
-		_goto_scene('res://scenes/play_game.tscn')
-		return
+	pass
 
 
 # Show the game over modal for some time, then go back to main screen
