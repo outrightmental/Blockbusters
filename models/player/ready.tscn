@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvo0oiws54t1m"]
+
+[ext_resource type="Script" uid="uid://c2fge45tdrxy1" path="res://models/player/ready.gd" id="1_i5n61"]
+[ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_gkuhg"]
+
+[node name="Score" type="Node2D"]
+script = ExtResource("1_i5n61")
+
+[node name="Text" type="RichTextLabel" parent="."]
+offset_left = -145.0
+offset_top = -27.0
+offset_right = 145.0
+offset_bottom = 27.0
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("2_gkuhg")
+theme_override_font_sizes/normal_font_size = 40
+text = "Player #"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -8,6 +8,7 @@ signal player_did_collect_gem(player_num: int)
 signal player_did_harm(player_num: int)
 signal gem_count_updated
 signal projectile_count_updated
+signal player_ready_updated
 
 # Keeping track of the score
 @onready var score: Dictionary = {
@@ -19,10 +20,8 @@ signal projectile_count_updated
 @onready var gems_in_blocks: int = 0
 @onready var gems_free: int = 0
 @onready var gems_collected: int = 0
-
 # Keeping track of the projectile count
 @onready var projectiles_in_play: int = 0
-
 
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
@@ -70,10 +69,10 @@ func _on_player_harm(player_num: int) -> void:
 	print("[GAME] Player %d did harm, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
-	
-func _on_gem_count_updated() -> void:
-	print ("[GEMS] in blocks: ", gems_in_blocks, " / free: ", gems_free, " / collected: ", gems_collected)	
 
-	
+func _on_gem_count_updated() -> void:
+	print ("[GEMS] in blocks: ", gems_in_blocks, " / free: ", gems_free, " / collected: ", gems_collected)
+
+
 func _on_projectile_count_updated() -> void:
 	print ("[PROJECTILES] in play: ", projectiles_in_play)
