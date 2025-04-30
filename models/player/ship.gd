@@ -15,19 +15,12 @@ var input_mapping: Dictionary = {
 									"action_a": "ui_accept",
 								}
 
-const input_mapping_format: Dictionary =  {
-											  "left": "p%d_left",
-											  "right": "p%d_right",
-											  "up": "p%d_up",
-											  "down": "p%d_down",
-											  "action_a": "p%d_action_a",
-										  }
-const dir_vectors                      := {
-											  "right": Vector2(1, 0),
-											  "left": Vector2(-1, 0),
-											  "up": Vector2(0, -1),
-											  "down": Vector2(0, 1),
-										  }
+const dir_vectors := {
+						 "right": Vector2(1, 0),
+						 "left": Vector2(-1, 0),
+						 "up": Vector2(0, -1),
+						 "down": Vector2(0, 1),
+					 }
 # keep track of the time when the input direction was pressed
 var input_direction_start_ticks_msec: float = 0.0
 # whether the input direction is pressed
@@ -50,7 +43,7 @@ func _ready() -> void:
 	set_linear_damp(LINEAR_DAMP)
 	# Set up input mapping for player
 	for key in input_mapping.keys():
-		var action_name: String = input_mapping_format[key] % player_num
+		var action_name: String = Config.player_input_mapping_format[key] % player_num
 		if InputMap.has_action(action_name):
 			input_mapping[key] = action_name
 		else:

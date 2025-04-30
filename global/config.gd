@@ -18,3 +18,13 @@ const PLAYER_INITIAL_SCORE: int      = 5
 const PLAYER_VICTORY_SCORE: int      = 10
 const PLAYER_COLLECT_GEM_VALUE: int  = 2
 const PLAYER_DISABLE_SHIP_VALUE: int = 3
+# Formatting template for player input
+const player_input_mapping_format: Dictionary = {
+											 "left": "p%d_left",
+											 "right": "p%d_right",
+											 "up": "p%d_up",
+											 "down": "p%d_down",
+											 "action_a": "p%d_action_a",
+										 }
+
+
