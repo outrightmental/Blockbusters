@@ -7,9 +7,7 @@ signal player_did_launch_projectile(player_num: int)
 signal player_did_collect_gem(player_num: int)
 signal player_did_harm(player_num: int)
 signal gem_count_updated
-# groups to keep track of gems enclosed in blocks or free on the board
-const GEM_IN_BLOCK_GROUP: String = "gem_in_block"
-const GEM_FREE_GROUP: String     = "gem_free"
+signal projectile_count_updated
 
 # Keeping track of the score
 @onready var score: Dictionary = {
@@ -21,6 +19,9 @@ const GEM_FREE_GROUP: String     = "gem_free"
 @onready var gems_in_blocks: int = 0
 @onready var gems_free: int = 0
 @onready var gems_collected: int = 0
+
+# Keeping track of the projectile count
+@onready var projectiles_in_play: int = 0
 
 
 # Check if the player can launch a projectile
@@ -38,6 +39,7 @@ func _ready() -> void:
 	player_did_collect_gem.connect(_on_player_collect_gem)
 	player_did_harm.connect(_on_player_harm)
 	gem_count_updated.connect(_on_gem_count_updated)
+	projectile_count_updated.connect(_on_projectile_count_updated)
 
 
 func _do_reset_game(initial_gems_in_blocks: int) -> void:
@@ -58,13 +60,13 @@ func _on_player_launch_projectile(player_num: int) -> void:
 
 
 func _on_player_collect_gem(player_num: int) -> void:
-	score[player_num] = clamp(score[player_num] + 2, 0, Config.PLAYER_VICTORY_SCORE)
+	score[player_num] = clamp(score[player_num] + Config.PLAYER_COLLECT_GEM_VALUE, 0, Config.PLAYER_VICTORY_SCORE)
 	print("[GAME] Player %d collected gem, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
 
 func _on_player_harm(player_num: int) -> void:
-	score[player_num] = clamp(score[player_num] - 3, 0, Config.PLAYER_VICTORY_SCORE)
+	score[player_num] = clamp(score[player_num] - Config.PLAYER_DISABLE_SHIP_VALUE, 0, Config.PLAYER_VICTORY_SCORE)
 	print("[GAME] Player %d did harm, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
@@ -73,3 +75,5 @@ func _on_gem_count_updated() -> void:
 	print ("[GEMS] in blocks: ", gems_in_blocks, " / free: ", gems_free, " / collected: ", gems_collected)	
 
 	
+func _on_projectile_count_updated() -> void:
+	print ("[PROJECTILES] in play: ", projectiles_in_play)
