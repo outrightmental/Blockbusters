@@ -1,7 +1,7 @@
 class_name Ship
 extends Collidable
 
-const FORCE_AMOUNT: int             = 200
+const FORCE_AMOUNT: int             = 500
 const LINEAR_DAMP: float            = 0.9
 const TARGET_ROTATION_FACTOR: float = 10
 const DISABLED_MSEC: int            = 3000
@@ -72,7 +72,7 @@ func _process(delta: float) -> void:
 		if Time.get_ticks_msec() - disabled_at_ticks_msec > DISABLED_MSEC:
 			do_enable()
 	else:
-		_process_input()
+		_process_input(delta)
 
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
@@ -86,7 +86,7 @@ func _process(delta: float) -> void:
 
 
 # Process input for the ship (if not disabled)
-func _process_input() -> void:
+func _process_input(delta: float) -> void:
 	# Check if input action is pressed
 	if Input.is_action_just_pressed(input_mapping["action_a"]):
 		_do_launch_projectile_explosive()
@@ -117,7 +117,7 @@ func _process_input() -> void:
 			target_rotation = linear_velocity.angle()
 
 	# Apply force in the direction of the input vector
-	apply_central_force(input_vector * FORCE_AMOUNT)
+	apply_impulse(input_vector * FORCE_AMOUNT * delta)
 	pass
 
 

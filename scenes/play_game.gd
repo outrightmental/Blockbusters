@@ -134,13 +134,13 @@ func _check_for_game_over() -> void:
 # Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 func _create_board() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	_spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
-	_spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
+	var player_ship_1: Ship = _spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
+	var player_ship_2: Ship = _spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
 	_spawn_player_score(1, Vector2(viewport_size.x * 0.03, viewport_size.y * 0.5), PI/2)
 	_spawn_player_score(2, Vector2(viewport_size.x * 0.97, viewport_size.y * 0.5), -PI/2)
-	var player_home_1: Home            = _spawn_player_home(1, Vector2(0, viewport_size.y * 0.5), 0)
-	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x, viewport_size.y * 0.5), PI)
-	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position]
+	var player_home_1: Home            = _spawn_player_home(1, Vector2(viewport_size.x * 0.5, 0), 0)
+	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x * 0.5, viewport_size.y), PI)
+	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position, player_ship_1.position, player_ship_2.position]
 
 	while block_count < BLOCK_COUNT_MAX:
 		var x: int = randi() % GRID_COLS

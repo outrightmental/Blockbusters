@@ -16,8 +16,8 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 # player initial score
 const PLAYER_INITIAL_SCORE: int      = 5
 const PLAYER_VICTORY_SCORE: int      = 10
-const PLAYER_COLLECT_GEM_VALUE: int  = 2
-const PLAYER_DISABLE_SHIP_VALUE: int = 3
+const PLAYER_COLLECT_GEM_VALUE: int  = 1
+const PLAYER_DISABLE_SHIP_VALUE: int = 0
 # Formatting template for player input
 const player_input_mapping_format: Dictionary = {
 											 "left": "p%d_left",
