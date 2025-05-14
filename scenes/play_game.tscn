@@ -33,12 +33,26 @@ position = Vector2(1032, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
 [node name="Modal" type="Node2D" parent="."]
-visible = false
 z_index = 100
 
-[node name="Text" type="RichTextLabel" parent="Modal"]
-offset_right = 1024.0
-offset_bottom = 576.0
+[node name="Text1" type="RichTextLabel" parent="Modal"]
+offset_left = 512.0
+offset_right = 1088.0
+offset_bottom = 512.0
+rotation = 1.5708
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("2_4xfa0")
+theme_override_font_sizes/normal_font_size = 40
+text = "Get Ready! "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Text2" type="RichTextLabel" parent="Modal"]
+offset_left = 512.0
+offset_top = 576.0
+offset_right = 1088.0
+offset_bottom = 1088.0
+rotation = -1.5708
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("2_4xfa0")
 theme_override_font_sizes/normal_font_size = 40

@@ -2,7 +2,7 @@ class_name Home
 extends Node2D
 
 # Constants
-const COLOR_ALPHA_RATIO: float = 0.3
+const COLOR_ALPHA_RATIO: float = 0.6
 
 
 # Player number to identify the home

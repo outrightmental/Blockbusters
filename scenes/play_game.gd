@@ -82,8 +82,10 @@ func _game_over(result: GameResult) -> void:
 # Show the modal with the given text and color
 func _show_modal(text: String, color: Color) -> void:
 	$Modal.show()
-	$Modal/Text.text = text
-	$Modal/Text.set("theme_override_colors/default_color", color)
+	$Modal/Text1.text = text
+	$Modal/Text1.set("theme_override_colors/default_color", color)
+	$Modal/Text2.text = text
+	$Modal/Text2.set("theme_override_colors/default_color", color)
 	_pause_game()
 
 
@@ -103,10 +105,10 @@ func _hide_modal() -> void:
 # fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
 func _check_for_game_over() -> void:
 	await _delay(GAME_CHECK_OVER_DELAY)
-	if Game.score[2] == 0 or Game.score[1] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[1] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_1_WINS)
 		return
-	if Game.score[1] == 0 or Game.score[2] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[2] == Config.PLAYER_VICTORY_SCORE:
 		_game_over(GameResult.PLAYER_2_WINS)
 		return
 	if Game.score[1] == Config.PLAYER_VICTORY_SCORE and Game.score[2] == Config.PLAYER_VICTORY_SCORE:

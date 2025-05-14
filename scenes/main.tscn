@@ -1,11 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmijftuchxf62"]
+[gd_scene load_steps=3 format=3 uid="uid://cmijftuchxf62"]
 
 [ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
-[ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_sugp2"]
-[ext_resource type="FontFile" uid="uid://bm8bvpfu88aux" path="res://assets/fonts/Montserrat/static/Montserrat-Regular.ttf" id="3_jyhfs"]
-[ext_resource type="FontFile" uid="uid://vcvw424a0cqr" path="res://assets/fonts/Montserrat/static/Montserrat-SemiBold.ttf" id="3_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://dvo0oiws54t1m" path="res://models/player/ready.tscn" id="4_jyhfs"]
-[ext_resource type="FontFile" uid="uid://csk5t783aicvv" path="res://assets/fonts/Montserrat/static/Montserrat-ExtraBoldItalic.ttf" id="4_tefeu"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0pxjd")
@@ -16,52 +12,12 @@ offset_right = 1024.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 1)
 
-[node name="RichTextLabel" type="RichTextLabel" parent="."]
-offset_left = 37.0
-offset_top = 32.0
-offset_right = 413.0
-offset_bottom = 104.0
-theme_override_fonts/normal_font = ExtResource("2_sugp2")
-theme_override_font_sizes/normal_font_size = 50
-text = "Blasteroids!"
-
-[node name="ControlsText" type="RichTextLabel" parent="."]
-offset_left = 39.0
-offset_top = 113.0
-offset_right = 998.0
-offset_bottom = 189.0
-theme_override_fonts/normal_font = ExtResource("3_tbgi4")
-theme_override_font_sizes/normal_font_size = 30
-text = "Player 1 uses ASWD to move, Q to launch projectile
-Player 2 uses JIKL to move, U to launch projectile"
-
-[node name="InstructionsText" type="RichTextLabel" parent="."]
-offset_left = 78.0
-offset_top = 206.0
-offset_right = 975.0
-offset_bottom = 372.0
-theme_override_fonts/normal_font = ExtResource("3_jyhfs")
-theme_override_font_sizes/normal_font_size = 25
-text = "- Spend 1 point to launch a projectile
-- Blow up the blocks containing gems to free the gems
-- Nudge a gem  into your home zone to collect it for 2 points
-- If your projectile hits a ship, disable it for 3 seconds, but lose 3 points
-- Score of 10 points wins, but a score of 0 points loses"
-
-[node name="ReadyText" type="RichTextLabel" parent="."]
-offset_left = 39.0
-offset_top = 417.0
-offset_right = 985.0
-offset_bottom = 463.0
-theme_override_fonts/normal_font = ExtResource("4_tefeu")
-theme_override_font_sizes/normal_font_size = 30
-text = "Players hit your launch buttons to ready up!"
-horizontal_alignment = 1
-
 [node name="ReadyPlayer1" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(344, 500)
+position = Vector2(409, 291)
+rotation = 1.5708
 player_num = 1
 
 [node name="ReadyPlayer2" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(658, 500)
+position = Vector2(619, 288)
+rotation = -1.5708
 player_num = 2
