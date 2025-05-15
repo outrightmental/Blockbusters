@@ -300,5 +300,5 @@ func _generate_mesh(_seed: int) -> void:
 			var g4 := sin(f4 * PI * r)
 			var g5 := sin(f5 * PI * r)
 			var g6 := sin(f6 * PI * r)
-			var z  := sin(PI * wrap(g1 + g2 + g3 * g4 * g5 * g6, 0.0, 1.0))
+			var z  := sin(PI * wrap(g1 + g2 + g3 * g4 + g5 * g6, 0.0, 1.0))
 			mesh[x][y] = z
