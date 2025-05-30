@@ -49,7 +49,7 @@ offset_right = 342.0
 offset_bottom = 299.0
 theme_override_fonts/normal_font = ExtResource("5_rgc1c")
 theme_override_font_sizes/normal_font_size = 18
-text = "Hit your launch button to ready up!"
+text = "Press start to ready up!"
 horizontal_alignment = 1
 
 [node name="PlayerNameText" type="RichTextLabel" parent="."]
