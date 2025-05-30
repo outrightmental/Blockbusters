@@ -10,6 +10,7 @@ const UNREADY_COLOR_SV_RATIO: float = 0.3
 @export var is_ready: bool = false
 # Input mapping
 var input_mapping: Dictionary = {
+									"start": "ui_cancel",
 									"action_a": "ui_accept",
 								}
 
@@ -65,7 +66,7 @@ func _toggle_ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["action_a"]):
+	if Input.is_action_just_pressed(input_mapping["start"]):
 		_toggle_ready()
 
 	
