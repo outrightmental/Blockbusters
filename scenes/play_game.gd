@@ -12,7 +12,7 @@ enum GameResult {
 }
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
-# The blocks are 32x32 pixels, so the grid is 1024x576 pixels
+# The blocks are32x32 pixels, so the grid is 1024x576 pixels
 const GRID_COLS: int                  = 32
 const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
 const GRID_ROWS: int                  = 18
