@@ -38,7 +38,7 @@ func _on_body_entered(body: Node2D) -> void:
 	body.apply_central_force(diff.normalized() * EXPLOSION_FORCE * (1 - diff.length() / explosive_radius))
 	if diff.length() <= critical_radius_block:
 		if body is Block or body is BlockHalf or body is BlockQuart:
-			body.do_break()
+			body.do_break(self)
 	if body is Ship and diff.length() <= critical_radius_ship:
 		body.do_disable(player_num)
 
