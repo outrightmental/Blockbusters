@@ -1,9 +1,8 @@
 extends Node2D
 
-# Enum for whether a grid square is empty, block, or gem
+# Enum for whether a grid square is empty or block
 enum GridType {
 	BLOCK,
-	GEM,
 }
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
 enum GameResult {
@@ -23,25 +22,26 @@ const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATI
 const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
 const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
 const BLOCK_SIZE: int                 = 32
-const GEM_COUNT_RATIO: float          = 0.02 # ratio of the grid that is filled with gems
+const GEM_SPAWN_INITIAL_MSEC: int     = 1000 # initial delay before spawning the first gem
+const GEM_SPAWN_EVERY_MSEC: int       = 5000 # delay between spawning gems
+const GEM_MAX_COUNT: int              = 5
 const GAME_START_COUNTER_DELAY: float = 1.0
 const GAME_DRAW_MODAL_DELAY: float    = 1.0 # in a draw situation, wait before showing the game over modal
 const GAME_OVER_DELAY: float          = 2.5
 const GAME_CHECK_OVER_DELAY: float    = 0.3 # tiny delay before checking game over state, to allow projectiles to finish
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
-const INITIAL_GEMS_IN_BLOCKS: int     = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GRID_MESH_THRESHOLD: float      = 0.62
 # Preloaded Scenes
-const ship_scene: PackedScene = preload('res://models/player/ship.tscn')
-const home_scene: PackedScene = preload('res://models/player/home.tscn')
+const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
+const home_scene: PackedScene  = preload('res://models/player/home.tscn')
 const score_scene: PackedScene = preload('res://models/player/score.tscn')
 const block_scene: PackedScene = preload('res://models/block/block.tscn')
 # Variables
-var grid: Dictionary           = {}
-var mesh: Dictionary           = {}
-var block_count: int           = 0
-var gem_count: int             = 0
-var started_at_ticks_msec: int = 0
+var grid: Dictionary            = {}
+var mesh: Dictionary            = {}
+var block_count: int            = 0
+var started_at_ticks_msec: int  = 0
+var spawn_next_gem_at_msec: int = 0
 # Signal that never happens, in case the tree is unloaded
 signal never
 
@@ -49,13 +49,15 @@ signal never
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
+	spawn_next_gem_at_msec = started_at_ticks_msec + GEM_SPAWN_INITIAL_MSEC
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
-	Game.reset_game.emit(INITIAL_GEMS_IN_BLOCKS)
+	Game.reset_game.emit()
 	# Connect the game over signals after resetting the game
 	Game.score_updated.connect(_check_for_game_over)
 	Game.gem_count_updated.connect(_check_for_game_over)
+	Game.gem_count_updated.connect(_reset_gem_spawn_time)
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	# Countdown and then start the game
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
@@ -68,6 +70,9 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	# Check if it's time to spawn a gem
+	if Time.get_ticks_msec() >= spawn_next_gem_at_msec:
+		_spawn_gem()
 	pass
 
 
@@ -125,7 +130,7 @@ func _check_for_game_over() -> void:
 
 	var total_gems_available            = Game.gems_in_blocks + Game.gems_free
 	var min_points_required_for_victory = min(Config.PLAYER_VICTORY_SCORE - Game.score[1], Config.PLAYER_VICTORY_SCORE - Game.score[2])
-	if total_gems_available * Config.PLAYER_COLLECT_GEM_VALUE < min_points_required_for_victory:
+	if block_count == 0 and total_gems_available * Config.PLAYER_COLLECT_GEM_VALUE < min_points_required_for_victory:
 		_game_over(GameResult.DRAW)
 
 	# the rest of these conditions test whether either player can win based on their ability to launch projectiles or
@@ -137,6 +142,11 @@ func _check_for_game_over() -> void:
 	if Game.gems_free * Config.PLAYER_COLLECT_GEM_VALUE >= min_points_required_for_victory:
 		return
 	_game_over(GameResult.DRAW)
+
+
+# Reset the gem spawn time 
+func _reset_gem_spawn_time() -> void:
+	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
@@ -174,16 +184,12 @@ func _create_board() -> void:
 			continue
 		if _is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
 			block_count += 1
-			if gem_count < INITIAL_GEMS_IN_BLOCKS:
-				grid[x][y] = GridType.GEM
-				gem_count += 1
-			else:
-				grid[x][y] = GridType.BLOCK
+			grid[x][y] = GridType.BLOCK
 
 	for x in range(GRID_COLS):
 		for y in range(GRID_ROWS):
 			if grid.has(x) and grid[x].has(y):
-				_spawn_block(_grid_position(x, y), grid[x][y] == GridType.GEM)
+				_spawn_block(_grid_position(x, y))
 
 
 func _is_clear_of_all(distance: int, source: Vector2, targets: Array[Vector2]) -> bool:
@@ -234,12 +240,26 @@ func _spawn_player_score(num: int, start_position: Vector2, start_rotation: floa
 	return score
 
 
-func _spawn_block(start_position: Vector2, has_gem: bool) -> Node:
+func _spawn_block(start_position: Vector2) -> Node:
 	var block: Block = block_scene.instantiate()
 	block.position = start_position
-	block.has_gem = has_gem
 	self.add_child(block)
 	return block
+
+
+func _spawn_gem() -> void:
+	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= GEM_MAX_COUNT:
+		return
+	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
+	var blocks: Array[Node] = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
+	if blocks.size() > 0:
+		# Randomly select a block to spawn a gem in
+		var random_block: Node = blocks[randi() % blocks.size()]
+		if random_block is Block and random_block.has_gem == false:
+			random_block.add_gem()
+			Game.spawned_gem.emit()
+	else:
+		print("No blocks found to spawn a gem in!")
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
