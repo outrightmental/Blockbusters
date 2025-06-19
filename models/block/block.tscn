@@ -13,7 +13,7 @@ script = ExtResource("1_okoc5")
 [node name="ParticleEmitter" parent="." instance=ExtResource("2_jakod")]
 z_index = 100
 amount = 25
-initial_velocity_max = 25.0
+initial_velocity_max = 100.0
 scale_amount_max = 10.0
 color = Color(1, 0.717667, 0.23, 1)
 script = null
