@@ -6,7 +6,7 @@ extends Node2D
 # Player number to identify the projectile
 @export var player_num: int = 0
 # Constants
-const LIFETIME_MSEC: int                 = 200
+const LIFETIME_MSEC: int                 = 1000
 const CRITICAL_RADIUS_BLOCK_RATIO: float = 0.5
 const CRITICAL_RADIUS_SHIP_RATIO: float  = 0.4
 const EXPLOSION_FORCE: int               = 5000
@@ -24,8 +24,14 @@ func _ready() -> void:
 	critical_radius_ship = explosive_radius * CRITICAL_RADIUS_SHIP_RATIO
 	critical_radius_block = explosive_radius * CRITICAL_RADIUS_BLOCK_RATIO
 	$ExplosiveArea2D.body_entered.connect(_on_body_entered)
+	# Set the explosion color based on player_num
+	if player_num in Config.PLAYER_COLORS:
+		$ParticleEmitter.color = Config.PLAYER_COLORS[player_num][0]
+	else:
+		print("No texture found for player_num: ", player_num)
+	$ParticleEmitter.emitting = true
 
-	
+
 # Called when another body enters the collission area
 func _on_body_entered(body: Node2D) -> void:
 	var diff: Vector2 = (body.position - position)
