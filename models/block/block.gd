@@ -8,6 +8,11 @@ const LINEAR_DAMP: float        = 0.1
 # Variables
 var gem: Node = null
 
+# Preloaded scenes
+@onready var half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
+@onready var half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
+@onready var gem_scene: PackedScene = preload("res://models/gem/gem.tscn")
+
 # Whether this block has a gem
 @export var has_gem: bool = false
 
@@ -22,7 +27,7 @@ func _ready() -> void:
 
 # Adds a gem inside this block
 func _add_gem() -> void:
-	gem = preload("res://models/gem/gem.tscn").instantiate()
+	gem = gem_scene.instantiate()
 	gem.position = Vector2(0, 0)
 	gem.add_collision_exception_with(self)
 	gem.freeze = true
@@ -31,33 +36,35 @@ func _add_gem() -> void:
 	pass
 
 
-# Break the block apart into two fragments
+# Break the block apart into two halves
 func do_break() -> void:
-	# Fragment 1
-	var frag1: Node = preload("res://models/block/block_half_1.tscn").instantiate()
-	frag1.add_collision_exception_with(self)
-	frag1.position = position
-	frag1.linear_velocity = linear_velocity + Vector2(-BREAK_APART_VELOCITY, -BREAK_APART_VELOCITY)
-	# Fragment 2
-	var frag2: Node = preload("res://models/block/block_half_2.tscn").instantiate()
-	frag2.add_collision_exception_with(self)
-	frag2.position = position
-	frag2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
+	# Half 1
+	var half1: Node = half1_scene.instantiate()
+	half1.add_collision_exception_with(self)
+	half1.position = position
+	half1.linear_velocity = linear_velocity + Vector2(-BREAK_APART_VELOCITY, -BREAK_APART_VELOCITY)
+	half1.half_num = 1
+	# Half 2
+	var half2: Node = half2_scene.instantiate()
+	half2.add_collision_exception_with(self)
+	half2.position = position
+	half2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
+	half2.half_num = 2
 	# Gem
 	if gem:
-		gem = preload("res://models/gem/gem.tscn").instantiate()
+		gem = gem_scene.instantiate()
 		gem.add_collision_exception_with(self)
 		gem.position = position
 		gem.linear_velocity = linear_velocity
-		gem.add_collision_exception_with(frag1)
-		gem.add_collision_exception_with(frag2)
+		gem.add_collision_exception_with(half1)
+		gem.add_collision_exception_with(half2)
 		self.get_parent().add_child(gem)
 		Game.gems_in_blocks -= 1
 		Game.gems_free += 1
 		Game.gem_count_updated.emit()
 	# Remove the block from the scene
-	self.get_parent().add_child(frag1)
-	self.get_parent().add_child(frag2)
+	self.get_parent().add_child(half1)
+	self.get_parent().add_child(half2)
 	self.call_deferred("queue_free")
 	pass
 

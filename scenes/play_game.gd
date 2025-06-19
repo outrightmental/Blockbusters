@@ -31,6 +31,11 @@ const GAME_CHECK_OVER_DELAY: float    = 0.3 # tiny delay before checking game ov
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 const INITIAL_GEMS_IN_BLOCKS: int     = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GRID_MESH_THRESHOLD: float      = 0.62
+# Preloaded Scenes
+@onready var ship_scene: PackedScene = preload('res://models/player/ship.tscn')
+@onready var home_scene: PackedScene = preload('res://models/player/home.tscn')
+@onready var score_scene: PackedScene = preload('res://models/player/score.tscn')
+@onready var block_scene: PackedScene = preload('res://models/block/block.tscn')
 # Variables
 var grid: Dictionary           = {}
 var mesh: Dictionary           = {}
@@ -199,42 +204,42 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 # Spawn a player ship at the given position and rotation
 func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float) -> Ship:
-	var ship_scene: Ship = preload('res://models/player/ship.tscn').instantiate()
-	ship_scene.position = start_position
-	ship_scene.player_num = num
-	ship_scene.rotation = start_rotation
-	self.add_child(ship_scene)
-	return ship_scene
+	var ship: Ship = ship_scene.instantiate()
+	ship.position = start_position
+	ship.player_num = num
+	ship.rotation = start_rotation
+	self.add_child(ship)
+	return ship
 
 
 # Spawn a player home at the given position and rotation
 func _spawn_player_home(num: int, start_position: Vector2, start_rotation: float) -> Home:
-	var home_scene: Home = preload('res://models/player/home.tscn').instantiate()
-	home_scene.position = start_position
-	home_scene.player_num = num
-	home_scene.rotation = start_rotation
-	home_scene.z_index = -1
-	self.add_child(home_scene)
-	return home_scene
+	var home: Home = home_scene.instantiate()
+	home.position = start_position
+	home.player_num = num
+	home.rotation = start_rotation
+	home.z_index = -1
+	self.add_child(home)
+	return home
 
 
 # Spawn a player score at the given position and rotation
 func _spawn_player_score(num: int, start_position: Vector2, start_rotation: float) -> Score:
-	var score_scene: Score = preload('res://models/player/score.tscn').instantiate()
-	score_scene.position = start_position
-	score_scene.player_num = num
-	score_scene.rotation = start_rotation
-	score_scene.z_index = -1
-	self.add_child(score_scene)
-	return score_scene
+	var score: Score = score_scene.instantiate()
+	score.position = start_position
+	score.player_num = num
+	score.rotation = start_rotation
+	score.z_index = -1
+	self.add_child(score)
+	return score
 
 
 func _spawn_block(start_position: Vector2, has_gem: bool) -> Node:
-	var block_scene: Block = preload('res://models/block/block.tscn').instantiate()
-	block_scene.position = start_position
-	block_scene.has_gem = has_gem
-	self.add_child(block_scene)
-	return block_scene
+	var block: Block = block_scene.instantiate()
+	block.position = start_position
+	block.has_gem = has_gem
+	self.add_child(block)
+	return block
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here

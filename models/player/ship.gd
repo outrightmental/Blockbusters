@@ -34,6 +34,9 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool             = false
 var disabled_at_ticks_msec: float = 0.0
 
+# Preload the projectile explosive scene
+@onready var projectile_explosive_scene: PackedScene = preload("res://models/player/projectile_explosive.tscn")
+
 # Player number to identify the ship
 @export var player_num: int = 0
 
@@ -146,7 +149,7 @@ func _do_launch_projectile_explosive() -> void:
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
-	var projectile: Node         = preload("res://models/player/projectile_explosive.tscn").instantiate()
+	var projectile: Node         = projectile_explosive_scene.instantiate()
 	projectile.set_owner(self)
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
