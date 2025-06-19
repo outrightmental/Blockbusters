@@ -32,10 +32,10 @@ const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 const INITIAL_GEMS_IN_BLOCKS: int     = floori(GRID_COUNT_MAX * GEM_COUNT_RATIO)
 const GRID_MESH_THRESHOLD: float      = 0.62
 # Preloaded Scenes
-@onready var ship_scene: PackedScene = preload('res://models/player/ship.tscn')
-@onready var home_scene: PackedScene = preload('res://models/player/home.tscn')
-@onready var score_scene: PackedScene = preload('res://models/player/score.tscn')
-@onready var block_scene: PackedScene = preload('res://models/block/block.tscn')
+const ship_scene: PackedScene = preload('res://models/player/ship.tscn')
+const home_scene: PackedScene = preload('res://models/player/home.tscn')
+const score_scene: PackedScene = preload('res://models/player/score.tscn')
+const block_scene: PackedScene = preload('res://models/block/block.tscn')
 # Variables
 var grid: Dictionary           = {}
 var mesh: Dictionary           = {}

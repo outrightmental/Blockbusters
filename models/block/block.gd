@@ -9,9 +9,9 @@ const LINEAR_DAMP: float        = 0.1
 var gem: Node = null
 
 # Preloaded scenes
-@onready var half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
-@onready var half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
-@onready var gem_scene: PackedScene = preload("res://models/gem/gem.tscn")
+const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
+const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
+const gem_scene: PackedScene = preload("res://models/gem/gem.tscn")
 
 # Whether this block has a gem
 @export var has_gem: bool = false
@@ -58,13 +58,13 @@ func do_break() -> void:
 		gem.linear_velocity = linear_velocity
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
-		self.get_parent().add_child(gem)
+		self.get_parent().call_deferred("add_child", gem)
 		Game.gems_in_blocks -= 1
 		Game.gems_free += 1
 		Game.gem_count_updated.emit()
 	# Remove the block from the scene
-	self.get_parent().add_child(half1)
-	self.get_parent().add_child(half2)
+	self.get_parent().call_deferred("add_child", half1)
+	self.get_parent().call_deferred("add_child", half2)
 	self.call_deferred("queue_free")
 	pass
 
