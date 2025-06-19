@@ -21,7 +21,6 @@ var input_mapping: Dictionary = {
 func _ready() -> void:
 	_set_player_name()
 	_set_color()
-	_set_player_controls_text()
 	# Set up input mapping for player
 	for key in input_mapping.keys():
 		var action_name: String = Config.player_input_mapping_format[key] % player_num
@@ -43,15 +42,6 @@ func _set_color() -> void:
 		$PlayerNameText.set("theme_override_colors/default_color", Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], READY_COLOR_SV_RATIO if is_ready else UNREADY_COLOR_SV_RATIO))
 	else:
 		print("No colors found for player_num: ", player_num)
-	pass
-
-
-# Set the controls text based on player_num
-func _set_player_controls_text() -> void:
-	if player_num in Config.PLAYER_CONTROLS_TEXT:
-		$PlayerControlsText.set_text(Config.PLAYER_CONTROLS_TEXT[player_num])
-	else:
-		print("No controls text found for player_num: ", player_num)
 	pass
 
 	

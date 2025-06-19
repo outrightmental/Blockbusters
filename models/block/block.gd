@@ -34,12 +34,12 @@ func _add_gem() -> void:
 # Break the block apart into two fragments
 func do_break() -> void:
 	# Fragment 1
-	var frag1: Node = preload("res://models/block/block_fragment_1.tscn").instantiate()
+	var frag1: Node = preload("res://models/block/block_half_1.tscn").instantiate()
 	frag1.add_collision_exception_with(self)
 	frag1.position = position
 	frag1.linear_velocity = linear_velocity + Vector2(-BREAK_APART_VELOCITY, -BREAK_APART_VELOCITY)
 	# Fragment 2
-	var frag2: Node = preload("res://models/block/block_fragment_2.tscn").instantiate()
+	var frag2: Node = preload("res://models/block/block_half_2.tscn").instantiate()
 	frag2.add_collision_exception_with(self)
 	frag2.position = position
 	frag2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
