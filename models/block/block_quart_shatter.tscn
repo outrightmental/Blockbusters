@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dur1xvqlvin4x"]
+
+[ext_resource type="Script" uid="uid://ckyuu8yfcxdh" path="res://models/block/block_quart_shatter.gd" id="1_v26ot"]
+
+[sub_resource type="Curve" id="Curve_v26ot"]
+_data = [Vector2(0.00656455, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="ParticleEmitter" type="CPUParticles2D"]
+emitting = false
+amount = 3
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 50.0
+scale_amount_max = 3.0
+scale_amount_curve = SubResource("Curve_v26ot")
+script = ExtResource("1_v26ot")

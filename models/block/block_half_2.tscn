@@ -1,10 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://dqc41damvbs8i"]
 
-[ext_resource type="Script" uid="uid://dg02gqyv1rfn4" path="res://models/block/block_fragment.gd" id="1_s7pcu"]
+[ext_resource type="Script" uid="uid://dg02gqyv1rfn4" path="res://models/block/block_half.gd" id="1_04usf"]
 
 [node name="Block" type="RigidBody2D"]
 gravity_scale = 0.0
-script = ExtResource("1_s7pcu")
+script = ExtResource("1_04usf")
 
 [node name="TriangleDown" type="Polygon2D" parent="."]
 z_index = 5
