@@ -21,13 +21,13 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(LINEAR_DAMP)
-	if has_gem:
-		_add_gem()
+	add_to_group(Game.BLOCK_GROUP)
 	pass
 
 
 # Adds a gem inside this block
-func _add_gem() -> void:
+func add_gem() -> void:
+	$ParticleEmitter.emitting = true
 	gem = gem_scene.instantiate()
 	gem.position = Vector2(0, 0)
 	gem.add_collision_exception_with(self)
