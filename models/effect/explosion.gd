@@ -24,8 +24,6 @@ func _ready() -> void:
 	critical_radius_ship = explosive_radius * CRITICAL_RADIUS_SHIP_RATIO
 	critical_radius_block = explosive_radius * CRITICAL_RADIUS_BLOCK_RATIO
 	$ExplosiveArea2D.body_entered.connect(_on_body_entered)
-	# Disable the collision shape so that collisions only occur at the instant of explosion
-	collision_shape.call_deferred("set_disabled", true)
 
 	
 # Called when another body enters the collission area
