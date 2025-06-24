@@ -1,11 +1,12 @@
 class_name Ship
 extends Collidable
 
-const FORCE_AMOUNT: int             = 500
-const LINEAR_DAMP: float            = 0.9
-const TARGET_ROTATION_FACTOR: float = 10
-const DISABLED_MSEC: int            = 3000
-const DISABLED_SV_RATIO: float      = 0.38
+const FORCE_AMOUNT: int                    = 500
+const LINEAR_DAMP: float                   = 0.9
+const TARGET_ROTATION_FACTOR: float        = 10
+const DISABLED_MSEC: int                   = 3000
+const DISABLED_SV_RATIO: float             = 0.38
+const HEATED_DISABLED_THRESHOLD_SEC: float = 2.0
 
 var input_mapping: Dictionary = {
 									"left": "ui_left",
@@ -35,17 +36,42 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool             = false
 var disabled_at_ticks_msec: float = 0.0
 # variables for laser tool
-var laser: Node = null
+var laser: Node             = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
-
+# variable for being heated
+var heated_sec: float   = 0.0
+var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/player/projectile_explosive.tscn")
-
 # Preload the laser beam scene
 const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
+# Cache reference to heated effect
+@onready var heated_effect: Node2D = $HeatedEffect
 
 # Player number to identify the ship
 @export var player_num: int = 0
+
+
+# Called when the ship is disabled
+func do_disable(responsible_player_num: int) -> void:
+	is_disabled = true
+	disabled_at_ticks_msec = Time.get_ticks_msec()
+	_set_colors(DISABLED_SV_RATIO)
+	Game.player_did_harm.emit(responsible_player_num)
+
+
+# Called when the ship is re-enabled
+func do_enable() -> void:
+	is_disabled = false
+	disabled_at_ticks_msec = 0.0
+	_set_colors(1.0)
+
+
+# Add heat if not disabled
+func do_heat(delta: float) -> void:
+	if is_disabled:
+		return
+	heated_delta += delta
 
 
 # Called when the node enters the scene tree for the first time.
@@ -62,12 +88,15 @@ func _ready() -> void:
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
 
+	# Initialize the rotation
 	actual_rotation = rotation
 	target_rotation = rotation
 
-	# Update the laser charges
+	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
-	
+
+	# Update the heated effect visibility
+	_update_heated_effect()
 
 
 # Set the colors of the ship based on player_num
@@ -95,9 +124,12 @@ func _process(delta: float) -> void:
 		angle_diff += TAU
 	actual_rotation += angle_diff * TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
-	
+
 	# Update the laser charge
 	_update_laser(delta)
+
+	# Update the heated state
+	_update_heat(delta)
 
 
 # Process input for the ship (if not disabled)
@@ -137,24 +169,7 @@ func _process_input(delta: float) -> void:
 
 	# Apply force in the direction of the input vector
 	apply_impulse(input_vector * FORCE_AMOUNT * delta)
-	pass
 
-
-# Called when the ship is disabled
-func do_disable(responsible_player_num: int) -> void:
-	is_disabled = true
-	disabled_at_ticks_msec = Time.get_ticks_msec()
-	_set_colors(DISABLED_SV_RATIO)
-	Game.player_did_harm.emit(responsible_player_num)
-	pass
-
-
-# Called when the ship is re-enabled
-func do_enable() -> void:
-	is_disabled = false
-	disabled_at_ticks_msec = 0.0
-	_set_colors(1.0)
-	pass
 
 # Called when the player wants to activate the primary tool
 func _do_activate_laser() -> void:
@@ -166,7 +181,7 @@ func _do_activate_laser() -> void:
 	laser.player_num = player_num
 	self.call_deferred("add_child", laser)
 
-	
+
 func _do_deactivate_laser() -> void:
 	if laser:
 		laser.call_deferred("queue_free")
@@ -207,7 +222,31 @@ func _update_laser(delta: float) -> void:
 		if laser_charge_sec > Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
 			laser_charge_sec = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
-	pass
+
+
+# If the ship is heated, increase the heated time, otherwise decrease it
+# If the ship is heated for too long, disable it
+func _update_heat(delta: float) -> void:
+	if heated_delta > 0:
+		heated_sec += delta
+		heated_delta = 0.0
+		_update_heated_effect()
+		if heated_sec >= HEATED_DISABLED_THRESHOLD_SEC:
+			do_disable(player_num)
+	elif heated_sec > 0:
+		heated_sec -= delta
+		if heated_sec < 0:
+			heated_sec = 0.0
+		_update_heated_effect()
+
+
+# Update the heated effect visibility and intensity
+func _update_heated_effect() -> void:
+	if heated_sec > 0:
+		heated_effect.set_visible(true)
+		heated_effect.modulate.a = clamp(heated_sec / HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+	else:
+		heated_effect.set_visible(false)
 
 
 # Called when the ship is instantiated

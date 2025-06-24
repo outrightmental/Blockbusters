@@ -19,3 +19,9 @@ polygon = PackedVector2Array(0, -2, 29, -2, -5, 15)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-17, -17, 17, 0, -17, 17, -12, 0)
+
+[node name="HeatedEffect" type="Node2D" parent="."]
+
+[node name="HeatedSHape" type="Polygon2D" parent="HeatedEffect"]
+position = Vector2(-12, 2)
+polygon = PackedVector2Array(-5, -19, 29, -2, -5, 15, 0, -2)

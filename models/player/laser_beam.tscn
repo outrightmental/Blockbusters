@@ -9,3 +9,6 @@ script = ExtResource("1_gg8fv")
 position = Vector2(17, 0)
 points = PackedVector2Array(0, 0, 145, 0)
 width = 1.0
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(163, 0)

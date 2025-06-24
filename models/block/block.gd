@@ -2,11 +2,13 @@ class_name Block
 extends Collidable
 
 # Constants
-const BREAK_APART_VELOCITY: int = 50
 const INNER_GEM_ALPHA: float    = 0.6
 const LINEAR_DAMP: float        = 0.1
 # Variables
 var gem: Node = null
+# variable for being heated
+var heated_sec: float   = 0.0
+var heated_delta: float = 0.0
 
 # List of nodes that should not break this
 @export var dont_break_by: Array[Node] = []
@@ -17,11 +19,15 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 # Whether this block has a gem
 @export var has_gem: bool = false
 
+# Cache reference to heated effect
+@onready var heated_effect: Node2D = $HeatedEffect
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(LINEAR_DAMP)
 	add_to_group(Game.BLOCK_GROUP)
+	# Update the heated effect visibility
+	_update_heated_effect()
 	pass
 
 
@@ -46,13 +52,13 @@ func do_break(broken_by: Node = null) -> void:
 	var half1: Node = half1_scene.instantiate()
 	half1.add_collision_exception_with(self)
 	half1.position = position
-	half1.linear_velocity = linear_velocity + Vector2(-BREAK_APART_VELOCITY, -BREAK_APART_VELOCITY)
+	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
 	half2.add_collision_exception_with(self)
 	half2.position = position
-	half2.linear_velocity = linear_velocity + Vector2(BREAK_APART_VELOCITY, BREAK_APART_VELOCITY)
+	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
 	# Gem
 	if gem:
@@ -78,8 +84,44 @@ func do_break(broken_by: Node = null) -> void:
 	pass
 
 
+# Add heat
+func do_heat(delta: float) -> void:
+	heated_delta += delta
+	pass
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	_update_heat(_delta)
+	pass
+
+
+# If the ship is heated, increase the heated time, otherwise decrease it
+# If the ship is heated for too long, disable it
+func _update_heat(delta: float) -> void:
+	if heated_delta > 0:
+		heated_sec += delta
+		heated_delta = 0.0
+		_update_heated_effect()
+		if heated_sec >= Config.BLOCK_HEATED_BREAK_SEC:
+			call_deferred("do_break")
+	elif heated_sec > 0:
+		heated_sec -= delta
+		if heated_sec < 0:
+			heated_sec = 0.0
+		_update_heated_effect()
+	pass
+
+
+# Update the heated effect visibility and intensity
+func _update_heated_effect() -> void:
+	if heated_effect == null:
+		return  # Ensure heated_effect is valid before proceeding
+	if heated_sec > 0:
+		heated_effect.set_visible(true)
+		heated_effect.modulate.a = clamp(heated_sec / Config.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
+	else:
+		heated_effect.set_visible(false)
 	pass
 
 

@@ -33,3 +33,10 @@ z_index = 5
 position = Vector2(-12, 2)
 color = Color(0.37, 0.37, 0.37, 0.392157)
 polygon = PackedVector2Array(27, 13, 27, -17, -3, 13)
+
+[node name="HeatedEffect" type="Node2D" parent="."]
+
+[node name="HeatedShape" type="Polygon2D" parent="HeatedEffect"]
+z_index = 5
+position = Vector2(-12, 2)
+polygon = PackedVector2Array(-3, -17, 27, -17, 27, 13, -3, 13)
