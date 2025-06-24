@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bgvuuvhomj1ox"]
+[gd_scene load_steps=6 format=3 uid="uid://bgvuuvhomj1ox"]
 
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/play_game.gd" id="1_s826b"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_4xfa0"]
+[ext_resource type="Script" uid="uid://cidkugf8p5y7" path="res://models/player/score.gd" id="3_bgg7l"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
 size = Vector2(1024, 16)
@@ -33,6 +34,7 @@ position = Vector2(1032, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
 [node name="Modal" type="Node2D" parent="."]
+visible = false
 z_index = 100
 
 [node name="Text1" type="RichTextLabel" parent="Modal"]
@@ -65,6 +67,22 @@ z_index = -10
 offset_right = 1024.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 0.501961)
+
+[node name="PlayerMeta" type="Node" parent="."]
+
+[node name="P1 Score" type="Node2D" parent="PlayerMeta"]
+position = Vector2(31, 288)
+rotation = 1.5708
+script = ExtResource("3_bgg7l")
+player_num = 1
+metadata/_custom_type_script = "uid://cidkugf8p5y7"
+
+[node name="P2 Score" type="Node2D" parent="PlayerMeta"]
+position = Vector2(993, 288)
+rotation = -1.5708
+script = ExtResource("3_bgg7l")
+player_num = 2
+metadata/_custom_type_script = "uid://cidkugf8p5y7"
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10

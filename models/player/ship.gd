@@ -35,13 +35,14 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool             = false
 var disabled_at_ticks_msec: float = 0.0
 # variables for laser tool
-var laser_start_ticks_msec: float = 0.0
+var laser: Node = null
+var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/player/projectile_explosive.tscn")
 
 # Preload the laser beam scene
-const laser_beam_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
+const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 
 # Player number to identify the ship
 @export var player_num: int = 0
@@ -91,16 +92,20 @@ func _process(delta: float) -> void:
 		angle_diff += TAU
 	actual_rotation += angle_diff * TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
-	pass
+	
+	# Update the laser charge
+	_update_laser(delta)
 
 
 # Process input for the ship (if not disabled)
 func _process_input(delta: float) -> void:
 	# Check if input action is pressed
 	if Input.is_action_just_pressed(input_mapping["action_a"]):
-		_do_activate_primary_tool()
+		_do_activate_laser()
+	if Input.is_action_just_released(input_mapping["action_a"]):
+		_do_deactivate_laser()
 	if Input.is_action_just_pressed(input_mapping["action_b"]):
-		_do_activate_secondary_tool()
+		_do_launch_projectile_explosive()
 
 	# Get input vector from which keys are pressed
 	var input_vector: Vector2 = Vector2.ZERO
@@ -149,16 +154,26 @@ func do_enable() -> void:
 	pass
 
 # Called when the player wants to activate the primary tool
-func _do_activate_primary_tool() -> void:
-	laser_start_ticks_msec = Time.get_ticks_msec()
-	var laser: Node         = laser_beam_scene.instantiate()
+func _do_activate_laser() -> void:
+	if laser_charge_sec < Config.PLAYER_SHIP_LASER_ACTIVATE_MIN_CHARGE_SEC:
+		return
+	if laser:
+		return
+	laser         = laser_scene.instantiate()
 	laser.call_deferred("set_owner", self)
 	laser.player_num = player_num
 	self.call_deferred("add_child", laser)
 
+	
+func _do_deactivate_laser() -> void:
+	if laser:
+		laser.call_deferred("queue_free")
+		laser = null
+		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+
 
 # Called when the player wants to activate the secondary tool
-func _do_activate_secondary_tool() -> void:
+func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	if not Game.player_can_launch_projectile(player_num):
@@ -175,6 +190,22 @@ func _do_activate_secondary_tool() -> void:
 	self.get_parent().call_deferred("add_child", projectile)
 	# Emit a signal to notify that the projectile explosive was launched
 	Game.player_did_launch_projectile.emit(player_num)
+
+
+func _update_laser(delta: float) -> void:
+	# If the laser is active, decrease the charge
+	if laser:
+		laser_charge_sec -= delta
+		if laser_charge_sec < 0:
+			laser_charge_sec = 0
+			_do_deactivate_laser()
+		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+	elif laser_charge_sec < Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
+		# If the laser is not active, recharge it
+		laser_charge_sec += delta * Config.PLAYER_SHIP_LASER_RECHARGE_RATE
+		if laser_charge_sec > Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
+			laser_charge_sec = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+	pass
 
 
 # Called when the ship is instantiated

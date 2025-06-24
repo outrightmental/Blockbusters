@@ -9,10 +9,11 @@ signal player_did_harm(player_num: int)
 signal gem_count_updated
 signal projectile_count_updated
 signal player_ready_updated
+signal player_laser_charge_updated(player_num: int, charge_sec: float)
 signal spawned_gem
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
-const GEM_GROUP: StringName = "GemGroup"
+const GEM_GROUP: StringName   = "GemGroup"
 
 # Keeping track of the score
 @onready var score: Dictionary = {
@@ -45,6 +46,7 @@ func _ready() -> void:
 	gem_count_updated.connect(_on_gem_count_updated)
 	projectile_count_updated.connect(_on_projectile_count_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
+	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
 	spawned_gem.connect(_on_spawned_gem)
 
 
@@ -84,11 +86,15 @@ func _on_gem_count_updated() -> void:
 func _on_projectile_count_updated() -> void:
 	print ("[PROJECTILES] in play: ", projectiles_in_play)
 
-	
+
 func _on_player_ready_updated() -> void:
 	pass
-	
-	
+
+
+func _on_player_laser_charge_updated(_player_num: int, _charge_sec: float ) -> void:
+	pass
+
+
 func _on_spawned_gem() -> void:
 	print("[GAME] Spawning gem in block")
 	gems_in_blocks += 1
