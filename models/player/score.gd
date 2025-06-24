@@ -2,7 +2,7 @@ class_name Score
 extends Node2D
 
 # Constants
-const COLOR_SV_RATIO: float = 0.6
+const COLOR_SV_RATIO: float = 0.7
 
 
 # Player number to identify the home

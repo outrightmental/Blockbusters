@@ -38,7 +38,6 @@ func _on_body_entered(_other: Node) -> void:
 	var explosion: Node = explosion_scene.instantiate()
 	explosion.position = position
 	explosion.player_num = player_num
-	explosion.call_deferred("set_owner", owner)
 	self.get_parent().call_deferred("add_child", explosion)
 	# Remove this projectile from the stage
 	self.queue_free()

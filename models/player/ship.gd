@@ -64,7 +64,10 @@ func _ready() -> void:
 
 	actual_rotation = rotation
 	target_rotation = rotation
-	pass
+
+	# Update the laser charges
+	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+	
 
 
 # Set the colors of the ship based on player_num
@@ -155,12 +158,11 @@ func do_enable() -> void:
 
 # Called when the player wants to activate the primary tool
 func _do_activate_laser() -> void:
-	if laser_charge_sec < Config.PLAYER_SHIP_LASER_ACTIVATE_MIN_CHARGE_SEC:
+	if laser_charge_sec < Config.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
 		return
 	if laser:
 		return
 	laser         = laser_scene.instantiate()
-	laser.call_deferred("set_owner", self)
 	laser.player_num = player_num
 	self.call_deferred("add_child", laser)
 
@@ -181,7 +183,6 @@ func _do_launch_projectile_explosive() -> void:
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
 	var projectile: Node         = projectile_explosive_scene.instantiate()
-	projectile.call_deferred("set_owner", self)
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
 	projectile.rotation = actual_rotation
@@ -205,6 +206,7 @@ func _update_laser(delta: float) -> void:
 		laser_charge_sec += delta * Config.PLAYER_SHIP_LASER_RECHARGE_RATE
 		if laser_charge_sec > Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
 			laser_charge_sec = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 	pass
 
 
