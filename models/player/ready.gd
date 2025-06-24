@@ -11,7 +11,6 @@ const UNREADY_COLOR_SV_RATIO: float = 0.3
 # Input mapping
 var input_mapping: Dictionary = {
 									"start": "ui_cancel",
-									"action_b": "ui_accept",
 								}
 
 

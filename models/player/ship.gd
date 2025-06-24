@@ -12,7 +12,8 @@ var input_mapping: Dictionary = {
 									"right": "ui_right",
 									"up": "ui_up",
 									"down": "ui_down",
-									"action_b": "ui_accept",
+									"action_a": "ui_accept",
+									"action_b": "ui_cancel",
 								}
 
 const dir_vectors := {
@@ -33,9 +34,14 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 # keep track of whether the ship is disabled, and when
 var is_disabled: bool             = false
 var disabled_at_ticks_msec: float = 0.0
+# variables for laser tool
+var laser_start_ticks_msec: float = 0.0
 
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/player/projectile_explosive.tscn")
+
+# Preload the laser beam scene
+const laser_beam_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 
 # Player number to identify the ship
 @export var player_num: int = 0
@@ -91,8 +97,10 @@ func _process(delta: float) -> void:
 # Process input for the ship (if not disabled)
 func _process_input(delta: float) -> void:
 	# Check if input action is pressed
+	if Input.is_action_just_pressed(input_mapping["action_a"]):
+		_do_activate_primary_tool()
 	if Input.is_action_just_pressed(input_mapping["action_b"]):
-		_do_launch_projectile_explosive()
+		_do_activate_secondary_tool()
 
 	# Get input vector from which keys are pressed
 	var input_vector: Vector2 = Vector2.ZERO
@@ -140,9 +148,17 @@ func do_enable() -> void:
 	_set_colors(1.0)
 	pass
 
+# Called when the player wants to activate the primary tool
+func _do_activate_primary_tool() -> void:
+	laser_start_ticks_msec = Time.get_ticks_msec()
+	var laser: Node         = laser_beam_scene.instantiate()
+	laser.call_deferred("set_owner", self)
+	laser.player_num = player_num
+	self.call_deferred("add_child", laser)
 
-# Called when the player wants to launch a projectile explosive
-func _do_launch_projectile_explosive() -> void:
+
+# Called when the player wants to activate the secondary tool
+func _do_activate_secondary_tool() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	if not Game.player_can_launch_projectile(player_num):

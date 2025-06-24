@@ -7,6 +7,8 @@ const PLAYER_COLORS: Dictionary = {
 								  }
 # player ship threshold that's rotation only (strafe) before applying force
 const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float = 500
+# player ship threshold of how long to wait between activating laser
+const PLAYER_SHIP_LASER_COOLDOWN_MSEC: float = 2000
 # player ship threshold of how long to wait between launching projectile explosives
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
 # player ship projectile explosive initial velocity, acceleration, and max velocity
@@ -24,6 +26,7 @@ const player_input_mapping_format: Dictionary = {
 													"right": "p%d_right",
 													"up": "p%d_up",
 													"down": "p%d_down",
+													"action_a": "p%d_action_a",
 													"action_b": "p%d_action_b",
 													"start": "p%d_start",
 												}
