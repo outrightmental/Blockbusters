@@ -24,6 +24,6 @@ const player_input_mapping_format: Dictionary = {
 													"right": "p%d_right",
 													"up": "p%d_up",
 													"down": "p%d_down",
-													"action_a": "p%d_action_a",
+													"action_b": "p%d_action_b",
 													"start": "p%d_start",
 												}

@@ -12,7 +12,7 @@ var input_mapping: Dictionary = {
 									"right": "ui_right",
 									"up": "ui_up",
 									"down": "ui_down",
-									"action_a": "ui_accept",
+									"action_b": "ui_accept",
 								}
 
 const dir_vectors := {
@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 # Process input for the ship (if not disabled)
 func _process_input(delta: float) -> void:
 	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["action_a"]):
+	if Input.is_action_just_pressed(input_mapping["action_b"]):
 		_do_launch_projectile_explosive()
 
 	# Get input vector from which keys are pressed
