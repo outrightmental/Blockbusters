@@ -43,7 +43,7 @@ func _set_color() -> void:
 		bg_style.set_corner_radius_all(CORNER_RADIUS)
 		progress_bar.set("theme_override_styles/background", bg_style)
 	else:
-		printerr("No colors found for player_num: ", player_num)
+		push_error("No colors found for player_num: ", player_num)
 	pass
 
 

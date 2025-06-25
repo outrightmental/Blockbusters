@@ -26,7 +26,7 @@ func _ready() -> void:
 		if InputMap.has_action(action_name):
 			input_mapping[key] = action_name
 		else:
-			printerr("Input action not found: ", action_name)
+			push_error("Input action not found: ", action_name)
 
 
 # Set the name of the player based on player_num
@@ -40,7 +40,7 @@ func _set_color() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$PlayerNameText.set("theme_override_colors/default_color", Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], READY_COLOR_SV_RATIO if is_ready else UNREADY_COLOR_SV_RATIO))
 	else:
-		printerr("No colors found for player_num: ", player_num)
+		push_error("No colors found for player_num: ", player_num)
 	pass
 
 	

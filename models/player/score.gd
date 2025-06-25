@@ -20,7 +20,7 @@ func _set_color() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$Text.set("theme_override_colors/default_color",Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], COLOR_SV_RATIO))
 	else:
-		printerr("No colors found for player_num: ", player_num)
+		push_error("No colors found for player_num: ", player_num)
 	pass
 
 	
@@ -29,7 +29,7 @@ func _on_score_updated() -> void:
 	if Game.score.has(player_num):
 		$Text.set_text(str(Game.score[player_num]))
 	else:
-		printerr("No score found for player_num: ", player_num)
+		push_error("No score found for player_num: ", player_num)
 	pass
 
 
