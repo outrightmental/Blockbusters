@@ -15,7 +15,7 @@ func _ready() -> void:
 		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
-		print("No texture found for player_num: ", player_num)
+		printerr("No texture found for player_num: ", player_num)
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
@@ -38,7 +38,6 @@ func _on_body_entered(_other: Node) -> void:
 	var explosion: Node = explosion_scene.instantiate()
 	explosion.position = position
 	explosion.player_num = player_num
-	explosion.call_deferred("set_owner", owner)
 	self.get_parent().call_deferred("add_child", explosion)
 	# Remove this projectile from the stage
 	self.queue_free()

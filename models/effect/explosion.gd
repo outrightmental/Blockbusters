@@ -28,7 +28,7 @@ func _ready() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$ParticleEmitter.color = Config.PLAYER_COLORS[player_num][0]
 	else:
-		print("No texture found for player_num: ", player_num)
+		printerr("No texture found for player_num: ", player_num)
 	$ParticleEmitter.emitting = true
 
 
