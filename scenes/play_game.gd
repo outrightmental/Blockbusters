@@ -246,7 +246,7 @@ func _spawn_gem() -> void:
 			random_block.add_gem()
 			Game.spawned_gem.emit()
 	else:
-		print("No blocks found to spawn a gem in!")
+		printerr("No blocks found to spawn a gem in!")
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here

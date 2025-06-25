@@ -36,7 +36,7 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool             = false
 var disabled_at_ticks_msec: float = 0.0
 # variables for laser tool
-var laser: Node             = null
+var laser: LaserBeam        = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 # variable for being heated
 var heated_sec: float   = 0.0
@@ -83,7 +83,7 @@ func _ready() -> void:
 		if InputMap.has_action(action_name):
 			input_mapping[key] = action_name
 		else:
-			print("Input action not found: ", action_name)
+			printerr("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
@@ -105,7 +105,7 @@ func _set_colors(sv_ratio: float) -> void:
 		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], sv_ratio)
 		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], sv_ratio)
 	else:
-		print("No colors found for player_num: ", player_num)
+		printerr("No colors found for player_num: ", player_num)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -179,7 +179,8 @@ func _do_activate_laser() -> void:
 		return
 	laser         = laser_scene.instantiate()
 	laser.player_num = player_num
-	self.call_deferred("add_child", laser)
+	laser.source_ship = self
+	self.get_parent().call_deferred("add_child", laser)
 
 
 func _do_deactivate_laser() -> void:
@@ -211,12 +212,14 @@ func _do_launch_projectile_explosive() -> void:
 func _update_laser(delta: float) -> void:
 	# If the laser is active, decrease the charge
 	if laser:
+		laser.set_position(position)
+		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
-	elif laser_charge_sec < Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
+	elif laser_charge_sec < Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC and not is_disabled:
 		# If the laser is not active, recharge it
 		laser_charge_sec += delta * Config.PLAYER_SHIP_LASER_RECHARGE_RATE
 		if laser_charge_sec > Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:

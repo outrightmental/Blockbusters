@@ -34,7 +34,7 @@ func player_can_launch_projectile(player_num: int) -> bool:
 	if score.has(player_num):
 		return score[player_num] > 0
 	else:
-		print("No score found for player_num: ", player_num)
+		printerr("No score found for player_num: ", player_num)
 		return false
 
 

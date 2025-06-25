@@ -1,7 +1,11 @@
+class_name LaserBeam
 extends Node2D
 
 # Player number to identify the laser beam
 @export var player_num: int = 0
+
+# Player ship to avoid self-collision
+@export var source_ship: Ship = null
 
 @onready var raycast: RayCast2D = $RayCast2D
 @onready var line: Line2D = $Line2D
@@ -9,11 +13,13 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if source_ship:
+		raycast.add_exception(source_ship)
 	# Set the sprite texture based on player_num
 	if player_num in Config.PLAYER_COLORS:
 		line.default_color = Config.PLAYER_COLORS[player_num][0]
 	else:
-		print("No texture found for player_num: ", player_num)
+		printerr("No texture found for player_num: ", player_num)
 
 
 func _process(delta: float) -> void:
