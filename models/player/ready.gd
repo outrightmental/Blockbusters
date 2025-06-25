@@ -10,8 +10,9 @@ const UNREADY_COLOR_SV_RATIO: float = 0.3
 @export var is_ready: bool = false
 # Input mapping
 var input_mapping: Dictionary = {
-									"action_a": "ui_accept",
+									"start": "ui_cancel",
 								}
+
 
 
 
@@ -25,21 +26,21 @@ func _ready() -> void:
 		if InputMap.has_action(action_name):
 			input_mapping[key] = action_name
 		else:
-			print("Input action not found: ", action_name)
+			printerr("Input action not found: ", action_name)
 
 
 # Set the name of the player based on player_num
 func _set_player_name() -> void:
-	$Text.set_text("Player " + str(player_num))
+	$PlayerNameText.set_text("Player " + str(player_num))
 	pass
 
 
 # Set the colors of the ship based on player_num
 func _set_color() -> void:
 	if player_num in Config.PLAYER_COLORS:
-		$Text.set("theme_override_colors/default_color", Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], READY_COLOR_SV_RATIO if is_ready else UNREADY_COLOR_SV_RATIO))
+		$PlayerNameText.set("theme_override_colors/default_color", Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], READY_COLOR_SV_RATIO if is_ready else UNREADY_COLOR_SV_RATIO))
 	else:
-		print("No colors found for player_num: ", player_num)
+		printerr("No colors found for player_num: ", player_num)
 	pass
 
 	
@@ -54,7 +55,7 @@ func _toggle_ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["action_a"]):
+	if Input.is_action_just_pressed(input_mapping["start"]):
 		_toggle_ready()
 
 	

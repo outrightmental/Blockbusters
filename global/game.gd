@@ -1,7 +1,7 @@
 extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
-signal reset_game(initial_gems_in_blocks: int)
+signal reset_game()
 signal score_updated(score: Dictionary)
 signal player_did_launch_projectile(player_num: int)
 signal player_did_collect_gem(player_num: int)
@@ -9,6 +9,11 @@ signal player_did_harm(player_num: int)
 signal gem_count_updated
 signal projectile_count_updated
 signal player_ready_updated
+signal player_laser_charge_updated(player_num: int, charge_sec: float)
+signal spawned_gem
+# Group names
+const BLOCK_GROUP: StringName = "BlockGroup"
+const GEM_GROUP: StringName   = "GemGroup"
 
 # Keeping track of the score
 @onready var score: Dictionary = {
@@ -23,12 +28,13 @@ signal player_ready_updated
 # Keeping track of the projectile count
 @onready var projectiles_in_play: int = 0
 
+
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
 	if score.has(player_num):
-		return score[player_num] > 1
+		return score[player_num] > 0
 	else:
-		print("No score found for player_num: ", player_num)
+		printerr("No score found for player_num: ", player_num)
 		return false
 
 
@@ -39,11 +45,14 @@ func _ready() -> void:
 	player_did_harm.connect(_on_player_harm)
 	gem_count_updated.connect(_on_gem_count_updated)
 	projectile_count_updated.connect(_on_projectile_count_updated)
+	player_ready_updated.connect(_on_player_ready_updated)
+	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
+	spawned_gem.connect(_on_spawned_gem)
 
 
-func _do_reset_game(initial_gems_in_blocks: int) -> void:
+func _do_reset_game() -> void:
 	gems_free = 0
-	gems_in_blocks = initial_gems_in_blocks
+	gems_in_blocks = 0
 	gems_collected = 0
 	gem_count_updated.emit()
 	score[1] = Config.PLAYER_INITIAL_SCORE
@@ -76,3 +85,18 @@ func _on_gem_count_updated() -> void:
 
 func _on_projectile_count_updated() -> void:
 	print ("[PROJECTILES] in play: ", projectiles_in_play)
+
+
+func _on_player_ready_updated() -> void:
+	pass
+
+
+func _on_player_laser_charge_updated(_player_num: int, _charge_sec: float ) -> void:
+	pass
+
+
+func _on_spawned_gem() -> void:
+	print("[GAME] Spawning gem in block")
+	gems_in_blocks += 1
+	gems_free += 1
+	gem_count_updated.emit()

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bjiivayicu2qj"]
+[gd_scene load_steps=4 format=3 uid="uid://bjiivayicu2qj"]
 
 [ext_resource type="Script" uid="uid://2es8up3haar4" path="res://models/block/block.gd" id="1_okoc5"]
+[ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/block/block_quart_shatter.tscn" id="2_jakod"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_af4ln"]
 size = Vector2(30, 30)
@@ -8,6 +9,14 @@ size = Vector2(30, 30)
 [node name="Block" type="RigidBody2D"]
 gravity_scale = 0.0
 script = ExtResource("1_okoc5")
+
+[node name="ParticleEmitter" parent="." instance=ExtResource("2_jakod")]
+z_index = 100
+amount = 25
+initial_velocity_max = 100.0
+scale_amount_max = 10.0
+color = Color(1, 0.717667, 0.23, 1)
+script = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
@@ -24,3 +33,10 @@ z_index = 5
 position = Vector2(-12, 2)
 color = Color(0.37, 0.37, 0.37, 0.392157)
 polygon = PackedVector2Array(27, 13, 27, -17, -3, 13)
+
+[node name="HeatedEffect" type="Node2D" parent="."]
+
+[node name="HeatedShape" type="Polygon2D" parent="HeatedEffect"]
+z_index = 5
+position = Vector2(-12, 2)
+polygon = PackedVector2Array(-3, -17, 27, -17, 27, 13, -3, 13)

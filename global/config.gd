@@ -7,6 +7,17 @@ const PLAYER_COLORS: Dictionary = {
 								  }
 # player ship threshold that's rotation only (strafe) before applying force
 const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float = 500
+# player ship laser
+const PLAYER_SHIP_LASER_CHARGE_MAX_SEC: float = 3
+const PLAYER_SHIP_LASER_RECHARGE_RATE: float = 0.5
+const PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC: float = 1
+const PLAYER_SHIP_LASER_FLICKER_RATE: float = 5
+# blocks
+const BLOCK_BREAK_APART_VELOCITY: float = 50
+const BLOCK_HALF_BREAK_APART_VELOCITY: float = BLOCK_BREAK_APART_VELOCITY / 2
+const BLOCK_HEATED_BREAK_SEC: float = 1.0
+const BLOCK_HALF_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 2
+const BLOCK_QUART_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 4
 # player ship threshold of how long to wait between launching projectile explosives
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
 # player ship projectile explosive initial velocity, acceleration, and max velocity
@@ -14,17 +25,17 @@ const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
 const PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 # player initial score
-const PLAYER_INITIAL_SCORE: int      = 5
+const PLAYER_INITIAL_SCORE: int      = 3
 const PLAYER_VICTORY_SCORE: int      = 10
-const PLAYER_COLLECT_GEM_VALUE: int  = 1
+const PLAYER_COLLECT_GEM_VALUE: int  = 2
 const PLAYER_DISABLE_SHIP_VALUE: int = 0
 # Formatting template for player input
 const player_input_mapping_format: Dictionary = {
-											 "left": "p%d_left",
-											 "right": "p%d_right",
-											 "up": "p%d_up",
-											 "down": "p%d_down",
-											 "action_a": "p%d_action_a",
-										 }
-
-
+													"left": "p%d_left",
+													"right": "p%d_right",
+													"up": "p%d_up",
+													"down": "p%d_down",
+													"action_a": "p%d_action_a",
+													"action_b": "p%d_action_b",
+													"start": "p%d_start",
+												}

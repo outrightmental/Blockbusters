@@ -2,7 +2,7 @@ class_name Home
 extends Node2D
 
 # Constants
-const COLOR_ALPHA_RATIO: float = 0.3
+const COLOR_ALPHA_RATIO: float = 0.6
 
 
 # Player number to identify the home
@@ -19,10 +19,10 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Gem:
 		Game.player_did_collect_gem.emit(player_num)
-		body.queue_free()
 		Game.gems_free -= 1
 		Game.gems_collected += 1
 		Game.gem_count_updated.emit()
+		body.do_shatter()
 	pass
 
 
@@ -31,7 +31,7 @@ func _set_colors() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$CircleLight.material.set_shader_parameter("color", Util.color_at_alpha_ratio(Config.PLAYER_COLORS[player_num][0], COLOR_ALPHA_RATIO))
 	else:
-		print("No colors found for player_num: ", player_num)
+		printerr("No colors found for player_num: ", player_num)
 	pass
 
 
