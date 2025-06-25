@@ -18,7 +18,7 @@ func _ready() -> void:
 
 
 ## Creates a sound effect at a specific location if the limit has not been reached. Pass [param location] for the global position of the audio effect, and [param type] for the SoundEffectSetting to be queued.
-func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOUND_EFFECT_TYPE) -> void:
+func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOUND_EFFECT_TYPE) -> AudioStreamPlayer2D:
 	if sound_effect_dict.has(type):
 		var sound_effect: SoundEffectSetting = sound_effect_dict[type]
 		if sound_effect.has_open_limit():
@@ -33,8 +33,10 @@ func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOU
 			new_2D_audio.finished.connect(sound_effect.on_audio_finished)
 			new_2D_audio.finished.connect(new_2D_audio.queue_free)
 			new_2D_audio.play()
+			return new_2D_audio
 	else:
 		push_error("Audio Manager failed to find setting for type ", type)
+	return null
 
 
 ## Creates a sound effect if the limit has not been reached. Pass [param type] for the SoundEffectSetting to be queued.

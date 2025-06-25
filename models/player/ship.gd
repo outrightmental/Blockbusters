@@ -23,10 +23,18 @@ const dir_vectors := {
 						 "up": Vector2(0, -1),
 						 "down": Vector2(0, 1),
 					 }
+enum ShipMovementState {
+	ACCELERATE,
+	DRIFT,
+	NONE,
+}
 # keep track of the time when the input direction was pressed
 var input_direction_start_ticks_msec: float = 0.0
 # whether the input direction is pressed
 var input_direction_pressed: bool = false
+# keep track of ship movement state and associated sounds
+var movement_state: ShipMovementState = ShipMovementState.NONE
+var movement_sound: AudioStreamPlayer2D = null
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
@@ -83,7 +91,7 @@ func _ready() -> void:
 		if InputMap.has_action(action_name):
 			input_mapping[key] = action_name
 		else:
-			printerr("Input action not found: ", action_name)
+			push_error("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
@@ -105,7 +113,7 @@ func _set_colors(sv_ratio: float) -> void:
 		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], sv_ratio)
 		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], sv_ratio)
 	else:
-		printerr("No colors found for player_num: ", player_num)
+		push_error("No colors found for player_num: ", player_num)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -130,6 +138,9 @@ func _process(delta: float) -> void:
 
 	# Update the heated state
 	_update_heat(delta)
+	
+	# Update the movement state audio
+	_update_movement_audio_position()
 
 
 # Process input for the ship (if not disabled)
@@ -155,6 +166,7 @@ func _process_input(delta: float) -> void:
 	# Reset input pressed state if no keys are pressed		
 	if input_vector == Vector2.ZERO:
 		input_direction_pressed = false
+		_update_movement_state(ShipMovementState.NONE)
 	else:
 		# If the input vector is not zero, set the pressed state and start time
 		if not input_direction_pressed:
@@ -164,8 +176,10 @@ func _process_input(delta: float) -> void:
 		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Config.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
 			target_rotation = input_vector.angle()
+			_update_movement_state(ShipMovementState.DRIFT)
 		else:
 			target_rotation = linear_velocity.angle()
+			_update_movement_state(ShipMovementState.ACCELERATE)
 
 	# Apply force in the direction of the input vector
 	apply_impulse(input_vector * FORCE_AMOUNT * delta)
@@ -251,6 +265,31 @@ func _update_heated_effect() -> void:
 		heated_effect.modulate.a = clamp(heated_sec / HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
+
+
+func _update_movement_state( state: ShipMovementState) -> void:
+	if movement_state == state:
+		return
+	movement_state = state
+	if movement_sound:
+		movement_sound.stop()
+		movement_sound = null
+	if state == ShipMovementState.ACCELERATE:
+		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2)
+	elif state == ShipMovementState.DRIFT:
+		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2)
+	else:
+		return
+	movement_sound.set_volume_db(AudioManager.get_volume_db(SoundEffectSetting.SOUND_EFFECT_TYPE.MOVEMENT))
+	movement_sound.set_pitch_scale(AudioManager.get_pitch_scale(SoundEffectSetting.SOUND_EFFECT_TYPE.MOVEMENT))
+	movement_sound.play()
+	_update_movement_audio_position()
+
+	
+func _update_movement_audio_position() -> void:
+	if movement_sound == null:
+		return
+	movement_sound.set_global_position(global_position)
 
 
 # Called when the ship is instantiated
