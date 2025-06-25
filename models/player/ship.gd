@@ -205,6 +205,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.linear_velocity = linear_velocity + rotation_vector * Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FIRE)
 	# Emit a signal to notify that the projectile explosive was launched
 	Game.player_did_launch_projectile.emit(player_num)
 

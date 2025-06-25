@@ -1,6 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://dr3o8o314dpy"]
+[gd_scene load_steps=5 format=3 uid="uid://dr3o8o314dpy"]
 
 [ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
+[ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
+[ext_resource type="AudioStream" uid="uid://bsovfnatgsuio" path="res://assets/sound/projectile_fire.mp3" id="3_hjth8"]
+
+[sub_resource type="Resource" id="Resource_hd106"]
+script = ExtResource("2_tnf83")
+limit = 5
+type = 9
+sound_effect = ExtResource("3_hjth8")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [node name="AudioManager" type="Node2D"]
 script = ExtResource("1_siwhy")
+sound_effects = Array[ExtResource("2_tnf83")]([SubResource("Resource_hd106")])
