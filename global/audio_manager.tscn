@@ -122,19 +122,19 @@ pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
-[sub_resource type="Resource" id="Resource_i1tjf"]
+[sub_resource type="Resource" id="Resource_58qv2"]
 script = ExtResource("2_tnf83")
 limit = 5
-sound_effect = ExtResource("13_2g12x")
+sound_effect = ExtResource("3_hjth8")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
-[sub_resource type="Resource" id="Resource_58qv2"]
+[sub_resource type="Resource" id="Resource_i1tjf"]
 script = ExtResource("2_tnf83")
 limit = 5
-sound_effect = ExtResource("3_hjth8")
+sound_effect = ExtResource("13_2g12x")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
