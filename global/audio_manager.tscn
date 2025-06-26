@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://dr3o8o314dpy"]
+[gd_scene load_steps=43 format=3 uid="uid://dr3o8o314dpy"]
 
 [ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
 [ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
@@ -14,6 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://2imihwkp7ciu" path="res://assets/sound/projectile_fail.mp3" id="11_o35lh"]
 [ext_resource type="AudioStream" uid="uid://bn8ken7o0sxvq" path="res://assets/sound/projectile_impact.mp3" id="13_2g12x"]
 [ext_resource type="AudioStream" uid="uid://cpo8rkd1talhg" path="res://assets/sound/ship_accelerates_1.mp3" id="14_b8dee"]
+[ext_resource type="AudioStream" uid="uid://b66qp0out4rkh" path="res://assets/sound/ship_accelerates_2.mp3" id="15_i1tjf"]
 [ext_resource type="AudioStream" uid="uid://qtjh4n1ip1j4" path="res://assets/sound/ship_collides_with_block.mp3" id="16_58qv2"]
 [ext_resource type="AudioStream" uid="uid://biahve13hdese" path="res://assets/sound/ship_collides_with_block_2.mp3" id="17_4tvw6"]
 [ext_resource type="AudioStream" uid="uid://bakaktjjxr3m4" path="res://assets/sound/ship_drifts_1.mp3" id="18_xhpsb"]
@@ -22,181 +23,37 @@
 [ext_resource type="AudioStream" uid="uid://eyj808jsmdop" path="res://assets/sound/laser_activate.mp3" id="21_c0cvf"]
 [ext_resource type="AudioStream" uid="uid://vdxabm6cr1yl" path="res://assets/sound/laser_impact_block_heat_up.mp3" id="22_c3wau"]
 
-[sub_resource type="Resource" id="Resource_8vkod"]
+[sub_resource type="Resource" id="Resource_tnf83"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 0
 sound_effect = ExtResource("3_t5ogi")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
-[sub_resource type="Resource" id="Resource_6nmt5"]
+[sub_resource type="Resource" id="Resource_hjth8"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 1
 sound_effect = ExtResource("4_6qx0k")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
-[sub_resource type="Resource" id="Resource_cji8m"]
+[sub_resource type="Resource" id="Resource_c0cvf"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 2
 sound_effect = ExtResource("5_c0cvf")
 volume = -10.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
-[sub_resource type="Resource" id="Resource_kg12j"]
+[sub_resource type="Resource" id="Resource_c3wau"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 3
-sound_effect = ExtResource("6_c3wau")
-volume = -25.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_clr00"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 4
-sound_effect = ExtResource("7_jxqnp")
-volume = -25.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_e1l55"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 5
-sound_effect = ExtResource("8_w8cx2")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_ypvv3"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 6
-sound_effect = ExtResource("9_8iyg1")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_umsmm"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 7
-sound_effect = ExtResource("10_52ggv")
-volume = -25.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_dw7xo"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 8
-sound_effect = ExtResource("11_o35lh")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_61tem"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 9
-sound_effect = ExtResource("3_hjth8")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_crge0"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 10
-sound_effect = ExtResource("13_2g12x")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_ba12c"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 11
-sound_effect = ExtResource("14_b8dee")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_opv48"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 12
-sound_effect = ExtResource("13_2g12x")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_mvp2l"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 13
-sound_effect = ExtResource("16_58qv2")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_7ctm0"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 14
-sound_effect = ExtResource("17_4tvw6")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_rko57"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 15
-sound_effect = ExtResource("18_xhpsb")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_g00k3"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 16
-sound_effect = ExtResource("19_liee5")
-volume = 0.0
-pitch_scale = 1.0
-pitch_randomness = 0.0
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
-
-[sub_resource type="Resource" id="Resource_df8vg"]
-script = ExtResource("2_tnf83")
-limit = 5
-type = 17
-sound_effect = ExtResource("20_ixdlm")
+sound_effect = ExtResource("21_c0cvf")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
@@ -205,8 +62,7 @@ metadata/_custom_type_script = "uid://clyakcye1nc2n"
 [sub_resource type="Resource" id="Resource_jxqnp"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 3
-sound_effect = ExtResource("21_c0cvf")
+sound_effect = ExtResource("22_c3wau")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
@@ -215,8 +71,133 @@ metadata/_custom_type_script = "uid://clyakcye1nc2n"
 [sub_resource type="Resource" id="Resource_w8cx2"]
 script = ExtResource("2_tnf83")
 limit = 5
-type = 4
-sound_effect = ExtResource("22_c3wau")
+sound_effect = ExtResource("6_c3wau")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_8iyg1"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("7_jxqnp")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_52ggv"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("8_w8cx2")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_o35lh"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("9_8iyg1")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_2g12x"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("10_52ggv")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_b8dee"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("11_o35lh")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_i1tjf"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("13_2g12x")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_58qv2"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_hjth8")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_4tvw6"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("14_b8dee")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_xhpsb"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("15_i1tjf")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_liee5"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("16_58qv2")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_ixdlm"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("17_4tvw6")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_8vkod"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("18_xhpsb")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_6nmt5"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("19_liee5")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_cji8m"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("20_ixdlm")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
@@ -224,4 +205,25 @@ metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [node name="AudioManager" type="Node2D"]
 script = ExtResource("1_siwhy")
-sound_effects = Array[ExtResource("2_tnf83")]([SubResource("Resource_8vkod"), SubResource("Resource_6nmt5"), SubResource("Resource_cji8m"), SubResource("Resource_kg12j"), SubResource("Resource_clr00"), SubResource("Resource_e1l55"), SubResource("Resource_ypvv3"), SubResource("Resource_umsmm"), SubResource("Resource_dw7xo"), SubResource("Resource_61tem"), SubResource("Resource_crge0"), SubResource("Resource_ba12c"), SubResource("Resource_opv48"), SubResource("Resource_mvp2l"), SubResource("Resource_7ctm0"), SubResource("Resource_rko57"), SubResource("Resource_g00k3"), SubResource("Resource_df8vg"), SubResource("Resource_jxqnp"), SubResource("Resource_w8cx2")])
+sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
+0: SubResource("Resource_tnf83"),
+1: SubResource("Resource_hjth8"),
+2: SubResource("Resource_c0cvf"),
+3: SubResource("Resource_c3wau"),
+4: SubResource("Resource_jxqnp"),
+5: SubResource("Resource_w8cx2"),
+6: SubResource("Resource_8iyg1"),
+7: SubResource("Resource_52ggv"),
+8: SubResource("Resource_o35lh"),
+9: SubResource("Resource_2g12x"),
+10: SubResource("Resource_b8dee"),
+11: SubResource("Resource_58qv2"),
+12: SubResource("Resource_i1tjf"),
+13: SubResource("Resource_4tvw6"),
+14: SubResource("Resource_xhpsb"),
+15: SubResource("Resource_liee5"),
+16: SubResource("Resource_ixdlm"),
+17: SubResource("Resource_8vkod"),
+18: SubResource("Resource_6nmt5"),
+19: SubResource("Resource_cji8m")
+})

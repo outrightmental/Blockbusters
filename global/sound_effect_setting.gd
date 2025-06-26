@@ -26,7 +26,6 @@ enum SOUND_EFFECT_TYPE {
 	SHIP_IS_DISABLED,
 }
 @export_range(0, 10) var limit: int = 5 ## Maximum number of this SoundEffectSetting to play simultaneously before culled.
-@export var type: SOUND_EFFECT_TYPE ## The unique sound effect in the [enum SOUND_EFFECT_TYPE] to associate with this effect. Each SoundEffectSetting resource should have it's own unique [enum SOUND_EFFECT_TYPE] setting.
 @export var sound_effect: AudioStreamMP3 ## The [AudioStreamMP3] audio resource to play.
 
 @export_range(-40.0, 20.0, 1.0 ) var volume: float = 0 ## The volume of the [member sound_effect].
