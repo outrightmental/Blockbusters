@@ -233,7 +233,7 @@ func _update_laser(delta: float) -> void:
 		laser.set_position(position)
 		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
-		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
+		# todo AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
@@ -276,13 +276,11 @@ func _update_movement_state( state: ShipMovementState) -> void:
 #	if movement_state == state:
 #		return
 #	movement_state = state
-#	if movement_sound:
-#		movement_sound.stop()
-#		movement_sound = null
+#	AudioManager.stop_2d_audio(movement_audio_key)
 #	if state == ShipMovementState.ACCELERATE:
-#		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2)
+#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
 #	elif state == ShipMovementState.DRIFT:
-#		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2)
+#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
 #	else:
 #		return
 #	_update_movement_audio_position()

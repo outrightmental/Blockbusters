@@ -60,7 +60,7 @@ func stop_2d_audio(key: String = "") -> void:
 	if playing_2d_audios.has(key):
 		var audio_player: AudioStreamPlayer2D = playing_2d_audios[key]
 		audio_player.stop()
-		audio_player.queue_free()
+		audio_player.finished.emit()
 		playing_2d_audios.erase(key)
 	else:
 		push_error("Audio Manager failed to find audio with key ", key)
