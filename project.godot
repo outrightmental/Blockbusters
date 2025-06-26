@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 Config="*res://global/config.gd"
 Game="*res://global/game.gd"
 Util="*res://global/util.gd"
+AudioManager="*res://global/audio_manager.tscn"
 
 [display]
 

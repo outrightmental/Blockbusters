@@ -1,0 +1,229 @@
+[gd_scene load_steps=43 format=3 uid="uid://dr3o8o314dpy"]
+
+[ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
+[ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
+[ext_resource type="AudioStream" uid="uid://bsovfnatgsuio" path="res://assets/sound/projectile_fire.mp3" id="3_hjth8"]
+[ext_resource type="AudioStream" uid="uid://blasyx3lo1lh2" path="res://assets/sound/block_collides_with_block.mp3" id="3_t5ogi"]
+[ext_resource type="AudioStream" uid="uid://3y3810puu1el" path="res://assets/sound/block_collides_with_block_2.mp3" id="4_6qx0k"]
+[ext_resource type="AudioStream" uid="uid://2nxoqyw5ipjk" path="res://assets/sound/game_start.mp3" id="5_c0cvf"]
+[ext_resource type="AudioStream" uid="uid://b01mbuvfpl6xx" path="res://assets/sound/player_1_ready.mp3" id="6_c3wau"]
+[ext_resource type="AudioStream" uid="uid://bxaqf4r6f52m0" path="res://assets/sound/player_2_ready.mp3" id="7_jxqnp"]
+[ext_resource type="AudioStream" uid="uid://n6wxk7gqjvmc" path="res://assets/sound/player_collects_gem.mp3" id="8_w8cx2"]
+[ext_resource type="AudioStream" uid="uid://jeumfbxc4yt" path="res://assets/sound/player_collects_gem_double.mp3" id="9_8iyg1"]
+[ext_resource type="AudioStream" uid="uid://dorsx66tkdefw" path="res://assets/sound/player_unready.mp3" id="10_52ggv"]
+[ext_resource type="AudioStream" uid="uid://2imihwkp7ciu" path="res://assets/sound/projectile_fail.mp3" id="11_o35lh"]
+[ext_resource type="AudioStream" uid="uid://bn8ken7o0sxvq" path="res://assets/sound/projectile_impact.mp3" id="13_2g12x"]
+[ext_resource type="AudioStream" uid="uid://cpo8rkd1talhg" path="res://assets/sound/ship_accelerates_1.mp3" id="14_b8dee"]
+[ext_resource type="AudioStream" uid="uid://b66qp0out4rkh" path="res://assets/sound/ship_accelerates_2.mp3" id="15_i1tjf"]
+[ext_resource type="AudioStream" uid="uid://qtjh4n1ip1j4" path="res://assets/sound/ship_collides_with_block.mp3" id="16_58qv2"]
+[ext_resource type="AudioStream" uid="uid://biahve13hdese" path="res://assets/sound/ship_collides_with_block_2.mp3" id="17_4tvw6"]
+[ext_resource type="AudioStream" uid="uid://bakaktjjxr3m4" path="res://assets/sound/ship_drifts_1.mp3" id="18_xhpsb"]
+[ext_resource type="AudioStream" uid="uid://c3l16lu0l81hq" path="res://assets/sound/ship_drifts_2.mp3" id="19_liee5"]
+[ext_resource type="AudioStream" uid="uid://cx0v13pop3iw2" path="res://assets/sound/ship_is_disabled.mp3" id="20_ixdlm"]
+[ext_resource type="AudioStream" uid="uid://eyj808jsmdop" path="res://assets/sound/laser_activate.mp3" id="21_c0cvf"]
+[ext_resource type="AudioStream" uid="uid://vdxabm6cr1yl" path="res://assets/sound/laser_impact_block_heat_up.mp3" id="22_c3wau"]
+
+[sub_resource type="Resource" id="Resource_tnf83"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_t5ogi")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_hjth8"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("4_6qx0k")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_c0cvf"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("5_c0cvf")
+volume = -10.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_c3wau"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("21_c0cvf")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_jxqnp"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("22_c3wau")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_w8cx2"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("6_c3wau")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_8iyg1"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("7_jxqnp")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_52ggv"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("8_w8cx2")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_o35lh"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("9_8iyg1")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_2g12x"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("10_52ggv")
+volume = -25.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_b8dee"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("11_o35lh")
+volume = -20.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_i1tjf"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("13_2g12x")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_58qv2"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_hjth8")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_4tvw6"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("14_b8dee")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_xhpsb"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("15_i1tjf")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_liee5"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("16_58qv2")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_ixdlm"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("17_4tvw6")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_8vkod"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("18_xhpsb")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_6nmt5"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("19_liee5")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_cji8m"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("20_ixdlm")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[node name="AudioManager" type="Node2D"]
+script = ExtResource("1_siwhy")
+sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
+0: SubResource("Resource_tnf83"),
+1: SubResource("Resource_hjth8"),
+2: SubResource("Resource_c0cvf"),
+3: SubResource("Resource_c3wau"),
+4: SubResource("Resource_jxqnp"),
+5: SubResource("Resource_w8cx2"),
+6: SubResource("Resource_8iyg1"),
+7: SubResource("Resource_52ggv"),
+8: SubResource("Resource_o35lh"),
+9: SubResource("Resource_2g12x"),
+10: SubResource("Resource_b8dee"),
+11: SubResource("Resource_58qv2"),
+12: SubResource("Resource_i1tjf"),
+13: SubResource("Resource_4tvw6"),
+14: SubResource("Resource_xhpsb"),
+15: SubResource("Resource_liee5"),
+16: SubResource("Resource_ixdlm"),
+17: SubResource("Resource_8vkod"),
+18: SubResource("Resource_6nmt5"),
+19: SubResource("Resource_cji8m")
+})

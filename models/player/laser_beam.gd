@@ -23,7 +23,7 @@ func _ready() -> void:
 		line.default_color = Config.PLAYER_COLORS[player_num][0]
 		sparks.color = Config.PLAYER_COLORS[player_num][0]
 	else:
-		printerr("No texture found for player_num: ", player_num)
+		push_error("No texture found for player_num: ", player_num)
 
 
 func _process(delta: float) -> void:

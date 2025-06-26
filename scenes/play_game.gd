@@ -64,6 +64,7 @@ func _ready() -> void:
 	await _delay(GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(GAME_START_COUNTER_DELAY)
+	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_hide_modal()
 	pass
 
@@ -246,7 +247,7 @@ func _spawn_gem() -> void:
 			random_block.add_gem()
 			Game.spawned_gem.emit()
 	else:
-		printerr("No blocks found to spawn a gem in!")
+		push_error("No blocks found to spawn a gem in!")
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here

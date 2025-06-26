@@ -15,7 +15,7 @@ func _ready() -> void:
 		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
-		printerr("No texture found for player_num: ", player_num)
+		push_error("No texture found for player_num: ", player_num)
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
@@ -39,6 +39,7 @@ func _on_body_entered(_other: Node) -> void:
 	explosion.position = position
 	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 	# Remove this projectile from the stage
 	self.queue_free()
 	pass
