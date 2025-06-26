@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://dr3o8o314dpy"]
+[gd_scene load_steps=42 format=3 uid="uid://dr3o8o314dpy"]
 
 [ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
 [ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
@@ -14,12 +14,13 @@
 [ext_resource type="AudioStream" uid="uid://2imihwkp7ciu" path="res://assets/sound/projectile_fail.mp3" id="11_o35lh"]
 [ext_resource type="AudioStream" uid="uid://bn8ken7o0sxvq" path="res://assets/sound/projectile_impact.mp3" id="13_2g12x"]
 [ext_resource type="AudioStream" uid="uid://cpo8rkd1talhg" path="res://assets/sound/ship_accelerates_1.mp3" id="14_b8dee"]
-[ext_resource type="AudioStream" uid="uid://b66qp0out4rkh" path="res://assets/sound/ship_accelerates_2.mp3" id="15_i1tjf"]
 [ext_resource type="AudioStream" uid="uid://qtjh4n1ip1j4" path="res://assets/sound/ship_collides_with_block.mp3" id="16_58qv2"]
 [ext_resource type="AudioStream" uid="uid://biahve13hdese" path="res://assets/sound/ship_collides_with_block_2.mp3" id="17_4tvw6"]
 [ext_resource type="AudioStream" uid="uid://bakaktjjxr3m4" path="res://assets/sound/ship_drifts_1.mp3" id="18_xhpsb"]
 [ext_resource type="AudioStream" uid="uid://c3l16lu0l81hq" path="res://assets/sound/ship_drifts_2.mp3" id="19_liee5"]
 [ext_resource type="AudioStream" uid="uid://cx0v13pop3iw2" path="res://assets/sound/ship_is_disabled.mp3" id="20_ixdlm"]
+[ext_resource type="AudioStream" uid="uid://eyj808jsmdop" path="res://assets/sound/laser_activate.mp3" id="21_c0cvf"]
+[ext_resource type="AudioStream" uid="uid://vdxabm6cr1yl" path="res://assets/sound/laser_impact_block_heat_up.mp3" id="22_c3wau"]
 
 [sub_resource type="Resource" id="Resource_8vkod"]
 script = ExtResource("2_tnf83")
@@ -145,7 +146,7 @@ metadata/_custom_type_script = "uid://clyakcye1nc2n"
 script = ExtResource("2_tnf83")
 limit = 5
 type = 12
-sound_effect = ExtResource("15_i1tjf")
+sound_effect = ExtResource("13_2g12x")
 volume = 0.0
 pitch_scale = 1.0
 pitch_randomness = 0.0
@@ -201,6 +202,26 @@ pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
+[sub_resource type="Resource" id="Resource_jxqnp"]
+script = ExtResource("2_tnf83")
+limit = 5
+type = 3
+sound_effect = ExtResource("21_c0cvf")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_w8cx2"]
+script = ExtResource("2_tnf83")
+limit = 5
+type = 4
+sound_effect = ExtResource("22_c3wau")
+volume = 0.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
 [node name="AudioManager" type="Node2D"]
 script = ExtResource("1_siwhy")
-sound_effects = Array[ExtResource("2_tnf83")]([SubResource("Resource_8vkod"), SubResource("Resource_6nmt5"), SubResource("Resource_cji8m"), SubResource("Resource_kg12j"), SubResource("Resource_clr00"), SubResource("Resource_e1l55"), SubResource("Resource_ypvv3"), SubResource("Resource_umsmm"), SubResource("Resource_dw7xo"), SubResource("Resource_61tem"), SubResource("Resource_crge0"), SubResource("Resource_ba12c"), SubResource("Resource_opv48"), SubResource("Resource_mvp2l"), SubResource("Resource_7ctm0"), SubResource("Resource_rko57"), SubResource("Resource_g00k3"), SubResource("Resource_df8vg")])
+sound_effects = Array[ExtResource("2_tnf83")]([SubResource("Resource_8vkod"), SubResource("Resource_6nmt5"), SubResource("Resource_cji8m"), SubResource("Resource_kg12j"), SubResource("Resource_clr00"), SubResource("Resource_e1l55"), SubResource("Resource_ypvv3"), SubResource("Resource_umsmm"), SubResource("Resource_dw7xo"), SubResource("Resource_61tem"), SubResource("Resource_crge0"), SubResource("Resource_ba12c"), SubResource("Resource_opv48"), SubResource("Resource_mvp2l"), SubResource("Resource_7ctm0"), SubResource("Resource_rko57"), SubResource("Resource_g00k3"), SubResource("Resource_df8vg"), SubResource("Resource_jxqnp"), SubResource("Resource_w8cx2")])

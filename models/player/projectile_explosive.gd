@@ -39,6 +39,7 @@ func _on_body_entered(_other: Node) -> void:
 	explosion.position = position
 	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 	# Remove this projectile from the stage
 	self.queue_free()
 	pass

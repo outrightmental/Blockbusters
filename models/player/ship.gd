@@ -34,7 +34,7 @@ var input_direction_start_ticks_msec: float = 0.0
 var input_direction_pressed: bool = false
 # keep track of ship movement state and associated sounds
 var movement_state: ShipMovementState = ShipMovementState.NONE
-# todo some kind of var movement_sound: AudioStreamPlayer2D = null
+@onready var movement_audio_key: String = "movement_%d" % player_num
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
@@ -46,6 +46,7 @@ var disabled_at_ticks_msec: float = 0.0
 # variables for laser tool
 var laser: LaserBeam        = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+@onready var laser_audio_key: String = "laser_%d" % player_num
 # variable for being heated
 var heated_sec: float   = 0.0
 var heated_delta: float = 0.0
@@ -195,13 +196,14 @@ func _do_activate_laser() -> void:
 	laser.player_num = player_num
 	laser.source_ship = self
 	self.get_parent().call_deferred("add_child", laser)
-
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
 
 func _do_deactivate_laser() -> void:
 	if laser:
 		laser.call_deferred("queue_free")
 		laser = null
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+		AudioManager.stop_2d_audio(laser_audio_key)
 
 
 # Called when the player wants to activate the secondary tool
@@ -209,6 +211,7 @@ func _do_launch_projectile_explosive() -> void:
 	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	if not Game.player_can_launch_projectile(player_num):
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FAIL)
 		return
 	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
@@ -230,6 +233,7 @@ func _update_laser(delta: float) -> void:
 		laser.set_position(position)
 		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
+		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
