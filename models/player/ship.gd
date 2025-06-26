@@ -34,7 +34,7 @@ var input_direction_start_ticks_msec: float = 0.0
 var input_direction_pressed: bool = false
 # keep track of ship movement state and associated sounds
 var movement_state: ShipMovementState = ShipMovementState.NONE
-var movement_sound: AudioStreamPlayer2D = null
+# todo some kind of var movement_sound: AudioStreamPlayer2D = null
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
@@ -268,25 +268,27 @@ func _update_heated_effect() -> void:
 
 
 func _update_movement_state( state: ShipMovementState) -> void:
-	if movement_state == state:
-		return
-	movement_state = state
-	if movement_sound:
-		movement_sound.stop()
-		movement_sound = null
-	if state == ShipMovementState.ACCELERATE:
-		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2)
-	elif state == ShipMovementState.DRIFT:
-		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2)
-	else:
-		return
-	_update_movement_audio_position()
+	pass # todo implement movement state audio
+#	if movement_state == state:
+#		return
+#	movement_state = state
+#	if movement_sound:
+#		movement_sound.stop()
+#		movement_sound = null
+#	if state == ShipMovementState.ACCELERATE:
+#		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2)
+#	elif state == ShipMovementState.DRIFT:
+#		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2)
+#	else:
+#		return
+#	_update_movement_audio_position()
 
 	
 func _update_movement_audio_position() -> void:
-	if movement_sound == null:
-		return
-	movement_sound.set_global_position(global_position)
+	pass # todo implement movement state audio
+#	if movement_sound == null:
+#		return
+#	movement_sound.set_global_position(global_position)
 
 
 # Called when the ship is instantiated

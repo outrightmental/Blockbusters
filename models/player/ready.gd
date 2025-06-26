@@ -48,6 +48,10 @@ func _set_color() -> void:
 func _toggle_ready() -> void:
 	is_ready = !is_ready
 	_set_color()
+	if is_ready:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_1_READY if player_num == 0 else SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_2_READY)
+	else:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_UNREADY)
 	Game.player_ready_updated.emit()
 	pass
 
