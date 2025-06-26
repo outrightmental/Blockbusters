@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/block/block_quart_shatter.tscn" id="2_6lx3s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c86j1"]
-radius = 200.0
+radius = 300.0
 
 [node name="Explosion" type="Node2D"]
 script = ExtResource("1_n4u1h")
