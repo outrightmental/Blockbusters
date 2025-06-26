@@ -280,9 +280,6 @@ func _update_movement_state( state: ShipMovementState) -> void:
 		movement_sound = AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2)
 	else:
 		return
-	movement_sound.set_volume_db(AudioManager.get_volume_db(SoundEffectSetting.SOUND_EFFECT_TYPE.MOVEMENT))
-	movement_sound.set_pitch_scale(AudioManager.get_pitch_scale(SoundEffectSetting.SOUND_EFFECT_TYPE.MOVEMENT))
-	movement_sound.play()
 	_update_movement_audio_position()
 
 	
