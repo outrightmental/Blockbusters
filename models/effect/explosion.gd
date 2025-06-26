@@ -38,13 +38,14 @@ func _ready() -> void:
 # Called when another body enters the collission area
 func _on_body_entered(body: Node2D) -> void:
 	var diff: Vector2 = (body.position - position)
-	body.apply_central_force(diff.normalized() * EXPLOSION_FORCE * (1 - diff.length() / explosive_radius))
+	var distance: float = diff.length()
+	body.apply_central_force(diff.normalized() * EXPLOSION_FORCE * (1 - distance / explosive_radius))
 	if body is Block or body is BlockHalf or body is BlockQuart:
-		if diff.length() <= critical_radius_block_shatter:
+		if distance <= critical_radius_block_shatter:
 			body.do_shatter()
-		elif diff.length() <= critical_radius_block_break:
+		elif distance <= critical_radius_block_break:
 			body.do_break(self)
-	if body is Ship and diff.length() <= critical_radius_ship:
+	if body is Ship and distance <= critical_radius_ship:
 		body.do_disable(player_num)
 
 

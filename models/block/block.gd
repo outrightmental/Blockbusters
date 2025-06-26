@@ -21,9 +21,9 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
-
 # Preloaded scene for the block quarter shattering
 const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -63,10 +63,8 @@ func do_break(broken_by: Node = null) -> void:
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
-	_do_release_gem()
 	# Gem
-	if gem:
-		_do_release_gem()
+	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
 	# Avoid collisions with the block that broke this half
@@ -83,19 +81,18 @@ func do_break(broken_by: Node = null) -> void:
 
 # Shatter into dust
 func do_shatter() -> void:
-	# Gem
-	if gem:
-		_do_release_gem()
+	_do_release_gem()
 	# Shatter effect
 	var shatter: Node = shatter_scene.instantiate()
 	shatter.position = position
 	self.get_parent().call_deferred("add_child", shatter)
 	self.call_deferred("queue_free")
-	
-	
-func _do_release_gem() -> void:
+
+
+func _do_release_gem() -> bool:
 	# Gem
 	if gem:
+		gem.queue_free()
 		gem = gem_scene.instantiate()
 		gem.position = position
 		gem.linear_velocity = linear_velocity
@@ -104,6 +101,8 @@ func _do_release_gem() -> void:
 		Game.gems_in_blocks -= 1
 		Game.gems_free += 1
 		Game.gem_count_updated.emit()
+		return true
+	return false
 
 
 # Add heat
