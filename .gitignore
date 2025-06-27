@@ -4,3 +4,6 @@
 
 # Ignore Jetbrains IDE project files
 .idea/
+
+# MacOS files
+.DS_Store
