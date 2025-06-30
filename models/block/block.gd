@@ -72,8 +72,8 @@ func do_break(broken_by: Node = null) -> void:
 		half1.dont_break_by.append(broken_by)
 		half2.dont_break_by.append(broken_by)
 	# Add the halves to the scene
-	self.get_parent().add_child(half1)
-	self.get_parent().add_child(half2)
+	self.get_parent().call_deferred("add_child", half2)
+	self.get_parent().call_deferred("add_child", half1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass

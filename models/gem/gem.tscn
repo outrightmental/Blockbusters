@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bypqllqv0b2d7"]
+[gd_scene load_steps=3 format=3 uid="uid://bypqllqv0b2d7"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://dw07h3wvuqaey" path="res://models/gem/gem.tres" id="1_376g1"]
 [ext_resource type="Script" uid="uid://c4htf546sf332" path="res://models/gem/gem.gd" id="1_ud73v"]
 
 [node name="Gem" type="RigidBody2D"]
+mass = 3.0
+physics_material_override = ExtResource("1_376g1")
 gravity_scale = 0.0
 contact_monitor = true
 max_contacts_reported = 1
