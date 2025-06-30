@@ -10,18 +10,23 @@ physics_material_override = ExtResource("1_v3q3k")
 gravity_scale = 0.0
 script = ExtResource("1_xws08")
 
-[node name="TriangleDown" type="Polygon2D" parent="."]
+[node name="TriangleUp" type="Polygon2D" parent="."]
 z_index = 5
-position = Vector2(-12, 2)
+position = Vector2(2, 12)
+rotation = -1.57079
 color = Color(0.37, 0.37, 0.37, 0.392157)
-polygon = PackedVector2Array(27, 13, 12, -2, -3, 13)
+polygon = PackedVector2Array(-3, -13, -0.900949, -14.9009, 10.1493, -3.85065, 10, 0, -0.835779, 10.8358, -3, 9)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(0, 0, 15, 15, -15, 15)
+position = Vector2(-0.0990448, 0.149379)
+rotation = -1.57079
+polygon = PackedVector2Array(-15, -11, -13, -13, -2, -2, -2, 2, -13, 13, -15, 11)
 
 [node name="HeatedEffect" type="Node2D" parent="."]
+position = Vector2(-0.0990448, 0.149379)
+rotation = -1.57079
 
 [node name="HeatedShape" type="Polygon2D" parent="HeatedEffect"]
 z_index = 5
 position = Vector2(-12, 2)
-polygon = PackedVector2Array(12, -2, 27, 13, -3, 13)
+polygon = PackedVector2Array(-1, -12, 8, -3, 8, -1, -1, 8)

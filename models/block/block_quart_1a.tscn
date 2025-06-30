@@ -14,14 +14,14 @@ script = ExtResource("1_msu1f")
 z_index = 5
 position = Vector2(-12, 2)
 color = Color(0.47, 0.47, 0.47, 0.392157)
-polygon = PackedVector2Array(-3, -17, 12, -2, -3, 13)
+polygon = PackedVector2Array(-3, -13, -0.900949, -14.9009, 10.1493, -3.85065, 10, 0, -0.835779, 10.8358, -3, 9)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-15, -15, 0, 0, -15, 15)
+polygon = PackedVector2Array(-15, -11, -13, -13, -2, -2, -2, 2, -13, 13, -15, 11)
 
 [node name="HeatedEffect" type="Node2D" parent="."]
 
 [node name="HeatedShape" type="Polygon2D" parent="HeatedEffect"]
 z_index = 5
 position = Vector2(-12, 2)
-polygon = PackedVector2Array(-3, -17, 12, -2, -3, 13)
+polygon = PackedVector2Array(-1, -12, 8, -3, 8, -1, -1, 8)
