@@ -1,10 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cnlnuranut6p6"]
+[gd_scene load_steps=3 format=3 uid="uid://cnlnuranut6p6"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_khit3"]
 [ext_resource type="Script" uid="uid://dg02gqyv1rfn4" path="res://models/block/block_half.gd" id="1_o1kjt"]
 
 [node name="Block" type="RigidBody2D"]
 collision_layer = 3
 collision_mask = 3
+mass = 2.0
+physics_material_override = ExtResource("1_khit3")
 gravity_scale = 0.0
 script = ExtResource("1_o1kjt")
 

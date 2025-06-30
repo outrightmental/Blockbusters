@@ -2,7 +2,7 @@ class_name ProjectileExplosive
 extends Collidable
 
 # Preloaded scene for the explosion effect
-const explosion_scene: PackedScene = preload("res://models/effect/explosion.tscn")
+const explosion_scene: PackedScene = preload("res://models/explosive/explosion.tscn")
 
 # Player number to identify the projectile
 @export var player_num: int = 0
@@ -48,9 +48,9 @@ func _on_body_entered(_other: Node) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
-	if (get_linear_velocity().length() < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
+	if (get_linear_velocity().length() < Config.PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship
-		apply_central_force(Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
+		apply_central_force(Config.PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
 	pass
 
 

@@ -15,8 +15,8 @@ size = Vector2(16, 576)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8rcy1"]
 shader = ExtResource("6_xugar")
-shader_parameter/line_color = Color(0.48, 0.48, 0.48, 1)
-shader_parameter/frequency = 5.0
+shader_parameter/line_color = Color(0.18, 0.18, 0.18, 1)
+shader_parameter/frequency = 2.0
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_xugar"]
 

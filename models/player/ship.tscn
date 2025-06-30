@@ -1,10 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://bg7dqpj5bjc6x"]
+[gd_scene load_steps=3 format=3 uid="uid://bg7dqpj5bjc6x"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://fdnyxkdqbh7y" path="res://models/player/ship.tres" id="1_3lbs4"]
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/player/ship.gd" id="1_yja86"]
 
 [node name="Ship" type="RigidBody2D"]
 position = Vector2(3, 0)
+collision_priority = 2.0
+mass = 10.0
+physics_material_override = ExtResource("1_3lbs4")
 gravity_scale = 0.0
+continuous_cd = 2
 script = ExtResource("1_yja86")
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
@@ -21,6 +26,7 @@ polygon = PackedVector2Array(0, -2, 29, -2, -5, 15)
 polygon = PackedVector2Array(-17, -17, 17, 0, -17, 17, -12, 0)
 
 [node name="HeatedEffect" type="Node2D" parent="."]
+visible = false
 
 [node name="HeatedSHape" type="Polygon2D" parent="HeatedEffect"]
 position = Vector2(-12, 2)

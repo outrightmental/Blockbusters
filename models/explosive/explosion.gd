@@ -5,12 +5,6 @@ extends Node2D
 
 # Player number to identify the projectile
 @export var player_num: int = 0
-# Constants
-const LIFETIME_MSEC: int                         = 1000
-const CRITICAL_RADIUS_BLOCK_BREAK_RATIO: float   = 0.6
-const CRITICAL_RADIUS_BLOCK_SHATTER_RATIO: float = 0.3
-const CRITICAL_RADIUS_SHIP_RATIO: float          = 0.4
-const EXPLOSION_FORCE: int                       = 8000
 # Variables
 var instantiated_at_ticks_msec: float    = 0.0
 var explosive_radius: float              = 0.0
@@ -23,9 +17,9 @@ var critical_radius_block_shatter: float = 0.0
 func _ready() -> void:
 	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = collision_shape.shape.radius
-	critical_radius_ship = explosive_radius * CRITICAL_RADIUS_SHIP_RATIO
-	critical_radius_block_break = explosive_radius * CRITICAL_RADIUS_BLOCK_BREAK_RATIO
-	critical_radius_block_shatter = explosive_radius * CRITICAL_RADIUS_BLOCK_SHATTER_RATIO
+	critical_radius_ship = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO
+	critical_radius_block_break = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_RATIO
+	critical_radius_block_shatter = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_BLOCK_SHATTER_RATIO
 	$ExplosiveArea2D.body_entered.connect(_on_body_entered)
 	# Set the explosion color based on player_num
 	if player_num in Config.PLAYER_COLORS:
@@ -39,7 +33,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	var diff: Vector2 = (body.position - position)
 	var distance: float = diff.length()
-	body.apply_central_force(diff.normalized() * EXPLOSION_FORCE * (1 - distance / explosive_radius))
+	body.apply_central_force(diff.normalized() * Config.EXPLOSION_FORCE * (1 - distance / explosive_radius))
 	if body is Block or body is BlockHalf or body is BlockQuart:
 		if distance <= critical_radius_block_shatter:
 			body.do_shatter()
@@ -51,5 +45,5 @@ func _on_body_entered(body: Node2D) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if Time.get_ticks_msec() - instantiated_at_ticks_msec > LIFETIME_MSEC:
+	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Config.EXPLOSION_LIFETIME_MSEC:
 		queue_free()
