@@ -37,11 +37,13 @@ func do_break(broken_by: Node = null) -> void:
 	quartA.add_collision_exception_with(self)
 	quartA.position = position
 	quartA.linear_velocity = linear_velocity + (Vector2(-Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
+	quartA.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Quarter B
 	var quartB: Node = (quart_scene_1b if half_num == 1 else quart_scene_2b).instantiate()
 	quartB.add_collision_exception_with(self)
 	quartB.position = position
 	quartB.linear_velocity = linear_velocity + (Vector2(0, -Config.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Config.BLOCK_HALF_BREAK_APART_VELOCITY))
+	quartB.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Avoid collisions with the block that broke this half
 	if broken_by:
 		quartA.dont_break_by.append(broken_by)

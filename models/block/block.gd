@@ -61,12 +61,14 @@ func do_break(broken_by: Node = null) -> void:
 	half1.position = position
 	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
+	half1.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
 	half2.add_collision_exception_with(self)
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
+	half2.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Gem
 	if _do_release_gem():
 		gem.add_collision_exception_with(half1)

@@ -26,6 +26,7 @@ const BLOCK_ACTIVATION_HEAT_THRESHOLD: float = 0.5
 const BLOCK_INACTIVE_OPACITY: float = 0.38
 const BLOCK_HALF_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 2
 const BLOCK_QUART_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 4
+const BLOCK_BREAK_HEAT_TRANSFER_RATIO: float = 0.7
 # player ship threshold of how long to wait between launching projectile explosives
 const PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
 # player ship projectile explosive initial velocity, acceleration, and max velocity
