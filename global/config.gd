@@ -22,8 +22,11 @@ const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float = 2.0
 const BLOCK_BREAK_APART_VELOCITY: float = 50
 const BLOCK_HALF_BREAK_APART_VELOCITY: float = BLOCK_BREAK_APART_VELOCITY / 2
 const BLOCK_HEATED_BREAK_SEC: float = 1.0
+const BLOCK_ACTIVATION_HEAT_THRESHOLD: float = 0.5
+const BLOCK_INACTIVE_OPACITY: float = 0.38
 const BLOCK_HALF_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 2
 const BLOCK_QUART_HEATED_BREAK_SEC: float = BLOCK_HEATED_BREAK_SEC / 4
+const BLOCK_BREAK_HEAT_TRANSFER_RATIO: float = 0.7
 # player ship threshold of how long to wait between launching projectile explosives
 const PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float = 500
 # player ship projectile explosive initial velocity, acceleration, and max velocity
@@ -32,8 +35,9 @@ const PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 # pertaining to explosive
 const EXPLOSION_LIFETIME_MSEC: int                         = 1000
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_RATIO: float   = 0.5
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_SHATTER_RATIO: float = 0.4
+const EXPLOSION_HEAT_RADIUS_RATIO: float   = 0.7
+const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_RATIO: float   = 0.4
+const EXPLOSION_CRITICAL_RADIUS_BLOCK_SHATTER_RATIO: float = 0.3
 const EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO: float          = 0.4
 const EXPLOSION_FORCE: int                       = 8000
 # player initial score
