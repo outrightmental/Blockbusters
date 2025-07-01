@@ -243,7 +243,7 @@ func _update_laser(delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
 		if heated_sec >= Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:

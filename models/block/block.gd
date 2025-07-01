@@ -21,6 +21,8 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
+# Cache reference to Shapes
+@onready var shapes: Node2D = $Shapes
 # Preloaded scene for the block quarter shattering
 const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
 
@@ -31,6 +33,8 @@ func _ready() -> void:
 	add_to_group(Game.BLOCK_GROUP)
 	# Update the heated effect visibility
 	_update_heated_effect()
+	freeze = true
+	shapes.modulate.a = Config.BLOCK_INACTIVE_OPACITY
 	pass
 
 
@@ -109,6 +113,13 @@ func _do_release_gem() -> bool:
 func do_heat(delta: float) -> void:
 	heated_delta += delta
 	pass
+	
+	
+# Activate
+func do_activate() -> void:
+	freeze = false
+	shapes.modulate.a = 1
+	pass	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -121,11 +132,13 @@ func _process(_delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
 		if heated_sec >= Config.BLOCK_HEATED_BREAK_SEC:
 			call_deferred("do_break")
+		if freeze and heated_sec >= Config.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+			call_deferred("do_activate")
 	elif heated_sec > 0:
 		heated_sec -= delta
 		if heated_sec < 0:
