@@ -11,13 +11,14 @@ const quart_scene_2b: PackedScene = preload("res://models/block/block_quart_2b.t
 # variable for being heated
 var heated_sec: float   = 0.0
 var heated_delta: float = 0.0
-
-
+# Preloaded scene for the block quarter shattering
+const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
 # List of nodes that should not break this
 @export var dont_break_by: Array[Node] = []
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -35,12 +36,14 @@ func do_break(broken_by: Node = null) -> void:
 	var quartA: Node = (quart_scene_1a if half_num == 1 else quart_scene_2a).instantiate()
 	quartA.add_collision_exception_with(self)
 	quartA.position = position
-	quartA.linear_velocity = linear_velocity + (Vector2(-Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Config.BLOCK_HALF_BREAK_APART_VELOCITY,0))
+	quartA.linear_velocity = linear_velocity + (Vector2(-Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
+	quartA.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Quarter B
 	var quartB: Node = (quart_scene_1b if half_num == 1 else quart_scene_2b).instantiate()
 	quartB.add_collision_exception_with(self)
 	quartB.position = position
 	quartB.linear_velocity = linear_velocity + (Vector2(0, -Config.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Config.BLOCK_HALF_BREAK_APART_VELOCITY))
+	quartB.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Avoid collisions with the block that broke this half
 	if broken_by:
 		quartA.dont_break_by.append(broken_by)
@@ -52,7 +55,15 @@ func do_break(broken_by: Node = null) -> void:
 	self.call_deferred("queue_free")
 	pass
 
-	
+
+# Shatter into dust
+func do_shatter() -> void:
+	var shatter: Node = shatter_scene.instantiate()
+	shatter.position = position
+	self.get_parent().call_deferred("add_child", shatter)
+	self.call_deferred("queue_free")
+
+
 # Add heat
 func do_heat(delta: float) -> void:
 	heated_delta += delta
@@ -69,7 +80,7 @@ func _process(_delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
 		if heated_sec >= Config.BLOCK_HALF_HEATED_BREAK_SEC:

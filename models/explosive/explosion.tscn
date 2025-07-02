@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://qwnrjhu6nfwd"]
 
-[ext_resource type="Script" uid="uid://b26w87siicyi1" path="res://models/effect/explosion.gd" id="1_n4u1h"]
+[ext_resource type="Script" uid="uid://b26w87siicyi1" path="res://models/explosive/explosion.gd" id="1_n4u1h"]
 [ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/block/block_quart_shatter.tscn" id="2_6lx3s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c86j1"]
-radius = 200.0
+radius = 300.0
 
 [node name="Explosion" type="Node2D"]
 script = ExtResource("1_n4u1h")

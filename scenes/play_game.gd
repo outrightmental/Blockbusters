@@ -13,9 +13,10 @@ enum GameResult {
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are32x32 pixels, so the grid is 1024x576 pixels
-const GRID_COLS: int                  = 32
+const GRID_COLS: int                  = 28
 const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
-const GRID_ROWS: int                  = 18
+const GRID_MARGIN: int                = 2
+const GRID_ROWS: int                  = 14
 const HOME_CLEARANCE_RADIUS: int      = 130
 const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
 const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
@@ -36,6 +37,10 @@ const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
 const score_scene: PackedScene = preload('res://models/player/score.tscn')
 const block_scene: PackedScene = preload('res://models/block/block.tscn')
+# References to player homes
+@onready var player_home_1 = $HomePlayer1
+@onready var player_home_2 = $HomePlayer2
+
 # Variables
 var grid: Dictionary            = {}
 var mesh: Dictionary            = {}
@@ -60,11 +65,11 @@ func _ready() -> void:
 	Game.gem_count_updated.connect(_reset_gem_spawn_time)
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	# Countdown and then start the game
+	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(GAME_START_COUNTER_DELAY)
-	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_hide_modal()
 	pass
 
@@ -129,21 +134,6 @@ func _check_for_game_over() -> void:
 		_game_over(GameResult.DRAW)
 		return
 
-	var total_gems_available            = Game.gems_in_blocks + Game.gems_free
-	var min_points_required_for_victory = min(Config.PLAYER_VICTORY_SCORE - Game.score[1], Config.PLAYER_VICTORY_SCORE - Game.score[2])
-	if block_count == 0 and total_gems_available * Config.PLAYER_COLLECT_GEM_VALUE < min_points_required_for_victory:
-		_game_over(GameResult.DRAW)
-
-	# the rest of these conditions test whether either player can win based on their ability to launch projectiles or
-	# projectiles are in play or there are enough free gems for either player to win
-	if Game.projectiles_in_play > 0:
-		return
-	if Game.player_can_launch_projectile(1) or Game.player_can_launch_projectile(2):
-		return
-	if Game.gems_free * Config.PLAYER_COLLECT_GEM_VALUE >= min_points_required_for_victory:
-		return
-	_game_over(GameResult.DRAW)
-
 
 # Reset the gem spawn time 
 func _reset_gem_spawn_time() -> void:
@@ -160,11 +150,9 @@ func _reset_gem_spawn_time() -> void:
 func _create_board() -> void:
 	var block_attempt_count: int = 0
 	_generate_mesh(floor(randf() * SEED_MAX))
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var player_ship_1: Ship    = _spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
-	var player_ship_2: Ship    = _spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
-	var player_home_1: Home            = _spawn_player_home(1, Vector2(viewport_size.x * 0.5, 0), 0)
-	var player_home_2: Home            = _spawn_player_home(2, Vector2(viewport_size.x * 0.5, viewport_size.y), PI)
+	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
+	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
+	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
 	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position, player_ship_1.position, player_ship_2.position]
 
 	while block_count < BLOCK_COUNT_MAX and block_attempt_count < BLOCK_ATTEMPT_MAX:
@@ -204,7 +192,7 @@ func _is_clear_of(distance: int, source: Vector2, target: Vector2) -> bool:
 
 func _grid_position(x: int, y: int) -> Vector2:
 	# Convert grid coordinates to world coordinates
-	return Vector2( BLOCK_CENTER + x * BLOCK_SIZE, BLOCK_CENTER + y * BLOCK_SIZE)
+	return Vector2( GRID_MARGIN * BLOCK_SIZE + BLOCK_CENTER + x * BLOCK_SIZE, GRID_MARGIN * BLOCK_SIZE +BLOCK_CENTER + y * BLOCK_SIZE)
 
 
 # Spawn a player ship at the given position and rotation
@@ -215,17 +203,6 @@ func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float
 	ship.rotation = start_rotation
 	self.add_child(ship)
 	return ship
-
-
-# Spawn a player home at the given position and rotation
-func _spawn_player_home(num: int, start_position: Vector2, start_rotation: float) -> Home:
-	var home: Home = home_scene.instantiate()
-	home.position = start_position
-	home.player_num = num
-	home.rotation = start_rotation
-	home.z_index = -1
-	self.add_child(home)
-	return home
 
 
 func _spawn_block(start_position: Vector2) -> Node:

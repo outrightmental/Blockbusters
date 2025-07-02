@@ -24,11 +24,14 @@ func do_break(broken_by: Node = null) -> void:
 	# Don't break by objects in the dont_break_by list
 	if broken_by in dont_break_by:
 		return
+	do_shatter()
+	
+# Shatter into dust
+func do_shatter() -> void:
 	var shatter: Node = shatter_scene.instantiate()
 	shatter.position = position
 	self.get_parent().call_deferred("add_child", shatter)
 	self.call_deferred("queue_free")
-	pass
 
 
 # Add heat
@@ -47,7 +50,7 @@ func _process(_delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
 		if heated_sec >= Config.BLOCK_HALF_HEATED_BREAK_SEC:

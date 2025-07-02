@@ -1,13 +1,6 @@
 class_name Ship
 extends Collidable
 
-const FORCE_AMOUNT: int                    = 500
-const LINEAR_DAMP: float                   = 0.9
-const TARGET_ROTATION_FACTOR: float        = 10
-const DISABLED_MSEC: int                   = 3000
-const DISABLED_SV_RATIO: float             = 0.38
-const HEATED_DISABLED_THRESHOLD_SEC: float = 2.0
-
 var input_mapping: Dictionary = {
 									"left": "ui_left",
 									"right": "ui_right",
@@ -51,7 +44,7 @@ var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 var heated_sec: float   = 0.0
 var heated_delta: float = 0.0
 # Preload the projectile explosive scene
-const projectile_explosive_scene: PackedScene = preload("res://models/player/projectile_explosive.tscn")
+const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
 const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 # Cache reference to heated effect
@@ -65,7 +58,7 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
 	disabled_at_ticks_msec = Time.get_ticks_msec()
-	_set_colors(DISABLED_SV_RATIO)
+	_set_colors(Config.PLAYER_SHIP_DISABLED_SV_RATIO)
 	Game.player_did_harm.emit(responsible_player_num)
 
 
@@ -85,7 +78,7 @@ func do_heat(delta: float) -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_linear_damp(LINEAR_DAMP)
+	set_linear_damp(Config.PLAYER_SHIP_LINEAR_DAMP)
 	# Set up input mapping for player
 	for key in input_mapping.keys():
 		var action_name: String = Config.player_input_mapping_format[key] % player_num
@@ -120,7 +113,7 @@ func _set_colors(sv_ratio: float) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if is_disabled:
-		if Time.get_ticks_msec() - disabled_at_ticks_msec > DISABLED_MSEC:
+		if Time.get_ticks_msec() - disabled_at_ticks_msec > Config.PLAYER_SHIP_DISABLED_MSEC:
 			do_enable()
 	else:
 		_process_input(delta)
@@ -131,7 +124,7 @@ func _process(delta: float) -> void:
 		angle_diff -= TAU
 	elif angle_diff < -PI:
 		angle_diff += TAU
-	actual_rotation += angle_diff * TARGET_ROTATION_FACTOR * delta
+	actual_rotation += angle_diff * Config.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
 
 	# Update the laser charge
@@ -183,7 +176,7 @@ func _process_input(delta: float) -> void:
 			_update_movement_state(ShipMovementState.ACCELERATE)
 
 	# Apply force in the direction of the input vector
-	apply_impulse(input_vector * FORCE_AMOUNT * delta)
+	apply_impulse(input_vector * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
 
 
 # Called when the player wants to activate the primary tool
@@ -208,7 +201,7 @@ func _do_deactivate_laser() -> void:
 
 # Called when the player wants to activate the secondary tool
 func _do_launch_projectile_explosive() -> void:
-	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
+	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	if not Game.player_can_launch_projectile(player_num):
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FAIL)
@@ -219,7 +212,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
 	projectile.rotation = actual_rotation
-	projectile.linear_velocity = linear_velocity + rotation_vector * Config.PLAYER_SHIP_PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
+	projectile.linear_velocity = linear_velocity + rotation_vector * Config.PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FIRE)
@@ -250,10 +243,10 @@ func _update_laser(delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
-		if heated_sec >= HEATED_DISABLED_THRESHOLD_SEC:
+		if heated_sec >= Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
 			do_disable(player_num)
 	elif heated_sec > 0:
 		heated_sec -= delta
@@ -266,7 +259,7 @@ func _update_heat(delta: float) -> void:
 func _update_heated_effect() -> void:
 	if heated_sec > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heated_sec / HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heated_sec / Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 

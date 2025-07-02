@@ -19,6 +19,7 @@ func _ready() -> void:
 func _set_color() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$Text.set("theme_override_colors/default_color",Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], COLOR_SV_RATIO))
+		$Underline.set("color",Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], COLOR_SV_RATIO))
 	else:
 		push_error("No colors found for player_num: ", player_num)
 	pass
