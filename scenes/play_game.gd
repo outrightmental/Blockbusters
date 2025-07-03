@@ -159,7 +159,7 @@ func _on_player_collect_gem(_player_num: int) -> void:
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively
 # Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 #
-# Before generating the board grid, generate a Gradient Mesh -- see https://github.com/outrightmental/Blasteroids/issues/30
+# Before generating the board grid, generate a Gradient Mesh -- see https://github.com/outrightmental/Blockbusters/issues/30
 # A block will only be placed if that block is above GRID_MESH_THRESHOLD in the gradient mesh
 #
 func _create_board() -> void:
