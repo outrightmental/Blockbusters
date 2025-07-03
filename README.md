@@ -8,8 +8,12 @@ Fast-paced arcade competition built for the [Noisebridge 1v1 Coffee Table](https
 
 ## Continuous Integration
 
-When a tag is pushed to the repository, [this workflow](.github/workflows/release.yml) builds the release and attaches it to the tag.
+When a tag is pushed to the repository, [this workflow](.github/workflows/release.yml) will automatically build the release artifacts and attach them to the tag.
 
-E.g.
-1. Create the tag `v2.1` -- GitHub Actions then [builds and publishes](https://github.com/outrightmental/Blockbusters/actions/runs/16060150225) an artifact attached to the tag.
-2. Create [release v2.1](https://github.com/outrightmental/Blockbusters/releases/tag/v2.1) from the tag -- the artifact appears attached to the release
+To build & publish a release:
+1. [Create a tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) at the commit you want to release. The tag should be the version name you want to give the release, e.g. `v2.1`
+2. [Create a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) based on the tag
+
+E.g. to create **v2.1** we
+1. Created the tag `v2.1` and pushed it to the repostory -- GitHub Actions then automatically [built and published](https://github.com/outrightmental/Blockbusters/actions/runs/16060245132) the artifacts and attached them to that tag.
+2. Created [release v2.1](https://github.com/outrightmental/Blockbusters/releases/tag/v2.1) from tag `v2.1` -- The artifacts then appeared attached to that release
