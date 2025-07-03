@@ -1,8 +1,6 @@
-[![Distro](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml/badge.svg)](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml)<br/>
-<br/>
-<a href="https://github.com/outrightmental/Blockbusters?tab=Unlicense-1-ov-file"><img src="https://img.shields.io/badge/license-Unlicense-999999" alt="Unlicense" /></a>
-<a href="https://discord.com/channels/720514857094348840/740983213756907561">![Discord](https://img.shields.io/badge/Discord-5865f2)</a>
+[![Distro](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml/badge.svg)](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml)
 <a href="https://godotengine.org/">![Godot](https://img.shields.io/badge/Godot-4.4.1%2B-478cbf)</a>
+<a href="https://discord.com/channels/720514857094348840/740983213756907561">![Discord](https://img.shields.io/badge/Comms-Discord-5865f2)</a>
 
 # Blockbusters
 
