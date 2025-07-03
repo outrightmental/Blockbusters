@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bv31253cb6v3s" path="res://models/block/block_quart.gd" id="1_cpdsg"]
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_gmt1v"]
 
-[node name="Block" type="RigidBody2D"]
+[node name="Block3" type="RigidBody2D"]
 rotation = -1.57079
 collision_layer = 3
 collision_mask = 3
@@ -11,7 +11,7 @@ physics_material_override = ExtResource("1_gmt1v")
 gravity_scale = 0.0
 script = ExtResource("1_cpdsg")
 
-[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-11, -11, -9, -13, 9, -13, 11, -11, 1, -1, -1, -1)
 
 [node name="HeatedEffect" type="Node2D" parent="."]

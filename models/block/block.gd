@@ -30,6 +30,10 @@ func _ready() -> void:
 	add_to_group(Game.BLOCK_GROUP)
 	# Update the heated effect visibility
 	_update_heated_effect()
+	# On collision
+	body_entered.connect(_on_body_entered)
+	set_contact_monitor(true)
+	# Start inactive
 	freeze = true
 	shapes.modulate.a = Config.BLOCK_INACTIVE_OPACITY
 	pass
@@ -121,13 +125,20 @@ func _do_release_gem() -> bool:
 func do_heat(delta: float) -> void:
 	heated_delta += delta
 	pass
-	
-	
+
+
 # Activate
 func do_activate() -> void:
 	freeze = false
 	shapes.modulate.a = 1
-	pass	
+	pass
+
+
+# Play a sound when colliding with another object
+func _on_body_entered(_body: Node) -> void:
+	print ("Block collided with: ", _body.name)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_COLLIDES_WITH_BLOCK)
+	pass
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
