@@ -1,6 +1,6 @@
 # Blockbusters
 
-Fast-paced 1v1 arcade competition built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
+Fast-paced arcade competition built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
 
 ## Game Design
 
