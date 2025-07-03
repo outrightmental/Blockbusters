@@ -38,6 +38,18 @@ func _ready() -> void:
 	pass
 
 
+# When a gem can be added
+func can_add_gem() -> bool:
+	# If the block already has a gem, return false
+	if gem:
+		return false
+	# If the block is unfrozen, return false
+	if not freeze:
+		return false
+	# otherwise, return true
+	return true
+
+
 # Adds a gem inside this block
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true

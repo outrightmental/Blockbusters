@@ -13,25 +13,18 @@ enum GameResult {
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are32x32 pixels, so the grid is 1024x576 pixels
+const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
+const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
+const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
+const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
+const BLOCK_SIZE: int                 = 32
 const GRID_COLS: int                  = 28
 const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
 const GRID_MARGIN: int                = 2
+const GRID_MESH_THRESHOLD: float      = 0.62
 const GRID_ROWS: int                  = 14
 const HOME_CLEARANCE_RADIUS: int      = 130
-const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
-const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
-const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
-const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
-const BLOCK_SIZE: int                 = 32
-const GEM_SPAWN_INITIAL_MSEC: int     = 1000 # initial delay before spawning the first gem
-const GEM_SPAWN_EVERY_MSEC: int       = 5000 # delay between spawning gems
-const GEM_MAX_COUNT: int              = 5
-const GAME_START_COUNTER_DELAY: float = 1.0
-const GAME_DRAW_MODAL_DELAY: float    = 1.0 # in a draw situation, wait before showing the game over modal
-const GAME_OVER_DELAY: float          = 2.5
-const GAME_CHECK_OVER_DELAY: float    = 0.3 # tiny delay before checking game over state, to allow projectiles to finish
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
-const GRID_MESH_THRESHOLD: float      = 0.62
 # Preloaded Scenes
 const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
@@ -47,6 +40,7 @@ var mesh: Dictionary            = {}
 var block_count: int            = 0
 var started_at_ticks_msec: int  = 0
 var spawn_next_gem_at_msec: int = 0
+var is_game_over: bool          = false
 # Signal that never happens, in case the tree is unloaded
 signal never
 
@@ -54,7 +48,7 @@ signal never
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
-	spawn_next_gem_at_msec = started_at_ticks_msec + GEM_SPAWN_INITIAL_MSEC
+	spawn_next_gem_at_msec = started_at_ticks_msec + Config.GEM_SPAWN_INITIAL_MSEC
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
@@ -67,9 +61,9 @@ func _ready() -> void:
 	# Countdown and then start the game
 	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_START_COUNTER_DELAY)
+	await _delay(Config.GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_START_COUNTER_DELAY)
+	await _delay(Config.GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
 
@@ -84,15 +78,18 @@ func _process(_delta: float) -> void:
 
 # Show the game over modal for some time, then go back to main screen
 func _game_over(result: GameResult) -> void:
+	if is_game_over:
+		return
+	is_game_over = true
+	await _delay(Config.GAME_OVER_DELAY_SEC)
 	match result:
 		GameResult.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
 		GameResult.PLAYER_2_WINS:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
 		GameResult.DRAW:
-			await _delay(GAME_DRAW_MODAL_DELAY)
 			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_OVER_DELAY)
+	await _delay(Config.GAME_OVER_SHOW_MODAL_SEC)
 	_hide_modal()
 	_goto_scene('res://scenes/main.tscn')
 	pass
@@ -123,21 +120,20 @@ func _hide_modal() -> void:
 # points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
 # fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
 func _check_for_game_over() -> void:
-	await _delay(GAME_CHECK_OVER_DELAY)
-	if Game.score[1] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[1] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.PLAYER_1_WINS)
 		return
-	if Game.score[2] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[2] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.PLAYER_2_WINS)
 		return
-	if Game.score[1] == Config.PLAYER_VICTORY_SCORE and Game.score[2] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[1] == Config.PLAYER_SCORE_VICTORY and Game.score[2] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.DRAW)
 		return
 
 
 # Reset the gem spawn time 
 func _reset_gem_spawn_time() -> void:
-	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
+	spawn_next_gem_at_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_EVERY_MSEC
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
@@ -213,14 +209,14 @@ func _spawn_block(start_position: Vector2) -> Node:
 
 
 func _spawn_gem() -> void:
-	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= GEM_MAX_COUNT:
+	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Config.GEM_MAX_COUNT:
 		return
-	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
+	spawn_next_gem_at_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_EVERY_MSEC
 	var blocks: Array[Node] = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
 	if blocks.size() > 0:
 		# Randomly select a block to spawn a gem in
 		var random_block: Node = blocks[randi() % blocks.size()]
-		if random_block is Block and random_block.has_gem == false:
+		if random_block is Block and random_block.can_add_gem():
 			random_block.add_gem()
 			Game.spawned_gem.emit()
 	else:

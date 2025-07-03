@@ -55,26 +55,26 @@ func _do_reset_game() -> void:
 	gems_in_blocks = 0
 	gems_collected = 0
 	gem_count_updated.emit()
-	score[1] = Config.PLAYER_INITIAL_SCORE
-	score[2] = Config.PLAYER_INITIAL_SCORE
+	score[1] = Config.PLAYER_SCORE_INITIAL
+	score[2] = Config.PLAYER_SCORE_INITIAL
 	print("[GAME] Resetting game score to: ", score)
 	score_updated.emit()
 
 
 func _on_player_launch_projectile(player_num: int) -> void:
-	score[player_num] = clamp(score[player_num] - 1, 0, Config.PLAYER_VICTORY_SCORE)
+	score[player_num] = clamp(score[player_num] - 1, 0, Config.PLAYER_SCORE_VICTORY)
 	print("[GAME] Player %d launched projectile, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
 
 func _on_player_collect_gem(player_num: int) -> void:
-	score[player_num] = clamp(score[player_num] + Config.PLAYER_COLLECT_GEM_VALUE, 0, Config.PLAYER_VICTORY_SCORE)
+	score[player_num] = clamp(score[player_num] + Config.PLAYER_SCORE_COLLECT_GEM_VALUE, 0, Config.PLAYER_SCORE_VICTORY)
 	print("[GAME] Player %d collected gem, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
 
 func _on_player_harm(player_num: int) -> void:
-	score[player_num] = clamp(score[player_num] - Config.PLAYER_DISABLE_SHIP_VALUE, 0, Config.PLAYER_VICTORY_SCORE)
+	score[player_num] = clamp(score[player_num] - Config.PLAYER_SCORE_DISABLE_SHIP_VALUE, 0, Config.PLAYER_SCORE_VICTORY)
 	print("[GAME] Player %d did harm, new score: %d" % [player_num, score[player_num]])
 	score_updated.emit()
 
