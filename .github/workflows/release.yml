@@ -49,14 +49,14 @@ jobs:
       - name: Compress Windows Build to Zip
         run: |
           cd build/windows
-          zip -r ../Blockbusters-${GITHUB_REF##*/}-Windows.zip . 
+          zip -r ../Blockbusters-${{ github.ref }}-Windows.zip . 
 
       - name: Upload Artifact to Release Tag
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/Blockbusters-${GITHUB_REF##*/}-Windows.zip
-          asset_name: Blockbusters-${GITHUB_REF##*/}-Windows.zip
+          file: build/Blockbusters-${{ github.ref }}-Windows.zip
+          asset_name: Blockbusters-${{ github.ref }}-Windows.zip
           tag: ${{ github.ref }}
           overwrite: true
 
