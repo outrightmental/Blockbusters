@@ -24,12 +24,9 @@ jobs:
         with:
           lfs: true
 
-      - name: Set up tag name
-        id: vars
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
       - name: Update config/version in project.godot
         run: |
+          TAG_NAME=${{ github.ref_name }}
           sed -i 's/^config\/version=.*/config\/version="${TAG_NAME}"/' project.godot
 
       - name: Setup
@@ -49,14 +46,14 @@ jobs:
       - name: Compress Windows Build to Zip
         run: |
           cd build/windows
-          zip -r ../Blockbusters-${{ github.ref }}-Windows.zip . 
+          zip -r ../Blockbusters-${{ github.ref_name }}-Windows.zip . 
 
       - name: Upload Artifact to Release Tag
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/Blockbusters-${{ github.ref }}-Windows.zip
-          asset_name: Blockbusters-${{ github.ref }}-Windows.zip
+          file: build/Blockbusters-${{ github.ref_name }}-Windows.zip
+          asset_name: Blockbusters-${{ github.ref_name }}-Windows.zip
           tag: ${{ github.ref }}
           overwrite: true
 
