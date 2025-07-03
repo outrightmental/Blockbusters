@@ -28,5 +28,5 @@ polygon = PackedVector2Array(23, -11, 24, -10, 24, 7, 21, 10, 4, 10, 3, 9)
 [node name="Triangle" type="Polygon2D" parent="Shapes"]
 z_index = 5
 position = Vector2(-12, 2)
-color = Color(0.8, 0.8, 0.8, 0.392157)
+color = Color(0.8, 0.8, 0.8, 0.627451)
 polygon = PackedVector2Array(25, 8, 25, -11, 23, -13, 1, 9, 3, 11, 22, 11)

@@ -1,9 +1,6 @@
 class_name Block
 extends Collidable
 
-# Constants
-const INNER_GEM_ALPHA: float = 0.6
-const LINEAR_DAMP: float     = 0.1
 # Variables
 var gem: Node = null
 # variable for being heated
@@ -29,7 +26,7 @@ const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatt
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_linear_damp(LINEAR_DAMP)
+	set_linear_damp(Config.BLOCK_LINEAR_DAMP)
 	add_to_group(Game.BLOCK_GROUP)
 	# Update the heated effect visibility
 	_update_heated_effect()
@@ -57,7 +54,7 @@ func add_gem() -> void:
 	gem.position = Vector2(0, 0)
 	gem.add_collision_exception_with(self)
 	gem.freeze = true
-	gem.modulate.a = INNER_GEM_ALPHA
+	gem.modulate.a = Config.BLOCK_INNER_GEM_ALPHA
 	self.add_child(gem)
 	pass
 
@@ -116,9 +113,6 @@ func _do_release_gem() -> bool:
 		gem.linear_velocity = linear_velocity
 		gem.add_collision_exception_with(self)
 		self.get_parent().call_deferred("add_child", gem)
-		Game.gems_in_blocks -= 1
-		Game.gems_free += 1
-		Game.gem_count_updated.emit()
 		return true
 	return false
 
