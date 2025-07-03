@@ -45,12 +45,20 @@ jobs:
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
           godot --headless --verbose --export-release "Windows Desktop" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
-          
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+
+      - name: Compress Windows Build to Zip
+        run: |
+          cd build/windows
+          zip -r ../Blockbusters-${GITHUB_REF##*/}-Windows.zip . 
+
+      - name: Upload Artifact to Release Tag
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: windows
-          path: build/windows
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/Blockbusters-${GITHUB_REF##*/}-Windows.zip
+          asset_name: Blockbusters-${GITHUB_REF##*/}-Windows.zip
+          tag: ${{ github.ref }}
+          overwrite: true
 
 #  export-linux:
 #    name: Linux Export
