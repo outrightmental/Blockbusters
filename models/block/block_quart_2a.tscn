@@ -3,14 +3,14 @@
 [ext_resource type="Script" uid="uid://bv31253cb6v3s" path="res://models/block/block_quart.gd" id="1_8iaos"]
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_o6omu"]
 
-[node name="Block" type="RigidBody2D"]
+[node name="Block5" type="RigidBody2D"]
 collision_layer = 3
 collision_mask = 3
 physics_material_override = ExtResource("1_o6omu")
 gravity_scale = 0.0
 script = ExtResource("1_8iaos")
 
-[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 rotation = 1.57079
 polygon = PackedVector2Array(-11, -11, -9, -13, 9, -13, 11, -11, 1, -1, -1, -1)
 

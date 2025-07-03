@@ -10,7 +10,7 @@ physics_material_override = ExtResource("1_v3q3k")
 gravity_scale = 0.0
 script = ExtResource("1_xws08")
 
-[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 rotation = -3.14159
 polygon = PackedVector2Array(-11, -11, -9, -13, 9, -13, 11, -11, 1, -1, -1, -1)
 
