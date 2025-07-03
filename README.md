@@ -19,5 +19,5 @@ To build & publish a release:
 2. [Create a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) based on the tag
 
 E.g. to build & publish **Release v2.1** we
-1. Created the tag `v2.1` and pushed it to the repository -- GitHub Actions then automatically [built and published](https://github.com/outrightmental/Blockbusters/actions/runs/16060245132) the artifacts and attached them to that tag.
+1. Created the tag `v2.1` and pushed it to the repository -- GitHub Actions then automatically [built and published](https://github.com/outrightmental/Blockbusters/actions/runs/16060630082) the artifacts and attached them to that tag.
 2. Created [release v2.1](https://github.com/outrightmental/Blockbusters/releases/tag/v2.1) from tag `v2.1` -- The artifacts then appeared attached to that release
