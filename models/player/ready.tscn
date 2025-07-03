@@ -15,7 +15,7 @@ offset_right = 212.0
 offset_bottom = 63.0
 theme_override_fonts/normal_font = ExtResource("2_gkuhg")
 theme_override_font_sizes/normal_font_size = 40
-text = "BLASTEROIDS!"
+text = "BLOCKBUSTERS!"
 horizontal_alignment = 1
 
 [node name="InstructionsText" type="RichTextLabel" parent="."]
