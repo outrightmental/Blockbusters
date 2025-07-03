@@ -19,9 +19,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Gem:
 		Game.player_did_collect_gem.emit(player_num)
-		Game.gems_free -= 1
 		Game.gems_collected += 1
-		Game.gem_count_updated.emit()
 		body.do_shatter()
 	pass
 

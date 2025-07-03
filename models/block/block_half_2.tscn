@@ -13,18 +13,20 @@ script = ExtResource("1_04usf")
 metadata/_edit_horizontal_guides_ = [13.0]
 metadata/_edit_vertical_guides_ = [13.0]
 
-[node name="TriangleDown" type="Polygon2D" parent="."]
-z_index = 5
-position = Vector2(-12, 2)
-color = Color(0.37, 0.37, 0.37, 0.392157)
-polygon = PackedVector2Array(27, 10, 27, -11, 24, -14, 0, 10, 3, 13, 23.9019, 13)
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(15, -9, 15, 12, 12, 15, -9, 15, -12, 12, 12, -12)
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(11, -11, 13, -9, 13, 10, 10, 13, -9, 13, -11, 11)
 
 [node name="HeatedEffect" type="Node2D" parent="."]
 
 [node name="HeatedShape" type="Polygon2D" parent="HeatedEffect"]
 z_index = 5
 position = Vector2(-12, 2)
-polygon = PackedVector2Array(25, -10, 25, 9, 23, 11, 4, 11, 3, 10, 23.8027, -10.8027)
+polygon = PackedVector2Array(23, -11, 24, -10, 24, 7, 21, 10, 4, 10, 3, 9)
+
+[node name="Shapes" type="Node2D" parent="."]
+
+[node name="Triangle" type="Polygon2D" parent="Shapes"]
+z_index = 5
+position = Vector2(-12, 2)
+color = Color(0.8, 0.8, 0.8, 0.627451)
+polygon = PackedVector2Array(25, 8, 25, -11, 23, -13, 1, 9, 3, 11, 22, 11)

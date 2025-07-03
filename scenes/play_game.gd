@@ -13,25 +13,18 @@ enum GameResult {
 # Constants
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are32x32 pixels, so the grid is 1024x576 pixels
+const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
+const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
+const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
+const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
+const BLOCK_SIZE: int                 = 32
 const GRID_COLS: int                  = 28
 const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
 const GRID_MARGIN: int                = 2
+const GRID_MESH_THRESHOLD: float      = 0.62
 const GRID_ROWS: int                  = 14
 const HOME_CLEARANCE_RADIUS: int      = 130
-const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
-const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
-const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
-const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
-const BLOCK_SIZE: int                 = 32
-const GEM_SPAWN_INITIAL_MSEC: int     = 1000 # initial delay before spawning the first gem
-const GEM_SPAWN_EVERY_MSEC: int       = 5000 # delay between spawning gems
-const GEM_MAX_COUNT: int              = 5
-const GAME_START_COUNTER_DELAY: float = 1.0
-const GAME_DRAW_MODAL_DELAY: float    = 1.0 # in a draw situation, wait before showing the game over modal
-const GAME_OVER_DELAY: float          = 2.5
-const GAME_CHECK_OVER_DELAY: float    = 0.3 # tiny delay before checking game over state, to allow projectiles to finish
 const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
-const GRID_MESH_THRESHOLD: float      = 0.62
 # Preloaded Scenes
 const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
@@ -42,11 +35,13 @@ const block_scene: PackedScene = preload('res://models/block/block.tscn')
 @onready var player_home_2 = $HomePlayer2
 
 # Variables
-var grid: Dictionary            = {}
-var mesh: Dictionary            = {}
-var block_count: int            = 0
-var started_at_ticks_msec: int  = 0
-var spawn_next_gem_at_msec: int = 0
+var grid: Dictionary                 = {}
+var mesh: Dictionary                 = {}
+var block_count: int                 = 0
+var started_at_ticks_msec: int           = 0
+var spawn_next_gem_at_msec: int          = 0
+var gem_dont_spawn_until_ticks_msec: int = 0
+var is_game_over: bool                   = false
 # Signal that never happens, in case the tree is unloaded
 signal never
 
@@ -54,22 +49,21 @@ signal never
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
-	spawn_next_gem_at_msec = started_at_ticks_msec + GEM_SPAWN_INITIAL_MSEC
+	spawn_next_gem_at_msec = started_at_ticks_msec + Config.GEM_SPAWN_INITIAL_MSEC
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
 	Game.reset_game.emit()
 	# Connect the game over signals after resetting the game
 	Game.score_updated.connect(_check_for_game_over)
-	Game.gem_count_updated.connect(_check_for_game_over)
-	Game.gem_count_updated.connect(_reset_gem_spawn_time)
 	Game.projectile_count_updated.connect(_check_for_game_over)
+	Game.player_did_collect_gem.connect(_on_player_collect_gem)
 	# Countdown and then start the game
 	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_START_COUNTER_DELAY)
+	await _delay(Config.GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_START_COUNTER_DELAY)
+	await _delay(Config.GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
 
@@ -78,21 +72,25 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# Check if it's time to spawn a gem
 	if Time.get_ticks_msec() >= spawn_next_gem_at_msec:
+		spawn_next_gem_at_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_EVERY_MSEC
 		_spawn_gem()
 	pass
 
 
 # Show the game over modal for some time, then go back to main screen
 func _game_over(result: GameResult) -> void:
+	if is_game_over:
+		return
+	is_game_over = true
+	await _delay(Config.GAME_OVER_DELAY_SEC)
 	match result:
 		GameResult.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
 		GameResult.PLAYER_2_WINS:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
 		GameResult.DRAW:
-			await _delay(GAME_DRAW_MODAL_DELAY)
 			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(GAME_OVER_DELAY)
+	await _delay(Config.GAME_OVER_SHOW_MODAL_SEC)
 	_hide_modal()
 	_goto_scene('res://scenes/main.tscn')
 	pass
@@ -123,21 +121,38 @@ func _hide_modal() -> void:
 # points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
 # fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
 func _check_for_game_over() -> void:
-	await _delay(GAME_CHECK_OVER_DELAY)
-	if Game.score[1] == Config.PLAYER_VICTORY_SCORE:
+	if Game.score[1] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.PLAYER_1_WINS)
 		return
-	if Game.score[2] == Config.PLAYER_VICTORY_SCORE:
+	elif Game.score[2] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.PLAYER_2_WINS)
 		return
-	if Game.score[1] == Config.PLAYER_VICTORY_SCORE and Game.score[2] == Config.PLAYER_VICTORY_SCORE:
+	elif Game.score[1] == Config.PLAYER_SCORE_VICTORY and Game.score[2] == Config.PLAYER_SCORE_VICTORY:
 		_game_over(GameResult.DRAW)
 		return
 
+	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
+	var total_gem_candidate_blocks: int = 0
+	var blocks: Array[Node]             = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
+	for block in blocks:
+		if block is Block and block.freeze:
+			total_gem_candidate_blocks += 1
+	if total_gems == 0 and total_gem_candidate_blocks == 0:
+		if Game.score[1]  > Game.score[2]:
+			_game_over(GameResult.PLAYER_1_WINS)
+			return
+		elif Game.score[2] > Game.score[1]:
+			_game_over(GameResult.PLAYER_2_WINS)
+			return
+		else:
+			_game_over(GameResult.DRAW)
+			return
 
-# Reset the gem spawn time 
-func _reset_gem_spawn_time() -> void:
-	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
+
+# Called when a player collects a gem
+func _on_player_collect_gem(_player_num: int) -> void:
+	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
+	print ("[GAME] Player collected a gem, not spawning another until: ", gem_dont_spawn_until_ticks_msec)
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
@@ -213,18 +228,20 @@ func _spawn_block(start_position: Vector2) -> Node:
 
 
 func _spawn_gem() -> void:
-	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= GEM_MAX_COUNT:
+	if gem_dont_spawn_until_ticks_msec > Time.get_ticks_msec():
+		return  # Don't spawn a gem if the last gem was collected too recently
+	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Config.GEM_MAX_COUNT:
 		return
-	spawn_next_gem_at_msec = Time.get_ticks_msec() + GEM_SPAWN_EVERY_MSEC
-	var blocks: Array[Node] = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
-	if blocks.size() > 0:
+	var candidates: Array[Block]
+	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
+		if block.can_add_gem():
+			candidates.append(block)
+	if candidates.size() > 0:
 		# Randomly select a block to spawn a gem in
-		var random_block: Node = blocks[randi() % blocks.size()]
-		if random_block is Block and random_block.has_gem == false:
-			random_block.add_gem()
-			Game.spawned_gem.emit()
+		var random_block: Block = candidates[randi() % candidates.size()]
+		random_block.add_gem()
 	else:
-		push_error("No blocks found to spawn a gem in!")
+		_check_for_game_over()
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
