@@ -12,6 +12,8 @@ Fast-paced arcade competition built for the [Noisebridge 1v1 Coffee Table](https
 
 ## Continuous Integration
 
+Leverages the GitHub marketplace action [godot-ci](https://github.com/marketplace/actions/godot-ci)
+
 When a tag is pushed to the repository, [this workflow](.github/workflows/distro.yml) will automatically build the release artifacts and attach them to the tag.
 
 To build & publish a release:
