@@ -36,8 +36,8 @@ var actual_rotation: float = 0.0
 # keep track of the time when the projectile explosive was last launched
 var projectile_explosive_start_ticks_msec: float = 0.0
 # keep track of whether the ship is disabled, and when
-var is_disabled: bool             = false
-var disabled_at_ticks_msec: float = 0.0
+var is_disabled: bool                = false
+var disabled_until_ticks_msec: float = 0.0
 # variables for laser tool
 var laser: LaserBeam        = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
@@ -58,23 +58,23 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 @export var player_num: int = 0
 
 # Ship has force field to "Hold" objects #21
-@onready var hold_field: Area2D = $HoldField
+@onready var forcefield_area: Area2D = $ForcefieldArea
 
-var holding_bodies: Dictionary[int, Node2D] = {}
+var forcefield_targets: Dictionary[int, Node2D] = {}
 
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
-	disabled_at_ticks_msec = Time.get_ticks_msec()
-	_set_colors(Config.PLAYER_SHIP_DISABLED_SV_RATIO)
+	disabled_until_ticks_msec = Time.get_ticks_msec() + Config.PLAYER_SHIP_DISABLED_SEC * 1000.0
+	_set_colors(Config.PLAYER_SHIP_DISABLED_S_RATIO, Config.PLAYER_SHIP_DISABLED_V_RATIO)
 	Game.player_did_harm.emit(responsible_player_num)
 
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false
-	disabled_at_ticks_msec = 0.0
+	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
 
 
@@ -106,19 +106,25 @@ func _ready() -> void:
 	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
-	# Connect the holding field body entered signal
-	hold_field.body_entered.connect(_on_body_entered)
-	hold_field.body_exited.connect(_on_body_exited)
+	# Connect the forcefield body entered signal
+	forcefield_area.body_entered.connect(_on_body_entered)
+	forcefield_area.body_exited.connect(_on_body_exited)
+	# Set the forcefield color based on player_num
+	if player_num in Config.PLAYER_COLORS:
+		$ForcefieldEffect.color = Config.PLAYER_COLORS[player_num][0]
+	else:
+		push_error("No color found for player ", player_num)
+	$ForcefieldEffect.set_emitting(false)
 
 	# Update the heated effect visibility
 	_update_heated_effect()
 
 
 # Set the colors of the ship based on player_num
-func _set_colors(sv_ratio: float) -> void:
+func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 	if player_num in Config.PLAYER_COLORS:
-		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], sv_ratio)
-		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], sv_ratio)
+		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
+		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
 	else:
 		push_error("No colors found for player_num: ", player_num)
 
@@ -127,7 +133,7 @@ func _set_colors(sv_ratio: float) -> void:
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if is_disabled:
-		if Time.get_ticks_msec() - disabled_at_ticks_msec > Config.PLAYER_SHIP_DISABLED_MSEC:
+		if Time.get_ticks_msec() > disabled_until_ticks_msec:
 			do_enable()
 	else:
 		_input_process(delta)
@@ -146,9 +152,9 @@ func _physics_process(delta: float) -> void:
 
 	# Update the heated state
 	_update_heat(delta)
-	
-	# Apply holding field forces
-	_apply_hold_field_forces(delta)
+
+	# Apply forcefield forces
+	_update_forcefield(delta)
 
 	# Update the movement state audio
 	_update_movement_audio_position()
@@ -273,18 +279,32 @@ func _update_heat(delta: float) -> void:
 		_update_heated_effect()
 
 
-# Apply forces to the bodies in the holding field
-func _apply_hold_field_forces(_delta: float) -> void:
-	for key in holding_bodies.keys():
-		var body: Node2D = holding_bodies[key]
-		# if body is not in the scene tree, remove it from the holding_bodies list
-		if not body or not body.is_inside_tree():
-			holding_bodies.erase(key)
-			continue
-		# get the direction vector from the body to the center of holding_field
-		var direction: Vector2 = (hold_field.global_position - body.global_position).normalized()
-		# apply a force on the body towards the center of holding_field
-		body.apply_central_force(direction * Config.PLAYER_SHIP_HOLDING_FIELD_FORCE * _delta)
+# Apply forces to the bodies in the forcefield
+func _update_forcefield(_delta: float) -> void:
+	var forcefield_target_mass: float = 0
+	if not is_disabled:
+		for key in forcefield_targets.keys():
+			var body: Node2D = forcefield_targets[key]
+			# if body is not in the scene tree, remove it from the forcefield_targets list
+			if not body or not body.is_inside_tree():
+				forcefield_targets.erase(key)
+				continue
+			# get the direction vector from the body to the center of forcefield
+			var direction: Vector2 = (forcefield_area.global_position - body.global_position).normalized()
+			# apply a force on the body towards the center of forcefield
+			body.apply_central_force(direction * Config.PLAYER_SHIP_FORCEFIELD_FORCE * _delta)
+			# accumulate the mass of the bodies in the forcefield
+			if body is RigidBody2D:
+				forcefield_target_mass += body.mass
+	# Update the forcefield effect based on the mass of the ship
+	if forcefield_target_mass > 0:
+		var forcefield_amount = clamp(forcefield_target_mass / Config.PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX, 0.0, 1.0)
+		$ForcefieldEffect.scale_amount_min = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN
+		$ForcefieldEffect.scale_amount_max = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX
+		$ForcefieldEffect.gravity = -Config.PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY * Vector2(cos(rotation), sin(rotation))
+		$ForcefieldEffect.set_emitting(true)
+	else:
+		$ForcefieldEffect.set_emitting(false)
 
 
 # Update the heated effect visibility and intensity
@@ -322,18 +342,22 @@ func _update_movement_audio_position() -> void:
 #	movement_sound.set_global_position(global_position)
 
 
-# Called when another body enters the holding field area
+# Called when another body enters the forcefield area
 func _on_body_entered(body: Node2D) -> void:
+	if body == self:
+		return  # Ignore self
 	if body is Collidable:
-		if holding_bodies.has(body.number):
-			return  # Already holding this body
-		holding_bodies.set(body.number, body)
+		if body is Block and body.freeze:
+			return 
+		if forcefield_targets.has(body.number):
+			return
+		forcefield_targets.set(body.number, body)
 
 
-# Called when another body exits the holding field area
+# Called when another body exits the forcefield area
 func _on_body_exited(body: Node2D) -> void:
-	if body is Collidable and body.number in holding_bodies:
-		holding_bodies.erase(body.number)
+	if body is Collidable and body.number in forcefield_targets:
+		forcefield_targets.erase(body.number)
 
 
 # Called when the ship is instantiated

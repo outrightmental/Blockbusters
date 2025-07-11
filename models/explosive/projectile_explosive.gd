@@ -15,7 +15,7 @@ func _ready() -> void:
 		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
-		push_error("No texture found for player_num: ", player_num)
+		push_error("No color found for player ", player_num)
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
