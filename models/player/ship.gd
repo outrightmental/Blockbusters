@@ -27,7 +27,9 @@ var input_direction_start_ticks_msec: float = 0.0
 var input_direction_pressed: bool = false
 # keep track of ship movement state and associated sounds
 var movement_state: ShipMovementState = ShipMovementState.NONE
+
 @onready var movement_audio_key: String = "movement_%d" % player_num
+
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
@@ -39,7 +41,9 @@ var disabled_at_ticks_msec: float = 0.0
 # variables for laser tool
 var laser: LaserBeam        = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+
 @onready var laser_audio_key: String = "laser_%d" % player_num
+
 # variable for being heated
 var heated_sec: float   = 0.0
 var heated_delta: float = 0.0
@@ -52,6 +56,11 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 
 # Player number to identify the ship
 @export var player_num: int = 0
+
+# Ship has force field to "Hold" objects #21
+@onready var hold_field: Area2D = $HoldField
+
+var holding_bodies: Array = []
 
 
 # Called when the ship is disabled
@@ -97,6 +106,10 @@ func _ready() -> void:
 	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
+	# Connect the holding field body entered signal
+	hold_field.body_entered.connect(_on_body_entered)
+	hold_field.body_exited.connect(_on_body_exited)
+
 	# Update the heated effect visibility
 	_update_heated_effect()
 
@@ -111,12 +124,12 @@ func _set_colors(sv_ratio: float) -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if is_disabled:
 		if Time.get_ticks_msec() - disabled_at_ticks_msec > Config.PLAYER_SHIP_DISABLED_MSEC:
 			do_enable()
 	else:
-		_process_input(delta)
+		_input_process(delta)
 
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
@@ -132,13 +145,13 @@ func _process(delta: float) -> void:
 
 	# Update the heated state
 	_update_heat(delta)
-	
+
 	# Update the movement state audio
 	_update_movement_audio_position()
 
 
 # Process input for the ship (if not disabled)
-func _process_input(delta: float) -> void:
+func _input_process(delta: float) -> void:
 	# Check if input action is pressed
 	if Input.is_action_just_pressed(input_mapping["action_a"]):
 		_do_activate_laser()
@@ -190,6 +203,7 @@ func _do_activate_laser() -> void:
 	laser.source_ship = self
 	self.get_parent().call_deferred("add_child", laser)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
+
 
 func _do_deactivate_laser() -> void:
 	if laser:
@@ -264,8 +278,10 @@ func _update_heated_effect() -> void:
 		heated_effect.set_visible(false)
 
 
-func _update_movement_state( state: ShipMovementState) -> void:
+func _update_movement_state(_state: ShipMovementState) -> void:
 	pass # todo implement movement state audio
+
+
 #	if movement_state == state:
 #		return
 #	movement_state = state
@@ -278,12 +294,28 @@ func _update_movement_state( state: ShipMovementState) -> void:
 #		return
 #	_update_movement_audio_position()
 
-	
+
 func _update_movement_audio_position() -> void:
 	pass # todo implement movement state audio
+
+
 #	if movement_sound == null:
 #		return
 #	movement_sound.set_global_position(global_position)
+
+
+# Called when another body enters the holding field area
+func _on_body_entered(body: Node2D) -> void:
+	if body is Ship or body is Gem or body is Block or body is BlockHalf or body is BlockQuart:
+		if body in holding_bodies:
+			return  # Already holding this body
+		holding_bodies.append(body)
+
+
+# Called when another body exits the holding field area
+func _on_body_exited(body: Node2D) -> void:
+	if body in holding_bodies:
+		holding_bodies.erase(body)
 
 
 # Called when the ship is instantiated

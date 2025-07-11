@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bg7dqpj5bjc6x"]
+[gd_scene load_steps=4 format=3 uid="uid://bg7dqpj5bjc6x"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://fdnyxkdqbh7y" path="res://models/player/ship.tres" id="1_3lbs4"]
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/player/ship.gd" id="1_yja86"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3lbs4"]
+radius = 21.3776
 
 [node name="Ship" type="RigidBody2D"]
 position = Vector2(3, 0)
@@ -34,3 +37,9 @@ rotation = 3.14159
 [node name="HeatedSHape" type="Polygon2D" parent="HeatedEffect"]
 position = Vector2(-12, 2)
 polygon = PackedVector2Array(-5, -19, 33, -10, 29, -2.11238, 33, 6, -5, 15, 9, -2)
+
+[node name="HoldField" type="Area2D" parent="."]
+position = Vector2(21, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HoldField"]
+shape = SubResource("CircleShape2D_3lbs4")

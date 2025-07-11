@@ -26,7 +26,8 @@ func _ready() -> void:
 		push_error("No texture found for player_num: ", player_num)
 
 
-func _process(delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(delta: float) -> void:
 	# get the raycast collision point 
 	if raycast.is_colliding():
 		var collision_distance: float = global_position.distance_to(raycast.get_collision_point())

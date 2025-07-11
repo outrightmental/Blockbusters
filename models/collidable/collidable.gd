@@ -40,6 +40,6 @@ func _ready():
 	max_contacts_reported = 1
 	
 	
-# Called every frame
-func _process(_delta):
+# Called at a fixed rate
+func _physics_process(_delta):
 	last_velocity = linear_velocity

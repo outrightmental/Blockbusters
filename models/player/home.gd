@@ -32,10 +32,6 @@ func _set_colors() -> void:
 	else:
 		push_error("No colors found for player_num: ", player_num)
 	pass
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+	
 
 	

@@ -45,8 +45,8 @@ func _on_body_entered(_other: Node) -> void:
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
 	if (get_linear_velocity().length() < Config.PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship
