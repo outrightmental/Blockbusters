@@ -60,7 +60,7 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 # Ship has force field to "Hold" objects #21
 @onready var hold_field: Area2D = $HoldField
 
-var holding_bodies: Array = []
+var holding_bodies: Dictionary[int, Node2D] = {}
 
 
 # Called when the ship is disabled
@@ -125,6 +125,7 @@ func _set_colors(sv_ratio: float) -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 	if is_disabled:
 		if Time.get_ticks_msec() - disabled_at_ticks_msec > Config.PLAYER_SHIP_DISABLED_MSEC:
 			do_enable()
@@ -145,6 +146,9 @@ func _physics_process(delta: float) -> void:
 
 	# Update the heated state
 	_update_heat(delta)
+	
+	# Apply holding field forces
+	_apply_hold_field_forces(delta)
 
 	# Update the movement state audio
 	_update_movement_audio_position()
@@ -269,6 +273,20 @@ func _update_heat(delta: float) -> void:
 		_update_heated_effect()
 
 
+# Apply forces to the bodies in the holding field
+func _apply_hold_field_forces(_delta: float) -> void:
+	for key in holding_bodies.keys():
+		var body: Node2D = holding_bodies[key]
+		# if body is not in the scene tree, remove it from the holding_bodies list
+		if not body or not body.is_inside_tree():
+			holding_bodies.erase(key)
+			continue
+		# get the direction vector from the body to the center of holding_field
+		var direction: Vector2 = (hold_field.global_position - body.global_position).normalized()
+		# apply a force on the body towards the center of holding_field
+		body.apply_central_force(direction * Config.PLAYER_SHIP_HOLDING_FIELD_FORCE * _delta)
+
+
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
 	if heated_sec > 0:
@@ -306,16 +324,16 @@ func _update_movement_audio_position() -> void:
 
 # Called when another body enters the holding field area
 func _on_body_entered(body: Node2D) -> void:
-	if body is Ship or body is Gem or body is Block or body is BlockHalf or body is BlockQuart:
-		if body in holding_bodies:
+	if body is Collidable:
+		if holding_bodies.has(body.number):
 			return  # Already holding this body
-		holding_bodies.append(body)
+		holding_bodies.set(body.number, body)
 
 
 # Called when another body exits the holding field area
 func _on_body_exited(body: Node2D) -> void:
-	if body in holding_bodies:
-		holding_bodies.erase(body)
+	if body is Collidable and body.number in holding_bodies:
+		holding_bodies.erase(body.number)
 
 
 # Called when the ship is instantiated
