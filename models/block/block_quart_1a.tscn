@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmvs0xoqad6la"]
+[gd_scene load_steps=3 format=3 uid="uid://bmvs1254ad6la"]
 
 [ext_resource type="Script" uid="uid://bv31253cb6v3s" path="res://models/block/block_quart.gd" id="1_msu1f"]
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_t38h5"]

@@ -15,7 +15,7 @@ func _ready() -> void:
 		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
-		push_error("No texture found for player_num: ", player_num)
+		push_error("No color found for player ", player_num)
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
@@ -45,8 +45,8 @@ func _on_body_entered(_other: Node) -> void:
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
 	if (get_linear_velocity().length() < Config.PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship

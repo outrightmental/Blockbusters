@@ -68,8 +68,8 @@ func _ready() -> void:
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	# Check if it's time to spawn a gem
 	if Time.get_ticks_msec() >= spawn_next_gem_at_msec:
 		spawn_next_gem_at_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_EVERY_MSEC

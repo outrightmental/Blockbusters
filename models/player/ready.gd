@@ -56,8 +56,8 @@ func _toggle_ready() -> void:
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	# Check if input action is pressed
 	if Input.is_action_just_pressed(input_mapping["start"]):
 		_toggle_ready()

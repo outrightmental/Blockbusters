@@ -27,7 +27,7 @@ func _ready() -> void:
 	if player_num in Config.PLAYER_COLORS:
 		$ParticleEmitter.color = Config.PLAYER_COLORS[player_num][0]
 	else:
-		push_error("No texture found for player_num: ", player_num)
+		push_error("No color found for player ", player_num)
 	$ParticleEmitter.emitting = true
 
 
@@ -46,11 +46,9 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Ship:
 		if distance <= heat_radius:
 			body.do_heat(clamp(Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC * 1.2 - distance/heat_radius, 0, Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC ))
-		#if distance <= critical_radius_ship:
-			#body.do_disable(player_num)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Config.EXPLOSION_LIFETIME_MSEC:
 		queue_free()

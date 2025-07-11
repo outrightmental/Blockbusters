@@ -1,7 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://qwnrjhu6nfwd"]
 
 [ext_resource type="Script" uid="uid://b26w87siicyi1" path="res://models/explosive/explosion.gd" id="1_n4u1h"]
-[ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/block/block_quart_shatter.tscn" id="2_6lx3s"]
+
+[sub_resource type="Curve" id="Curve_v26ot"]
+_data = [Vector2(0.00656455, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.96539, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c86j1"]
 radius = 300.0
@@ -9,11 +12,16 @@ radius = 300.0
 [node name="Explosion" type="Node2D"]
 script = ExtResource("1_n4u1h")
 
-[node name="ParticleEmitter" parent="." instance=ExtResource("2_6lx3s")]
+[node name="ParticleEmitter" type="CPUParticles2D" parent="."]
+emitting = false
 amount = 25
+one_shot = true
+explosiveness = 1.0
+spread = 180.0
+gravity = Vector2(0, 0)
 initial_velocity_max = 200.0
 scale_amount_max = 10.0
-script = null
+scale_amount_curve = SubResource("Curve_v26ot")
 
 [node name="ExplosiveArea2D" type="Area2D" parent="."]
 
