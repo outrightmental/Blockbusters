@@ -46,7 +46,7 @@ func _on_body_entered(body: Node2D) -> void:
 			body.do_break(self, 2)
 		elif distance <= critical_radius_block_break_level_1:
 			body.do_break(self, 1)
-		if distance <= heat_radius:
+		elif distance <= heat_radius:
 			body.do_heat(clamp(Config.BLOCK_HEATED_BREAK_SEC * Config.BLOCK_EXPLOSION_OVERHEAT_RATIO - distance/heat_radius, 0, Config.BLOCK_HEATED_BREAK_SEC ))
 	if body is Ship:
 		if distance <= heat_radius:
