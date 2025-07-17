@@ -64,7 +64,7 @@ func add_gem() -> void:
 
 
 # Break the block apart into two halves
-func do_break(broken_by: Node = null) -> void:
+func do_break(broken_by: Node = null, level: int = 1) -> void:
 	# Don't break by objects in the dont_break_by list
 	if broken_by in dont_break_by:
 		return
@@ -93,6 +93,10 @@ func do_break(broken_by: Node = null) -> void:
 	# Add the halves to the scene
 	self.get_parent().call_deferred("add_child", half2)
 	self.get_parent().call_deferred("add_child", half1)
+	# If the break level is higher than 1, pass the break down to the halves
+	if level > 1:
+		half1.call_deferred("do_break", broken_by, level-1)
+		half2.call_deferred("do_break", broken_by, level-1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
