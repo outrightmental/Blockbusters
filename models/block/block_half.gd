@@ -49,8 +49,8 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 		quartA.dont_break_by.append(broken_by)
 		quartB.dont_break_by.append(broken_by)
 	# Add the quarters to the scene
-	self.get_parent().call_deferred("add_child", quartA)
-	self.get_parent().call_deferred("add_child", quartB)
+	self.get_parent().add_child(quartA)
+	self.get_parent().add_child(quartB)
 	# If the break level is higher than 1, pass the break down to the quarters
 	if level > 1:
 		quartA.call_deferred("do_break", broken_by, level-1)

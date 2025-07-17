@@ -91,8 +91,8 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 		half1.dont_break_by.append(broken_by)
 		half2.dont_break_by.append(broken_by)
 	# Add the halves to the scene
-	self.get_parent().call_deferred("add_child", half2)
-	self.get_parent().call_deferred("add_child", half1)
+	self.get_parent().add_child(half2)
+	self.get_parent().add_child(half1)
 	# If the break level is higher than 1, pass the break down to the halves
 	if level > 1:
 		half1.call_deferred("do_break", broken_by, level-1)
