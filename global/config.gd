@@ -31,9 +31,10 @@ const PLAYER_SHIP_TARGET_ROTATION_FACTOR: float         = 10
 const BLOCK_ACTIVATION_HEAT_THRESHOLD: float = 0.5
 const BLOCK_BREAK_APART_VELOCITY: float      = 50
 const BLOCK_BREAK_HEAT_TRANSFER_RATIO: float = 0.7
+const BLOCK_EXPLOSION_OVERHEAT_RATIO: float  = 1.2 # exploson maxes at ratio above the amount of heat needed to break the block
 const BLOCK_HALF_BREAK_APART_VELOCITY: float = BLOCK_BREAK_APART_VELOCITY / 2
 const BLOCK_HALF_HEATED_BREAK_SEC: float     = BLOCK_HEATED_BREAK_SEC / 2
-const BLOCK_HEATED_BREAK_SEC: float          = 0.1 # todo restore 1.0
+const BLOCK_HEATED_BREAK_SEC: float          = 1.0
 const BLOCK_INACTIVE_OPACITY: float          = 0.4
 const BLOCK_INNER_GEM_ALPHA: float           = 0.8
 const BLOCK_LINEAR_DAMP: float               = 0.1
@@ -53,13 +54,13 @@ const PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float    = 500
 const PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 # pertaining to explosive
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_1_RATIO: float   = 0.0 # todo restore to 0.4
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_2_RATIO: float   = 0.0 # todo restore to 0.25
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_3_RATIO: float   = 0.5 # todo restore to 0.1
-const EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO: float          = 0.4
-const EXPLOSION_FORCE: int                                 = 8000
-const EXPLOSION_HEAT_RADIUS_RATIO: float                   = 0.7
-const EXPLOSION_LIFETIME_MSEC: int                         = 1000
+const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_1_RATIO: float = 0.5
+const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_2_RATIO: float = 0.25
+const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_3_RATIO: float = 0.1
+const EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO: float                = 0.4
+const EXPLOSION_FORCE: int                                       = 8000
+const EXPLOSION_HEAT_RADIUS_RATIO: float                         = 0.7
+const EXPLOSION_LIFETIME_MSEC: int                               = 1000
 # Formatting template for player input
 const player_input_mapping_format: Dictionary = {
 													"left": "p%d_left",

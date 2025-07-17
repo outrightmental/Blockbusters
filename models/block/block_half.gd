@@ -53,8 +53,8 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 	self.get_parent().add_child(quartB)
 	# If the break level is higher than 1, pass the break down to the quarters
 	if level > 1:
-		quartA.call_deferred("do_break", broken_by, level-1)
-		quartB.call_deferred("do_break", broken_by, level-1)
+		quartA.call_deferred("do_break", null, level - 1)
+		quartB.call_deferred("do_break", null, level - 1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
