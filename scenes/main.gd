@@ -15,7 +15,6 @@ func _ready() -> void:
 # If both players are ready, start the game
 func _on_player_ready_updated() -> void:
 	if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
-		# TODO here we should show an indication that both players are ready and the game will start if nobody unreadies
 		await _delay(GAME_START_DELAY_SECONDS)
 		if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
 			_goto_scene("res://scenes/play_game.tscn")

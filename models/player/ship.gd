@@ -250,7 +250,7 @@ func _update_laser(delta: float) -> void:
 		laser.set_position(position)
 		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
-		# todo AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
+		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
@@ -317,29 +317,25 @@ func _update_heated_effect() -> void:
 
 
 func _update_movement_state(_state: ShipMovementState) -> void:
-	pass # todo implement movement state audio
-
-
-#	if movement_state == state:
-#		return
-#	movement_state = state
-#	AudioManager.stop_2d_audio(movement_audio_key)
-#	if state == ShipMovementState.ACCELERATE:
-#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
-#	elif state == ShipMovementState.DRIFT:
-#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
-#	else:
-#		return
-#	_update_movement_audio_position()
+	#	if movement_state == state:
+	#		return
+	#	movement_state = state
+	#	AudioManager.stop_2d_audio(movement_audio_key)
+	#	if state == ShipMovementState.ACCELERATE:
+	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
+	#	elif state == ShipMovementState.DRIFT:
+	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
+	#	else:
+	#		return
+	#	_update_movement_audio_position()
+	pass
 
 
 func _update_movement_audio_position() -> void:
-	pass # todo implement movement state audio
-
-
-#	if movement_sound == null:
-#		return
-#	movement_sound.set_global_position(global_position)
+	#	if movement_sound == null:
+	#		return
+	#	movement_sound.set_global_position(global_position)
+	pass
 
 
 # Called when another body enters the forcefield area
@@ -348,7 +344,7 @@ func _on_body_entered(body: Node2D) -> void:
 		return  # Ignore self
 	if body is Collidable:
 		if body is Block and body.freeze:
-			return 
+			return
 		if forcefield_targets.has(body.number):
 			return
 		forcefield_targets.set(body.number, body)
