@@ -36,7 +36,7 @@ func _physics_process(delta: float) -> void:
 
 		# If the body is heatable, apply heat
 		if body is Ship or body is Block or body is BlockHalf or body is BlockQuart:
-			body.do_heat(delta)
+			body.apply_heat(delta)
 
 		# Make the line visible up to the collision point
 		line.set_point_position(1, target_point)
