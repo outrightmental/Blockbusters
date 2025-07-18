@@ -62,7 +62,6 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 
 var forcefield_targets: Dictionary[int, Node2D] = {}
 
-
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
@@ -78,8 +77,8 @@ func do_enable() -> void:
 	_set_colors(1.0)
 
 
-# Add heat if not disabled
-func do_heat(delta: float) -> void:
+# Apply heat if not disabled
+func apply_heat(delta: float, heated_by: Node2D = null) -> void:
 	if is_disabled:
 		return
 	heated_delta += delta

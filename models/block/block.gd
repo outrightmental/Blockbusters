@@ -4,11 +4,9 @@ extends Collidable
 # Variables
 var gem: Node = null
 # variable for being heated
-var heated_sec: float   = 0.0
-var heated_delta: float = 0.0
+var heat: float   = 0.0
+var heat_delta: float = 0.0
 
-# List of nodes that should not break this
-@export var dont_break_by: Array[Node] = []
 # Preloaded scenes
 const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
 const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
@@ -64,19 +62,14 @@ func add_gem() -> void:
 
 
 # Break the block apart into two halves
-func do_break(broken_by: Node = null) -> void:
-	# Don't break by objects in the dont_break_by list
-	if broken_by in dont_break_by:
-		return
+func do_break() -> void:
 	# Half 1
 	var half1: Node = half1_scene.instantiate()
-	half1.add_collision_exception_with(self)
 	half1.position = position
 	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
-	half2.add_collision_exception_with(self)
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
@@ -84,31 +77,16 @@ func do_break(broken_by: Node = null) -> void:
 	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
-	# Avoid collisions with the block that broke this half
-	if broken_by:
-		half1.dont_break_by.append(broken_by)
-		half2.dont_break_by.append(broken_by)
 	# Transfer heat to the broken pieces
-# todo
-#	if heated_sec > 0:
-#		half1.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
-#		half2.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+	if heat > 0:
+		half1.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+		half2.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Add the halves to the scene
 	self.get_parent().add_child(half2)
 	self.get_parent().add_child(half1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
-
-
-# Shatter into dust
-func do_shatter() -> void:
-	_do_release_gem()
-	# Shatter effect
-	var shatter: Node = shatter_scene.instantiate()
-	shatter.position = position
-	self.get_parent().call_deferred("add_child", shatter)
-	self.call_deferred("queue_free")
 
 
 func _do_release_gem() -> bool:
@@ -124,9 +102,9 @@ func _do_release_gem() -> bool:
 	return false
 
 
-# Add heat
-func do_heat(delta: float) -> void:
-	heated_delta += delta
+# Apply heat
+func apply_heat(delta: float) -> void:
+	heat_delta += delta
 	pass
 
 
@@ -153,18 +131,18 @@ func _physics_process(_delta: float) -> void:
 # If the ship is heated, increase the heated time, otherwise decrease it
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
-	if heated_delta > 0:
-		heated_sec += heated_delta
-		heated_delta = 0.0
+	if heat_delta > 0:
+		heat += heat_delta
+		heat_delta = 0.0
 		_update_heated_effect()
-		if heated_sec >= Config.BLOCK_HEATED_BREAK_SEC:
+		if heat >= Config.BLOCK_HEATED_BREAK_SEC:
 			call_deferred("do_break")
-		if freeze and heated_sec >= Config.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+		if freeze and heat >= Config.BLOCK_ACTIVATION_HEAT_THRESHOLD:
 			call_deferred("do_activate")
-	elif heated_sec > 0:
-		heated_sec -= delta
-		if heated_sec < 0:
-			heated_sec = 0.0
+	elif heat > 0:
+		heat -= delta
+		if heat < 0:
+			heat = 0.0
 		_update_heated_effect()
 	pass
 
@@ -173,9 +151,9 @@ func _update_heat(delta: float) -> void:
 func _update_heated_effect() -> void:
 	if heated_effect == null:
 		return  # Ensure heated_effect is valid before proceeding
-	if heated_sec > 0:
+	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heated_sec / Config.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Config.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 	pass

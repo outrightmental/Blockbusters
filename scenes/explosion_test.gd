@@ -25,7 +25,7 @@ func _ready() -> void:
 # Create the test board
 func _create_board() -> void:
 	for x in range(Config.BOARD_GRID_COLS):
-		for y in range(floori(float(Config.BOARD_GRID_ROWS)/2) -1, floori(float(Config.BOARD_GRID_ROWS)/2) + 1):
+		for y in range(Config.BOARD_GRID_ROWS):
 			_spawn_block(_grid_position(x, y))
 
 

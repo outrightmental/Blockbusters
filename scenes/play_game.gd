@@ -262,12 +262,12 @@ func _generate_mesh(_seed: int) -> void:
 	var f5 := _modulate(_seed, Config.BOARD_SEED_F5, 1.0)
 	var f6 := _modulate(_seed, Config.BOARD_SEED_F6, 1.0)
 
-	for x in range(Config.Config.BOARD_GRID_COLS):
+	for x in range(Config.BOARD_GRID_COLS):
 		mesh[x] = {}
-		for y in range(Config.Config.BOARD_GRID_ROWS):
-			var r  := float(float(x * Config.Config.BOARD_GRID_COLS + y) / Config.Config.BOARD_GRID_COUNT_MAX)
-			var g1 := cos(f1 * PI * x / Config.Config.BOARD_GRID_COLS)
-			var g2 := sin(f2 * PI * y / Config.Config.BOARD_GRID_ROWS)
+		for y in range(Config.BOARD_GRID_ROWS):
+			var r  := float(float(x * Config.BOARD_GRID_COLS + y) / Config.BOARD_GRID_COUNT_MAX)
+			var g1 := cos(f1 * PI * x / Config.BOARD_GRID_COLS)
+			var g2 := sin(f2 * PI * y / Config.BOARD_GRID_ROWS)
 			var g3 := sin(f3 * PI * r)
 			var g4 := sin(f4 * PI * r)
 			var g5 := sin(f5 * PI * r)
