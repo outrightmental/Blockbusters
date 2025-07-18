@@ -11,7 +11,21 @@ env:
   PROJECT_PATH: .
 
 jobs:
+  nothing_left_todo:
+    name: Nothing Left TODO
+    env:
+      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Nothing left TODO
+        run: .github/nothing_left_todo.sh
+
   export-windows:
+    needs: nothing_left_todo
     name: Windows Export
     runs-on: ubuntu-22.04  # Use 22.04 with godot 4
     container:
