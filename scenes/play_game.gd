@@ -1,30 +1,5 @@
 extends Node2D
 
-# Enum for whether a grid square is empty or block
-enum GridType {
-	BLOCK,
-}
-# Enum for whether Player 1 wins, Player 2 wins, or a draw
-enum GameResult {
-	PLAYER_1_WINS,
-	PLAYER_2_WINS,
-	DRAW,
-}
-# Constants
-# Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
-# The blocks are32x32 pixels, so the grid is 1024x576 pixels
-const BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
-const BLOCK_CENTER: int               = floori(BLOCK_SIZE * 0.5)
-const BLOCK_COUNT_MAX: int            = floori(GRID_COUNT_MAX * BLOCK_COUNT_RATIO)
-const BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
-const BLOCK_SIZE: int                 = 32
-const GRID_COLS: int                  = 28
-const GRID_COUNT_MAX: int             = GRID_COLS * GRID_ROWS
-const GRID_MARGIN: int                = 2
-const GRID_MESH_THRESHOLD: float      = 0.62
-const GRID_ROWS: int                  = 14
-const HOME_CLEARANCE_RADIUS: int      = 130
-const MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 # Preloaded Scenes
 const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
@@ -35,9 +10,9 @@ const block_scene: PackedScene = preload('res://models/block/block.tscn')
 @onready var player_home_2 = $HomePlayer2
 
 # Variables
-var grid: Dictionary                 = {}
-var mesh: Dictionary                 = {}
-var block_count: int                 = 0
+var grid: Dictionary                     = {}
+var mesh: Dictionary                     = {}
+var block_count: int                     = 0
 var started_at_ticks_msec: int           = 0
 var spawn_next_gem_at_msec: int          = 0
 var gem_dont_spawn_until_ticks_msec: int = 0
@@ -60,9 +35,9 @@ func _ready() -> void:
 	Game.player_did_collect_gem.connect(_on_player_collect_gem)
 	# Countdown and then start the game
 	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
-	_show_modal("Ready...", MODAL_NEUTRAL_TEXT_COLOR)
+	_show_modal("Ready...", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(Config.GAME_START_COUNTER_DELAY)
-	_show_modal("Set...", MODAL_NEUTRAL_TEXT_COLOR)
+	_show_modal("Set...", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(Config.GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
@@ -78,18 +53,18 @@ func _physics_process(_delta: float) -> void:
 
 
 # Show the game over modal for some time, then go back to main screen
-func _game_over(result: GameResult) -> void:
+func _game_over(result: Game.Result) -> void:
 	if is_game_over:
 		return
 	is_game_over = true
 	await _delay(Config.GAME_OVER_DELAY_SEC)
 	match result:
-		GameResult.PLAYER_1_WINS:
+		Game.Result.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
-		GameResult.PLAYER_2_WINS:
+		Game.Result.PLAYER_2_WINS:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
-		GameResult.DRAW:
-			_show_modal("Draw!", MODAL_NEUTRAL_TEXT_COLOR)
+		Game.Result.DRAW:
+			_show_modal("Draw!", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
 	await _delay(Config.GAME_OVER_SHOW_MODAL_SEC)
 	_hide_modal()
 	_goto_scene('res://scenes/main.tscn')
@@ -122,13 +97,13 @@ func _hide_modal() -> void:
 # fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
 func _check_for_game_over() -> void:
 	if Game.score[1] == Config.PLAYER_SCORE_VICTORY:
-		_game_over(GameResult.PLAYER_1_WINS)
+		_game_over(Game.Result.PLAYER_1_WINS)
 		return
 	elif Game.score[2] == Config.PLAYER_SCORE_VICTORY:
-		_game_over(GameResult.PLAYER_2_WINS)
+		_game_over(Game.Result.PLAYER_2_WINS)
 		return
 	elif Game.score[1] == Config.PLAYER_SCORE_VICTORY and Game.score[2] == Config.PLAYER_SCORE_VICTORY:
-		_game_over(GameResult.DRAW)
+		_game_over(Game.Result.DRAW)
 		return
 
 	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
@@ -139,13 +114,13 @@ func _check_for_game_over() -> void:
 			total_gem_candidate_blocks += 1
 	if total_gems == 0 and total_gem_candidate_blocks == 0:
 		if Game.score[1]  > Game.score[2]:
-			_game_over(GameResult.PLAYER_1_WINS)
+			_game_over(Game.Result.PLAYER_1_WINS)
 			return
 		elif Game.score[2] > Game.score[1]:
-			_game_over(GameResult.PLAYER_2_WINS)
+			_game_over(Game.Result.PLAYER_2_WINS)
 			return
 		else:
-			_game_over(GameResult.DRAW)
+			_game_over(Game.Result.DRAW)
 			return
 
 
@@ -164,16 +139,16 @@ func _on_player_collect_gem(_player_num: int) -> void:
 #
 func _create_board() -> void:
 	var block_attempt_count: int = 0
-	_generate_mesh(floor(randf() * SEED_MAX))
+	_generate_mesh(floor(randf() * Config.BOARD_SEED_MAX))
 	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
 	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
 	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
 	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position, player_ship_1.position, player_ship_2.position]
 
-	while block_count < BLOCK_COUNT_MAX and block_attempt_count < BLOCK_ATTEMPT_MAX:
+	while block_count < Config.BOARD_BLOCK_COUNT_MAX and block_attempt_count < Config.BOARD_BLOCK_ATTEMPT_MAX:
 		block_attempt_count += 1
-		var x: int = randi() % GRID_COLS
-		var y: int = randi() % GRID_ROWS
+		var x: int = randi() % Config.BOARD_GRID_COLS
+		var y: int = randi() % Config.BOARD_GRID_ROWS
 		if not grid.has(x):
 			grid[x] = {}
 		if grid[x].has(y):
@@ -182,14 +157,14 @@ func _create_board() -> void:
 			continue
 		if not mesh[x].has(y):
 			continue
-		if mesh[x][y] < GRID_MESH_THRESHOLD:
+		if mesh[x][y] < Config.BOARD_GRID_MESH_THRESHOLD:
 			continue
-		if _is_clear_of_all(HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
+		if _is_clear_of_all(Config.BOARD_HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
 			block_count += 1
-			grid[x][y] = GridType.BLOCK
+			grid[x][y] = true
 
-	for x in range(GRID_COLS):
-		for y in range(GRID_ROWS):
+	for x in range(Config.BOARD_GRID_COLS):
+		for y in range(Config.BOARD_GRID_ROWS):
 			if grid.has(x) and grid[x].has(y):
 				_spawn_block(_grid_position(x, y))
 
@@ -207,7 +182,7 @@ func _is_clear_of(distance: int, source: Vector2, target: Vector2) -> bool:
 
 func _grid_position(x: int, y: int) -> Vector2:
 	# Convert grid coordinates to world coordinates
-	return Vector2( GRID_MARGIN * BLOCK_SIZE + BLOCK_CENTER + x * BLOCK_SIZE, GRID_MARGIN * BLOCK_SIZE +BLOCK_CENTER + y * BLOCK_SIZE)
+	return Vector2( Config.BOARD_GRID_MARGIN * Config.BOARD_BLOCK_SIZE + Config.BOARD_BLOCK_CENTER + x * Config.BOARD_BLOCK_SIZE, Config.BOARD_GRID_MARGIN * Config.BOARD_BLOCK_SIZE +Config.BOARD_BLOCK_CENTER + y * Config.BOARD_BLOCK_SIZE)
 
 
 # Spawn a player ship at the given position and rotation
@@ -273,16 +248,6 @@ func _unpause_game() -> void:
 # ------------------------------------------------------------------ #
 # Pertaining to generating a gradient mesh                           #
 # ------------------------------------------------------------------ #
-const PI: float             = 3.14159
-const SEED_MAX: int         = 1_000_000_000
-const SEED_F1: int          = 18_285_756
-const SEED_F2: int          = 89_074_356
-const SEED_F3: int          = 973_523_665
-const SEED_F4: int          = 167_653_873
-const SEED_F5: int          = 423_587_300
-const SEED_F6: int          = 798_647_400
-const DEMO_REPETITIONS: int = 1_000
-
 
 func _modulate(x: float, max_val: float, range_val: float) -> float:
 	return 2.0 * range_val * (fmod(x, max_val) / max_val) - range_val
@@ -290,19 +255,19 @@ func _modulate(x: float, max_val: float, range_val: float) -> float:
 
 func _generate_mesh(_seed: int) -> void:
 	# Factors between −1 and 1
-	var f1 := _modulate(_seed, SEED_F1, 1.0)
-	var f2 := _modulate(_seed, SEED_F2, 1.0)
-	var f3 := _modulate(_seed, SEED_F3, 1.0)
-	var f4 := _modulate(_seed, SEED_F4, 1.0)
-	var f5 := _modulate(_seed, SEED_F5, 1.0)
-	var f6 := _modulate(_seed, SEED_F6, 1.0)
+	var f1 := _modulate(_seed, Config.BOARD_SEED_F1, 1.0)
+	var f2 := _modulate(_seed, Config.BOARD_SEED_F2, 1.0)
+	var f3 := _modulate(_seed, Config.BOARD_SEED_F3, 1.0)
+	var f4 := _modulate(_seed, Config.BOARD_SEED_F4, 1.0)
+	var f5 := _modulate(_seed, Config.BOARD_SEED_F5, 1.0)
+	var f6 := _modulate(_seed, Config.BOARD_SEED_F6, 1.0)
 
-	for x in range(GRID_COLS):
+	for x in range(Config.Config.BOARD_GRID_COLS):
 		mesh[x] = {}
-		for y in range(GRID_ROWS):
-			var r  := float(x * GRID_COLS + y) / GRID_COUNT_MAX
-			var g1 := cos(f1 * PI * x / GRID_COLS)
-			var g2 := sin(f2 * PI * y / GRID_ROWS)
+		for y in range(Config.Config.BOARD_GRID_ROWS):
+			var r  := float(float(x * Config.Config.BOARD_GRID_COLS + y) / Config.Config.BOARD_GRID_COUNT_MAX)
+			var g1 := cos(f1 * PI * x / Config.Config.BOARD_GRID_COLS)
+			var g2 := sin(f2 * PI * y / Config.Config.BOARD_GRID_ROWS)
 			var g3 := sin(f3 * PI * r)
 			var g4 := sin(f4 * PI * r)
 			var g5 := sin(f5 * PI * r)

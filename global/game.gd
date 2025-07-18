@@ -12,6 +12,12 @@ signal player_laser_charge_updated(player_num: int, charge_sec: float)
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
+# Enum for whether Player 1 wins, Player 2 wins, or a draw
+enum Result {
+	PLAYER_1_WINS,
+	PLAYER_2_WINS,
+	DRAW,
+}
 
 # Keeping track of the score
 @onready var score: Dictionary = {
