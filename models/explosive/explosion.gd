@@ -7,23 +7,15 @@ extends Node2D
 @export var player_num: int = 0
 
 # Variables
-var instantiated_at_ticks_msec: float          = 0.0
-var explosive_radius: float                    = 0.0
-var critical_radius_ship: float                = 0.0
-var critical_radius_block_break_level_1: float = 0.0 # blocks shatter into halves, halves into quarters, quarters disintegrate
-var critical_radius_block_break_level_2: float = 0.0 # blocks shatter into quarters, halves disintegrate
-var critical_radius_block_break_level_3: float = 0.0 # blocks disintegrate
-var heat_radius: float                         = 0.0
+var instantiated_at_ticks_msec: float = 0.0
+var explosive_radius: float           = 0.0
+var heat_radius: float                = 0.0
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = collision_shape.shape.radius
-	critical_radius_ship = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO
-	critical_radius_block_break_level_1 = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_1_RATIO
-	critical_radius_block_break_level_2 = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_2_RATIO
-	critical_radius_block_break_level_3 = explosive_radius * Config.EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_3_RATIO
 	heat_radius = explosive_radius * Config.EXPLOSION_HEAT_RADIUS_RATIO
 	$ExplosiveArea2D.body_entered.connect(_on_body_entered)
 	# Set the explosion color based on player_num
@@ -39,18 +31,10 @@ func _on_body_entered(body: Node2D) -> void:
 	var diff: Vector2   = (body.position - position)
 	var distance: float = diff.length()
 	body.apply_central_force(diff.normalized() * Config.EXPLOSION_FORCE * (1 - distance / explosive_radius))
-	if body is Block or body is BlockHalf or body is BlockQuart:
-		if distance <= critical_radius_block_break_level_3:
-			body.do_break(self, 3)
-		elif distance <= critical_radius_block_break_level_2:
-			body.do_break(self, 2)
-		elif distance <= critical_radius_block_break_level_1:
-			body.do_break(self, 1)
-		elif distance <= heat_radius:
-			body.do_heat(clamp(Config.BLOCK_HEATED_BREAK_SEC * Config.BLOCK_EXPLOSION_OVERHEAT_RATIO - distance/heat_radius, 0, Config.BLOCK_HEATED_BREAK_SEC ))
-	if body is Ship:
+	const max_heat = Config.BLOCK_HEATED_BREAK_SEC * Config.BLOCK_EXPLOSION_OVERHEAT_RATIO
+	if body is Block or body is BlockHalf or body is BlockQuart or body is Ship:
 		if distance <= heat_radius:
-			body.do_heat(clamp(Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC * Config.BLOCK_EXPLOSION_OVERHEAT_RATIO - distance/heat_radius, 0, Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC ))
+			body.do_heat(max_heat * (1-(distance/heat_radius)))
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.

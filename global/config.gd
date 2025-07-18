@@ -61,10 +61,6 @@ const PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 #
 # pertaining to explosive
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_1_RATIO: float = 0.5 # todo restore 0.5
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_2_RATIO: float = 0.3 # todo restore 0.25
-const EXPLOSION_CRITICAL_RADIUS_BLOCK_BREAK_LEVEL_3_RATIO: float = 0.0 # todo restore 0.1
-const EXPLOSION_CRITICAL_RADIUS_SHIP_RATIO: float                = 0.4
 const EXPLOSION_FORCE: int                                       = 8000
 const EXPLOSION_HEAT_RADIUS_RATIO: float                         = 0.7
 const EXPLOSION_LIFETIME_MSEC: int                               = 1000

@@ -20,7 +20,7 @@ func _ready() -> void:
 
 
 # Break the block quarter apart into dust
-func do_break(broken_by: Node = null, _level: int = 1) -> void:
+func do_break(broken_by: Node = null) -> void:
 	# Don't break by objects in the dont_break_by list
 	if broken_by in dont_break_by:
 		return

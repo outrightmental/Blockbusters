@@ -64,7 +64,7 @@ func add_gem() -> void:
 
 
 # Break the block apart into two halves
-func do_break(broken_by: Node = null, level: int = 1) -> void:
+func do_break(broken_by: Node = null) -> void:
 	# Don't break by objects in the dont_break_by list
 	if broken_by in dont_break_by:
 		return
@@ -74,14 +74,12 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 	half1.position = position
 	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
-	half1.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
 	half2.add_collision_exception_with(self)
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
-	half2.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Gem
 	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
@@ -90,13 +88,14 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 	if broken_by:
 		half1.dont_break_by.append(broken_by)
 		half2.dont_break_by.append(broken_by)
+	# Transfer heat to the broken pieces
+# todo
+#	if heated_sec > 0:
+#		half1.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+#		half2.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Add the halves to the scene
 	self.get_parent().add_child(half2)
 	self.get_parent().add_child(half1)
-	# If the break level is higher than 1, pass the break down to the halves
-	if level > 1:
-		half1.call_deferred("do_break", null, level - 1)
-		half2.call_deferred("do_break", null, level - 1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass

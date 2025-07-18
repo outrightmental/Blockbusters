@@ -15,8 +15,9 @@ func _ready() -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var explosion: Node        = explosion_scene.instantiate()
 	explosion.position = Vector2(viewport_size.x / 2, viewport_size.y / 2)
+	explosion.player_num = 1
 	self.add_child(explosion)
-	await _delay(8.0)
+	await _delay(5.0)
 	_goto_scene("res://scenes/explosion_test.tscn")
 	pass
 
@@ -24,7 +25,7 @@ func _ready() -> void:
 # Create the test board
 func _create_board() -> void:
 	for x in range(Config.BOARD_GRID_COLS):
-		for y in range(Config.BOARD_GRID_ROWS):
+		for y in range(floori(float(Config.BOARD_GRID_ROWS)/2) -1, floori(float(Config.BOARD_GRID_ROWS)/2) + 1):
 			_spawn_block(_grid_position(x, y))
 
 

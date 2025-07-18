@@ -28,7 +28,7 @@ func _ready() -> void:
 
 
 # Break the block half apart into two quarters
-func do_break(broken_by: Node = null, level: int = 1) -> void:
+func do_break(broken_by: Node = null) -> void:
 	# Don't break by objects in the dont_break_by list
 	if broken_by in dont_break_by:
 		return
@@ -37,13 +37,11 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 	quartA.add_collision_exception_with(self)
 	quartA.position = position
 	quartA.linear_velocity = linear_velocity + (Vector2(-Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
-	quartA.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Quarter B
 	var quartB: Node = (quart_scene_1b if half_num == 1 else quart_scene_2b).instantiate()
 	quartB.add_collision_exception_with(self)
 	quartB.position = position
 	quartB.linear_velocity = linear_velocity + (Vector2(0, -Config.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Config.BLOCK_HALF_BREAK_APART_VELOCITY))
-	quartB.do_heat(Config.BLOCK_QUART_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Avoid collisions with the block that broke this half
 	if broken_by:
 		quartA.dont_break_by.append(broken_by)
@@ -51,10 +49,10 @@ func do_break(broken_by: Node = null, level: int = 1) -> void:
 	# Add the quarters to the scene
 	self.get_parent().add_child(quartA)
 	self.get_parent().add_child(quartB)
-	# If the break level is higher than 1, pass the break down to the quarters
-	if level > 1:
-		quartA.call_deferred("do_break", null, level - 1)
-		quartB.call_deferred("do_break", null, level - 1)
+	# Transfer heat to the broken pieces
+	if heated_sec > 0:
+		quartA.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+		quartB.do_heat(heated_sec * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
