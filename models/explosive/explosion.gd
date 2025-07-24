@@ -25,6 +25,7 @@ func _ready() -> void:
 	else:
 		push_error("No color found for player ", player_num)
 	$ParticleEmitter.emitting = true
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
