@@ -11,7 +11,6 @@ _data = [Vector2(0.0170455, 0), 0.0, 0.0, 0, 0, Vector2(0.539773, 1), 0.0, 0.0, 
 point_count = 3
 
 [node name="Ship" type="RigidBody2D"]
-position = Vector2(3, 0)
 collision_priority = 2.0
 mass = 10.0
 physics_material_override = ExtResource("1_3lbs4")
