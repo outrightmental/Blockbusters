@@ -39,8 +39,8 @@ func do_break() -> void:
 	self.get_parent().add_child(quartB)
 	# Transfer heat to the broken pieces
 	if heat > 0:
-		quartA.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
-		quartB.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+		quartA.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
+		quartB.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
