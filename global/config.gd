@@ -33,8 +33,9 @@ const PLAYER_SHIP_TARGET_ROTATION_FACTOR: float         = 10
 # blocks
 const BLOCK_ACTIVATION_HEAT_THRESHOLD: float = 0.5
 const BLOCK_BREAK_APART_VELOCITY: float      = 50
-const BLOCK_BREAK_HEAT_TRANSFER_RATIO: float = 0.9
-const BLOCK_EXPLOSION_OVERHEAT_RATIO: float  = 6 # exploson maxes at ratio above the amount of heat needed to break the block
+const BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO: float = 0.9
+const BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO: float = 0.9
+const BLOCK_EXPLOSION_OVERHEAT_RATIO: float  = 3 # exploson maxes at ratio above the amount of heat needed to break the block
 const BLOCK_HALF_BREAK_APART_VELOCITY: float = BLOCK_BREAK_APART_VELOCITY / 2
 const BLOCK_HALF_HEATED_BREAK_SEC: float     = BLOCK_HEATED_BREAK_SEC / 2
 const BLOCK_HEATED_BREAK_SEC: float          = 1.0
@@ -62,7 +63,7 @@ const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 #
 # pertaining to explosive
 const EXPLOSION_FORCE: int                                       = 8000
-const EXPLOSION_HEAT_RADIUS_RATIO: float                         = 0.7
+const EXPLOSION_HEAT_RADIUS_RATIO: float                         = 0.6
 const EXPLOSION_LIFETIME_MSEC: int                               = 1000
 #
 # Board

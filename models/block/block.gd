@@ -58,6 +58,7 @@ func add_gem() -> void:
 	gem.freeze = true
 	gem.modulate.a = Config.BLOCK_INNER_GEM_ALPHA
 	self.add_child(gem)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	pass
 
 
@@ -79,8 +80,8 @@ func do_break() -> void:
 		gem.add_collision_exception_with(half2)
 	# Transfer heat to the broken pieces
 	if heat > 0:
-		half1.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
-		half2.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
+		half1.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
+		half2.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
 	# Add the halves to the scene
 	self.get_parent().add_child(half2)
 	self.get_parent().add_child(half1)

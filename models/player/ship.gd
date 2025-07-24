@@ -78,7 +78,7 @@ func do_enable() -> void:
 
 
 # Apply heat if not disabled
-func apply_heat(delta: float, heated_by: Node2D = null) -> void:
+func apply_heat(delta: float) -> void:
 	if is_disabled:
 		return
 	heated_delta += delta

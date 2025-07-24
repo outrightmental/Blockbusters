@@ -17,8 +17,6 @@ var started_at_ticks_msec: int           = 0
 var spawn_next_gem_at_msec: int          = 0
 var gem_dont_spawn_until_ticks_msec: int = 0
 var is_game_over: bool                   = false
-# Signal that never happens, in case the tree is unloaded
-signal never
 
 
 # Called when the node enters the scene tree for the first time.
@@ -34,11 +32,10 @@ func _ready() -> void:
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	Game.player_did_collect_gem.connect(_on_player_collect_gem)
 	# Countdown and then start the game
-	AudioManager.create_audio(SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	_show_modal("Ready...", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(Config.GAME_START_COUNTER_DELAY)
+	await Util.delay(Config.GAME_START_COUNTER_DELAY)
 	_show_modal("Set...", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(Config.GAME_START_COUNTER_DELAY)
+	await Util.delay(Config.GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
 
@@ -57,7 +54,7 @@ func _game_over(result: Game.Result) -> void:
 	if is_game_over:
 		return
 	is_game_over = true
-	await _delay(Config.GAME_OVER_DELAY_SEC)
+	await Util.delay(Config.GAME_OVER_DELAY_SEC)
 	match result:
 		Game.Result.PLAYER_1_WINS:
 			_show_modal("Player 1 wins!", Config.PLAYER_COLORS[1][0])
@@ -65,7 +62,7 @@ func _game_over(result: Game.Result) -> void:
 			_show_modal("Player 2 wins!", Config.PLAYER_COLORS[2][0])
 		Game.Result.DRAW:
 			_show_modal("Draw!", Config.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
-	await _delay(Config.GAME_OVER_SHOW_MODAL_SEC)
+	await Util.delay(Config.GAME_OVER_SHOW_MODAL_SEC)
 	_hide_modal()
 	_goto_scene('res://scenes/main.tscn')
 	pass
@@ -223,14 +220,6 @@ func _spawn_gem() -> void:
 func _goto_scene(path: String) -> void:
 	if get_tree():
 		get_tree().change_scene_to_file(path)
-
-
-# Delay, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _delay(seconds: float) -> Signal:
-	if get_tree():
-		return get_tree().create_timer(seconds).timeout
-	else:
-		return never
 
 
 # Pause game, guarding against the condition that the tree has been unloaded since the calling thread arrived here

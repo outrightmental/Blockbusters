@@ -3,7 +3,6 @@ extends Collidable
 
 # Preloaded scene for the explosion effect
 const explosion_scene: PackedScene = preload("res://models/explosive/explosion.tscn")
-
 # Player number to identify the projectile
 @export var player_num: int = 0
 
@@ -19,12 +18,12 @@ func _ready() -> void:
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
-	
+
 	# Count this projectile
 	Game.projectiles_in_play += 1
 	Game.projectile_count_updated.emit()
 	pass
-	
+
 
 # Called when the projectile is removed from the stage
 func _exit_tree() -> void:
@@ -39,7 +38,6 @@ func _on_body_entered(_other: Node) -> void:
 	explosion.position = position
 	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)
-	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 	# Remove this projectile from the stage
 	self.queue_free()
 	pass
