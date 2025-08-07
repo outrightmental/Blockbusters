@@ -14,6 +14,7 @@ extends Node2D
 # variable for flickering effect
 var alpha: float = 0.0
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if source_ship:
@@ -41,8 +42,12 @@ func _physics_process(delta: float) -> void:
 		# Make the line visible up to the collision point
 		line.set_point_position(1, target_point)
 		# Set the line to a random alpha value for a flickering effect
-		alpha = wrapf(alpha + delta * Config.PLAYER_SHIP_LASER_FLICKER_RATE, 0.0, 1.0)
-		line.set_default_color(Util.color_at_alpha_ratio(Config.PLAYER_COLORS[player_num][0], alpha))
+		alpha = wrapf(
+			alpha + delta * Config.PLAYER_SHIP_LASER_FLICKER_RATE,
+			0.0,
+			Config.PLAYER_SHIP_LASER_ALPHA_MAX
+		)
+		line.modulate.a = alpha
 		# Emit sparks at the collision point
 		sparks.set_emitting(true)
 		sparks.position =  target_point
