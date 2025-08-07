@@ -39,7 +39,7 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool                = false
 var disabled_until_ticks_msec: float = 0.0
 # variables for laser tool
-var laser: LaserBeam        = null
+var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
@@ -50,7 +50,7 @@ var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
+const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -61,6 +61,7 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
 @onready var forcefield_area: Area2D = $ForcefieldArea
 
 var forcefield_targets: Dictionary[int, Node2D] = {}
+
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
