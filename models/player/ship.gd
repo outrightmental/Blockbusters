@@ -62,6 +62,10 @@ const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster
 
 var forcefield_targets: Dictionary[int, Node2D] = {}
 
+# Keep track of the previous forcefield direction
+# in order to "hold" objects while the forcefield is turning
+var forcefield_position_previous: Vector2 = Vector2.ZERO
+
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
@@ -284,6 +288,9 @@ func _update_heat(delta: float) -> void:
 func _update_forcefield(_delta: float) -> void:
 	var forcefield_target_mass: float = 0
 	if not is_disabled:
+		var forcefield_position: Vector2 = forcefield_area.global_position - global_position
+		var forcefield_delta: Vector2    = forcefield_position - forcefield_position_previous
+		forcefield_position_previous = forcefield_position
 		for key in forcefield_targets.keys():
 			var body: Node2D = forcefield_targets[key]
 			# if body is not in the scene tree, remove it from the forcefield_targets list
@@ -293,7 +300,10 @@ func _update_forcefield(_delta: float) -> void:
 			# get the direction vector from the body to the center of forcefield
 			var direction: Vector2 = (forcefield_area.global_position - body.global_position).normalized()
 			# apply a force on the body towards the center of forcefield
-			body.apply_central_force(direction * Config.PLAYER_SHIP_FORCEFIELD_FORCE * _delta)
+			body.apply_central_force(direction * Config.PLAYER_SHIP_FORCEFIELD_INWARD_FORCE * _delta)
+			# apply a force on the body in the direction of the forcefield delta
+			if forcefield_delta.length() > Config.PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD:
+				body.apply_central_force(forcefield_delta * Config.PLAYER_SHIP_FORCEFIELD_MOTION_FORCE * _delta)
 			# accumulate the mass of the bodies in the forcefield
 			if body is RigidBody2D:
 				forcefield_target_mass += body.mass
@@ -343,7 +353,7 @@ func _update_movement_audio_position() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body == self:
 		return  # Ignore self
-	if body is Collidable:
+	if body is Collidable and not body is ProjectileExplosive:
 		if body is Block and body.freeze:
 			return
 		if forcefield_targets.has(body.number):
