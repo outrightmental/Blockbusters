@@ -21,7 +21,7 @@ const PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX: float    = 3.0
 const PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN: float    = 1.0
 const PLAYER_SHIP_FORCEFIELD_FORCE: float               = 10000.0
 const PLAYER_SHIP_FORCE_AMOUNT: int                     = 5000
-const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 2.0
+const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 1.0
 const PLAYER_SHIP_LASER_ALPHA_MAX: float                = 0.5
 const PLAYER_SHIP_LASER_CLUSTER_SPREAD: float           = 5
 const PLAYER_SHIP_LASER_CLUSTER_COUNT: int              = 5
@@ -34,14 +34,14 @@ const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float          = 500
 const PLAYER_SHIP_TARGET_ROTATION_FACTOR: float         = 10
 #
 # blocks
-const BLOCK_ACTIVATION_HEAT_THRESHOLD: float       = 0.5
+const BLOCK_ACTIVATION_HEAT_THRESHOLD: float       = 0.3
 const BLOCK_BREAK_APART_VELOCITY: float            = 50
 const BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO: float  = 0.9
 const BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO: float = 0.9
 const BLOCK_EXPLOSION_OVERHEAT_RATIO: float        = 3 # exploson maxes at ratio above the amount of heat needed to break the block
 const BLOCK_HALF_BREAK_APART_VELOCITY: float       = BLOCK_BREAK_APART_VELOCITY / 2
 const BLOCK_HALF_HEATED_BREAK_SEC: float           = BLOCK_HEATED_BREAK_SEC / 2
-const BLOCK_HEATED_BREAK_SEC: float                = 1.0
+const BLOCK_HEATED_BREAK_SEC: float                = 0.5
 const BLOCK_INACTIVE_OPACITY: float                = 0.25
 const BLOCK_INNER_GEM_ALPHA: float                 = 0.8
 const BLOCK_LINEAR_DAMP: float                     = 0.1
