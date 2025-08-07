@@ -19,7 +19,10 @@ one_shot = true
 explosiveness = 1.0
 spread = 180.0
 gravity = Vector2(0, 0)
-initial_velocity_max = 200.0
+initial_velocity_min = 200.0
+initial_velocity_max = 300.0
+damping_min = 100.0
+damping_max = 300.0
 scale_amount_max = 10.0
 scale_amount_curve = SubResource("Curve_v26ot")
 
