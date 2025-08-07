@@ -39,7 +39,7 @@ var projectile_explosive_start_ticks_msec: float = 0.0
 var is_disabled: bool                = false
 var disabled_until_ticks_msec: float = 0.0
 # variables for laser tool
-var lasers: Array[LaserBeam] = []
+var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
@@ -50,7 +50,7 @@ var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
+const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -207,24 +207,19 @@ func _input_process(delta: float) -> void:
 func _do_activate_laser() -> void:
 	if laser_charge_sec < Config.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
 		return
-	if not lasers.is_empty():
+	if laser:
 		return
-	var from_y = position.y - Config.PLAYER_SHIP_LASER_CLUSTER_SPREAD * (Config.PLAYER_SHIP_LASER_CLUSTER_COUNT - 1) / 2
-	for i in range(Config.PLAYER_SHIP_LASER_CLUSTER_COUNT):		
-		var laser: Node = laser_scene.instantiate()
-		laser.position.y = from_y + i * Config.PLAYER_SHIP_LASER_CLUSTER_SPREAD
-		laser.player_num = player_num
-		laser.source_ship = self
-		lasers.append(laser)
-		self.get_parent().call_deferred("add_child", laser)
+	laser         = laser_scene.instantiate()
+	laser.player_num = player_num
+	laser.source_ship = self
+	self.get_parent().call_deferred("add_child", laser)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
 
 
 func _do_deactivate_laser() -> void:
-	if not lasers.is_empty():
-		for laser in lasers:
-			laser.call_deferred("queue_free")
-		lasers.clear()
+	if laser:
+		laser.call_deferred("queue_free")
+		laser = null
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 		AudioManager.stop_2d_audio(laser_audio_key)
 
@@ -252,10 +247,9 @@ func _do_launch_projectile_explosive() -> void:
 
 func _update_laser(delta: float) -> void:
 	# If the laser is active, decrease the charge
-	if not lasers.is_empty():
-		for laser in lasers:
-			laser.set_position(position)
-			laser.set_rotation(actual_rotation)
+	if laser:
+		laser.set_position(position)
+		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
 		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
