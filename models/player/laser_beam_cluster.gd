@@ -1,4 +1,4 @@
-﻿class_name LaserBeamCluster
+class_name LaserBeamCluster
 extends Node2D
 
 # Player number to identify the laser beam
@@ -9,13 +9,9 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$LaserBeamA.player_num = player_num
-	$LaserBeamA.source_ship = source_ship
-	$LaserBeamB.player_num = player_num
-	$LaserBeamB.source_ship = source_ship
-	$LaserBeamC.player_num = player_num
-	$LaserBeamC.source_ship = source_ship
-	$LaserBeamD.player_num = player_num
-	$LaserBeamD.source_ship = source_ship
-	$LaserBeamE.player_num = player_num
-	$LaserBeamE.source_ship = source_ship
+	$LaserBeamA.setup(player_num, source_ship)
+	$LaserBeamB.setup(player_num, source_ship)
+	$LaserBeamC.setup(player_num, source_ship)
+	$LaserBeamD.setup(player_num, source_ship)
+	$LaserBeamE.setup(player_num, source_ship)
+	

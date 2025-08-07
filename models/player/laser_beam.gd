@@ -1,10 +1,4 @@
-class_name LaserBeam
 extends Node2D
-
-# Player number to identify the laser beam
-@export var player_num: int = 0
-# Player ship to avoid self-collision
-@export var source_ship: Ship = null
 
 # References to child nodes
 @onready var raycast: RayCast2D = $RayCast2D
@@ -16,7 +10,7 @@ var alpha: float = 0.0
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func setup(player_num: int, source_ship: Ship = null) -> void:
 	if source_ship:
 		raycast.add_exception(source_ship)
 	# Set the sprite texture based on player_num
