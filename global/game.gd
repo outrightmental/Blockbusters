@@ -9,6 +9,7 @@ signal player_did_harm(player_num: int)
 signal projectile_count_updated
 signal player_ready_updated
 signal player_laser_charge_updated(player_num: int, charge_sec: float)
+signal input_mode_updated
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
@@ -17,6 +18,11 @@ enum Result {
 	PLAYER_1_WINS,
 	PLAYER_2_WINS,
 	DRAW,
+}
+# Enum for input modes
+enum InputMode {
+	ARCADE_TABLE,
+	CONSOLE_GAMEPADS,
 }
 
 # Keeping track of the score
@@ -30,6 +36,8 @@ enum Result {
 # Keeping track of the projectile count
 @onready var projectiles_in_play: int = 0
 
+# Keep track of the input mode
+@onready var input_mode: InputMode = InputMode.ARCADE_TABLE
 
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
@@ -39,6 +47,14 @@ func player_can_launch_projectile(player_num: int) -> bool:
 		push_error("No score found for player_num: ", player_num)
 		return false
 
+
+# Activate dual gamepad input mode, issue #126
+func activate_dual_gamepad_input_mode() -> void:
+	print ("[GAME] Activating dual gamepad input mode")
+	input_mode = InputMode.CONSOLE_GAMEPADS
+	input_mode_updated.emit()
+	pass
+	
 
 func _ready() -> void:
 	reset_game.connect(_do_reset_game)

@@ -3,12 +3,13 @@ extends Node2D
 # Constants
 const GAME_START_DELAY_SECONDS: float = 1.0
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
-	pass
+	_detect_input_mode()
 
-	
+
 # If both players are ready, start the game
 func _on_player_ready_updated() -> void:
 	if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
@@ -23,3 +24,8 @@ func _goto_scene(path: String) -> void:
 		get_tree().change_scene_to_file(path)
 
 
+# Detect the input mode (gamepad or keyboard) and update the UI accordingly
+func _detect_input_mode() -> void:
+	var gamepads: Array[int] = Input.get_connected_joypads()
+	if gamepads.size() == 2:
+		Game.activate_dual_gamepad_input_mode()
