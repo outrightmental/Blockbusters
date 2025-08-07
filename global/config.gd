@@ -1,5 +1,3 @@
-extends Node
-
 #
 # This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
@@ -19,14 +17,16 @@ const PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY: float      = 170.0
 const PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX: int         = 10
 const PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX: float    = 3.0
 const PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN: float    = 1.0
-const PLAYER_SHIP_FORCEFIELD_FORCE: float               = 10000.0
+const PLAYER_SHIP_FORCEFIELD_INWARD_FORCE: float        = 10000.0
+const PLAYER_SHIP_FORCEFIELD_MOTION_FORCE: float        = 30000.0
+const PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD: float    = 1.0
 const PLAYER_SHIP_FORCE_AMOUNT: int                     = 5000
 const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 1.0
 const PLAYER_SHIP_LASER_ALPHA_MAX: float                = 0.5
-const PLAYER_SHIP_LASER_CLUSTER_SPREAD: float           = 5
-const PLAYER_SHIP_LASER_CLUSTER_COUNT: int              = 5
 const PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC: float = 1
 const PLAYER_SHIP_LASER_CHARGE_MAX_SEC: float           = 3
+const PLAYER_SHIP_LASER_CLUSTER_COUNT: int              = 5
+const PLAYER_SHIP_LASER_CLUSTER_SPREAD: float           = 5
 const PLAYER_SHIP_LASER_FLICKER_RATE: float             = 5
 const PLAYER_SHIP_LASER_RECHARGE_RATE: float            = 0.5
 const PLAYER_SHIP_LINEAR_DAMP: float                    = 0.9
