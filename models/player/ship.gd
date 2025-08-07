@@ -67,6 +67,7 @@ func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
 	disabled_until_ticks_msec = Time.get_ticks_msec() + Config.PLAYER_SHIP_DISABLED_SEC * 1000.0
 	_set_colors(Config.PLAYER_SHIP_DISABLED_S_RATIO, Config.PLAYER_SHIP_DISABLED_V_RATIO)
+	_do_deactivate_laser()
 	Game.player_did_harm.emit(responsible_player_num)
 
 
