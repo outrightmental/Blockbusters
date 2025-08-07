@@ -56,25 +56,25 @@ polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0
 [node name="ShowRoundCorners" type="Node2D" parent="."]
 
 [node name="TopLeft" type="Polygon2D" parent="ShowRoundCorners"]
-color = Color(0.313726, 0.313726, 0.313726, 1)
+color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="TopRight" type="Polygon2D" parent="ShowRoundCorners"]
 position = Vector2(1024, 0)
 rotation = 1.57079
-color = Color(0.313726, 0.313726, 0.313726, 1)
+color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="BottomRight" type="Polygon2D" parent="ShowRoundCorners"]
 position = Vector2(1024, 576)
 rotation = -3.14159
-color = Color(0.313726, 0.313726, 0.313726, 1)
+color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="BottomLeft" type="Polygon2D" parent="ShowRoundCorners"]
 position = Vector2(0, 576)
 rotation = -1.57079
-color = Color(0.313726, 0.313726, 0.313726, 1)
+color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="Modal" type="Node2D" parent="."]
