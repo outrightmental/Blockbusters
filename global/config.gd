@@ -1,3 +1,5 @@
+extends Node
+
 #
 # This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
