@@ -9,7 +9,7 @@ func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
 	# Game.detect_input_mode()
 	_setup()
-	Game.input_mode_updated.connect(_setup)
+	InputManager.input_mode_updated.connect(_setup)
 
 
 # If both players are ready, start the game
@@ -22,13 +22,13 @@ func _on_player_ready_updated() -> void:
 
 # Setup the UI based on the current input mode		
 func _setup() -> void:
-	match Game.input_mode:
-		Game.InputMode.TABLE:
+	match InputManager.mode:
+		InputManager.Mode.TABLE:
 			$TableMode.show()
 			$CouchMode.hide()
 			$ReadyP1.transform = Transform2D(PI/2, Vector2(122, 291))
 			$ReadyP2.transform = Transform2D(-PI/2, Vector2(906, 288))
-		Game.InputMode.COUCH:
+		InputManager.Mode.COUCH:
 			$TableMode.hide()
 			$CouchMode.show()
 			$ReadyP1.transform = Transform2D(0, Vector2(250, 400))

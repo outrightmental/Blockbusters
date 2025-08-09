@@ -21,6 +21,7 @@ Config="*res://global/config.gd"
 Game="*res://global/game.gd"
 Util="*res://global/util.gd"
 AudioManager="*res://global/audio_manager.tscn"
+InputManager="*res://global/input_manager.gd"
 
 [display]
 

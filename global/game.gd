@@ -9,7 +9,6 @@ signal player_did_harm(player_num: int)
 signal projectile_count_updated
 signal player_ready_updated
 signal player_laser_charge_updated(player_num: int, charge_sec: float)
-signal input_mode_updated
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
@@ -19,12 +18,6 @@ enum Result {
 	PLAYER_2_WINS,
 	DRAW,
 }
-# Enum for input modes
-enum InputMode {
-	TABLE,
-	COUCH,
-}
-
 # Keeping track of the score
 @onready var score: Dictionary = {
 									 1: 0,
@@ -36,9 +29,6 @@ enum InputMode {
 # Keeping track of the projectile count
 @onready var projectiles_in_play: int = 0
 
-# Keep track of the input mode
-@onready var input_mode: InputMode = InputMode.TABLE
-
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
 	if score.has(player_num):
@@ -48,17 +38,6 @@ func player_can_launch_projectile(player_num: int) -> bool:
 		return false
 		
 
-# Detect the input mode based on the current input devices, see #126
-func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
-	if Input.get_connected_joypads().size() >= 2:
-		print ("[GAME] Activating dual gamepad input mode")
-		input_mode = InputMode.COUCH
-	else:
-		print ("[GAME] Activating single gamepad input mode")
-		input_mode = InputMode.TABLE
-	input_mode_updated.emit()
-
-
 func _ready() -> void:
 	reset_game.connect(_do_reset_game)
 	player_did_launch_projectile.connect(_on_player_launch_projectile)
@@ -67,7 +46,6 @@ func _ready() -> void:
 	projectile_count_updated.connect(_on_projectile_count_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
-	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 
 
 func _do_reset_game() -> void:
