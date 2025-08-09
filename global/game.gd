@@ -21,8 +21,8 @@ enum Result {
 }
 # Enum for input modes
 enum InputMode {
-	ARCADE_TABLE,
-	CONSOLE_GAMEPADS,
+	TABLE,
+	COUCH,
 }
 
 # Keeping track of the score
@@ -37,7 +37,7 @@ enum InputMode {
 @onready var projectiles_in_play: int = 0
 
 # Keep track of the input mode
-@onready var input_mode: InputMode = InputMode.ARCADE_TABLE
+@onready var input_mode: InputMode = InputMode.TABLE
 
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
@@ -46,15 +46,18 @@ func player_can_launch_projectile(player_num: int) -> bool:
 	else:
 		push_error("No score found for player_num: ", player_num)
 		return false
+		
 
-
-# Activate dual gamepad input mode, issue #126
-func activate_dual_gamepad_input_mode() -> void:
-	print ("[GAME] Activating dual gamepad input mode")
-	input_mode = InputMode.CONSOLE_GAMEPADS
+# Detect the input mode based on the current input devices, see #126
+func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
+	if Input.get_connected_joypads().size() >= 2:
+		print ("[GAME] Activating dual gamepad input mode")
+		input_mode = InputMode.COUCH
+	else:
+		print ("[GAME] Activating single gamepad input mode")
+		input_mode = InputMode.TABLE
 	input_mode_updated.emit()
-	pass
-	
+
 
 func _ready() -> void:
 	reset_game.connect(_do_reset_game)
@@ -64,6 +67,7 @@ func _ready() -> void:
 	projectile_count_updated.connect(_on_projectile_count_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
+	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 
 
 func _do_reset_game() -> void:

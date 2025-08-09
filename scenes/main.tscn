@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cmijftuchxf62"]
+[gd_scene load_steps=4 format=3 uid="uid://cmijftuchxf62"]
 
 [ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
+[ext_resource type="PackedScene" uid="uid://5830e5k6edcl" path="res://models/player/instructions.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://dvo0oiws54t1m" path="res://models/player/ready.tscn" id="4_jyhfs"]
 
 [node name="Main" type="Node2D"]
@@ -12,12 +13,28 @@ offset_right = 1024.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 1)
 
-[node name="ReadyPlayer1" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(409, 291)
+[node name="ReadyP1" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(122, 291)
 rotation = 1.5708
 player_num = 1
 
-[node name="ReadyPlayer2" parent="." instance=ExtResource("4_jyhfs")]
-position = Vector2(619, 288)
+[node name="ReadyP2" parent="." instance=ExtResource("4_jyhfs")]
+position = Vector2(906, 288)
 rotation = -1.5708
 player_num = 2
+
+[node name="TableMode" type="Node2D" parent="."]
+visible = false
+
+[node name="InstructionsP1" parent="TableMode" instance=ExtResource("3_sugp2")]
+position = Vector2(409, 291)
+rotation = 1.5708
+
+[node name="InstructionsP2" parent="TableMode" instance=ExtResource("3_sugp2")]
+position = Vector2(619, 288)
+rotation = -1.5708
+
+[node name="CouchMode" type="Node2D" parent="."]
+
+[node name="InstructionsC" parent="CouchMode" instance=ExtResource("3_sugp2")]
+position = Vector2(512, 118)

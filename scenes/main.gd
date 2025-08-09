@@ -7,25 +7,35 @@ const GAME_START_DELAY_SECONDS: float = 1.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
-	_detect_input_mode()
+	# Game.detect_input_mode()
+	_setup()
+	Game.input_mode_updated.connect(_setup)
 
 
 # If both players are ready, start the game
 func _on_player_ready_updated() -> void:
-	if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
+	if $ReadyP1.is_ready and $ReadyP2.is_ready:
 		await Util.delay(GAME_START_DELAY_SECONDS)
-		if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
+		if $ReadyP1.is_ready and $ReadyP2.is_ready:
 			_goto_scene("res://scenes/play_game.tscn")
+
+
+# Setup the UI based on the current input mode		
+func _setup() -> void:
+	match Game.input_mode:
+		Game.InputMode.TABLE:
+			$TableMode.show()
+			$CouchMode.hide()
+			$ReadyP1.transform = Transform2D(PI/2, Vector2(122, 291))
+			$ReadyP2.transform = Transform2D(-PI/2, Vector2(906, 288))
+		Game.InputMode.COUCH:
+			$TableMode.hide()
+			$CouchMode.show()
+			$ReadyP1.transform = Transform2D(0, Vector2(250, 400))
+			$ReadyP2.transform = Transform2D(0, Vector2(776, 400))
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _goto_scene(path: String) -> void:
 	if get_tree():
 		get_tree().change_scene_to_file(path)
-
-
-# Detect the input mode (gamepad or keyboard) and update the UI accordingly
-func _detect_input_mode() -> void:
-	var gamepads: Array[int] = Input.get_connected_joypads()
-	if gamepads.size() == 2:
-		Game.activate_dual_gamepad_input_mode()
