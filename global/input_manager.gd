@@ -114,26 +114,25 @@ func _input(event: InputEvent) -> void:
 					return
 
 
-# --- Helpers -------------------------------------------------------------
-
+# If player has a gamepad, read stick; otherwise, read keyboard axes.
 func _get_dir_for_player(player: int) -> Vector2:
-
-	# If player has a gamepad, read stick; otherwise, read keyboard axes.
-	var dev := p1_device_id if player == 1 else p2_device_id
-	if dev != -1:
-		var x := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
-		var y := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
-		var v := Vector2(x, y)
-		# invert Y if you want up to be negative stick Y (depends on your game)
-		if v.length() < DEADZONE:
-			return Vector2.ZERO
-		return v
-	else:
-		var keys   := P1_KEYS if player == 1 else P2_KEYS
-		var x_axis := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
-		var y_axis := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
-		var v      := Vector2(x_axis, y_axis)
-		return v.normalized() if v.length() > 1.0 else v
+	match mode:
+		Mode.TABLE:
+			var keys   := P1_KEYS if player == 1 else P2_KEYS
+			var x_axis := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
+			var y_axis := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
+			var v      := Vector2(x_axis, y_axis)
+			return v.normalized() if v.length() > 1.0 else v
+		Mode.COUCH:
+			var dev := p1_device_id if player == 1 else p2_device_id
+			var x   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
+			var y   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
+			var v   := Vector2(x, y)
+			# invert Y if you want up to be negative stick Y (depends on your game)
+			if v.length() < DEADZONE:
+				return Vector2.ZERO
+			return v
+	return Vector2.ZERO
 
 
 func _player_for_device(device_id: int) -> int:
