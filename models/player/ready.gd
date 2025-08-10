@@ -8,10 +8,6 @@ const UNREADY_COLOR_SV_RATIO: float = 0.3
 @export var player_num: int = 0
 # When the player is ready
 @export var is_ready: bool = false
-# Input mapping
-var input_mapping: Dictionary = {
-									"start": "ui_cancel",
-								}
 
 
 
@@ -20,14 +16,8 @@ var input_mapping: Dictionary = {
 func _ready() -> void:
 	_set_player_name()
 	_set_color()
-	# Set up input mapping for player
-	for key in input_mapping.keys():
-		var action_name: String = Config.player_input_mapping_format[key] % player_num
-		if InputMap.has_action(action_name):
-			input_mapping[key] = action_name
-		else:
-			push_error("Input action not found: ", action_name)
-
+	InputManager.action_pressed.connect(_on_input_action_pressed)
+	
 
 # Set the name of the player based on player_num
 func _set_player_name() -> void:
@@ -56,10 +46,8 @@ func _toggle_ready() -> void:
 	pass
 
 
-# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
-	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["start"]):
+func _on_input_action_pressed(player: int, action: String) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if action == InputManager.INPUT_START:
 		_toggle_ready()
-
-	

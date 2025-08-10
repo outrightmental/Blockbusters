@@ -18,7 +18,6 @@ enum Result {
 	PLAYER_2_WINS,
 	DRAW,
 }
-
 # Keeping track of the score
 @onready var score: Dictionary = {
 									 1: 0,
@@ -30,7 +29,6 @@ enum Result {
 # Keeping track of the projectile count
 @onready var projectiles_in_play: int = 0
 
-
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
 	if score.has(player_num):
@@ -38,7 +36,7 @@ func player_can_launch_projectile(player_num: int) -> bool:
 	else:
 		push_error("No score found for player_num: ", player_num)
 		return false
-
+		
 
 func _ready() -> void:
 	reset_game.connect(_do_reset_game)

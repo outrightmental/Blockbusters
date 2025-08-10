@@ -11,6 +11,6 @@ check() {
   fi
 }
 
-# Check that there are no TODO items in the specified directories
+# Check the specified directories
 check global
 check models

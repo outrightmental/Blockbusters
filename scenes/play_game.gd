@@ -23,6 +23,9 @@ var is_game_over: bool                   = false
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
 	spawn_next_gem_at_msec = started_at_ticks_msec + Config.GEM_SPAWN_INITIAL_MSEC
+	# Setup the board based on the current input mode
+	_setup()
+	InputManager.input_mode_updated.connect(_setup)
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
@@ -38,6 +41,21 @@ func _ready() -> void:
 	await Util.delay(Config.GAME_START_COUNTER_DELAY)
 	_hide_modal()
 	pass
+
+
+# Setup the UI based on the current input mode		
+func _setup() -> void:
+	match InputManager.mode:
+		InputManager.Mode.TABLE:
+			$PlayerMeta/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
+			$PlayerMeta/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
+			$PlayerMeta/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
+			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
+		InputManager.Mode.COUCH:
+			$PlayerMeta/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
+			$PlayerMeta/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$PlayerMeta/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
+			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
@@ -124,7 +142,7 @@ func _check_for_game_over() -> void:
 # Called when a player collects a gem
 func _on_player_collect_gem(_player_num: int) -> void:
 	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Config.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
-	print ("[GAME] Player collected a gem, not spawning another until: ", gem_dont_spawn_until_ticks_msec)
+	print ("[GAME] Player collected a gem")
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
