@@ -7,7 +7,6 @@ const GAME_START_DELAY_SECONDS: float = 1.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
-	# Game.detect_input_mode()
 	_setup()
 	InputManager.input_mode_updated.connect(_setup)
 
