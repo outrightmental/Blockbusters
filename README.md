@@ -4,9 +4,14 @@
 
 # Blockbusters
 
-Fast-paced arcade competition built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
+Fast-paced arcade competition built for
+the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
 
 Original design by [outrightmental](https://discord.com/users/outrightmental)
+
+| [![Blockbusters Screenshot #1](design/screenshots/blockbusters-screenshot-1.jpg)](design/screenshots/blockbusters-screenshot-1.jpg) | [![Blockbusters Screenshot #2](design/screenshots/blockbusters-screenshot-2.jpg)](design/screenshots/blockbusters-screenshot-2.jpg) | [![Blockbusters Screenshot #3](design/screenshots/blockbusters-screenshot-3.jpg)](design/screenshots/blockbusters-screenshot-3.jpg) |
+|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| [![Blockbusters Screenshot #4](design/screenshots/blockbusters-screenshot-4.jpg)](design/screenshots/blockbusters-screenshot-4.jpg) | [![Blockbusters Screenshot #5](design/screenshots/blockbusters-screenshot-5.jpg)](design/screenshots/blockbusters-screenshot-5.jpg) | [![Blockbusters Screenshot #6](design/screenshots/blockbusters-screenshot-6.jpg)](design/screenshots/blockbusters-screenshot-6.jpg) |
 
 ## Game Design
 
@@ -16,12 +21,20 @@ Original design by [outrightmental](https://discord.com/users/outrightmental)
 
 Leverages the GitHub marketplace action [godot-ci](https://github.com/marketplace/actions/godot-ci)
 
-When a tag is pushed to the repository, [this workflow](.github/workflows/distro.yml) will automatically build the release artifacts and attach them to the tag.
+When a tag is pushed to the repository, [this workflow](.github/workflows/distro.yml) will automatically build the
+release artifacts and attach them to the tag.
 
 To build & publish a release:
-1. [Create a tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) at the commit you want to release. The tag should be the version name you want to give the release, e.g. `v2.1`
-2. [Create a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) based on the tag
+
+1. [Create a tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) at the commit you want to release. The tag should
+   be the version name you want to give the release, e.g. `v2.1`
+2. [Create a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
+   based on the tag
 
 E.g. to build & publish **Release v2.1** we
-1. Created the tag `v2.1` and pushed it to the repository -- GitHub Actions then automatically [built and published](https://github.com/outrightmental/Blockbusters/actions/runs/16060630082) the artifacts and attached them to that tag.
-2. Created [release v2.1](https://github.com/outrightmental/Blockbusters/releases/tag/v2.1) from tag `v2.1` -- The artifacts then appeared attached to that release
+
+1. Created the tag `v2.1` and pushed it to the repository -- GitHub Actions then
+   automatically [built and published](https://github.com/outrightmental/Blockbusters/actions/runs/16060630082) the
+   artifacts and attached them to that tag.
+2. Created [release v2.1](https://github.com/outrightmental/Blockbusters/releases/tag/v2.1) from tag `v2.1` -- The
+   artifacts then appeared attached to that release
