@@ -16,19 +16,22 @@ enum Mode {
 func _ready() -> void:
 	# hot-plug support
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	_assign_gamepads()
 
 
 # Detect the input mode based on the current input devices, see #126
 func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
-	if Input.get_connected_joypads().size() >= 2:
+	var joypads: Array = Input.get_connected_joypads()
+	if joypads.size() >= 2:
 		print ("[GAME] Activating dual gamepad input mode")
 		mode = Mode.COUCH
+		joypads.sort()  # lowest id first for stability
+		# Optionally: dedupe "ghost" XInput mirrors by GUID/name here.
+		p1_device_id = joypads[0]
+		p2_device_id = joypads[1]
 	else:
 		print ("[GAME] Activating single gamepad input mode")
 		mode = Mode.TABLE
 	input_mode_updated.emit()
-	_assign_gamepads()
 
 
 signal move(player: int, dir: Vector2)                 # per-frame movement vector
@@ -38,79 +41,88 @@ signal action_released(player: int, action: String)
 
 # Deadzone for sticks
 const DEADZONE := 0.25
-# Axes (0=X, 1=Y on most devices; customize if needed)
-const AXIS_LEFT_X := 0
-const AXIS_LEFT_Y := 1
+# Names of input actions that are used in the Input Map
+const INPUT_LEFT: String     = "left"
+const INPUT_RIGHT: String    = "right"
+const INPUT_UP: String       = "up"
+const INPUT_DOWN: String     = "down"
+const INPUT_ACTION_A: String = "action_a"
+const INPUT_ACTION_B: String = "action_b"
+const INPUT_START: String    = "start"
+# Formatting template for player input
+const PLAYER_INPUT_MAPPING_FORMAT: Dictionary = {
+													INPUT_LEFT: "p%d_left",
+													INPUT_RIGHT: "p%d_right",
+													INPUT_UP: "p%d_up",
+													INPUT_DOWN: "p%d_down",
+													INPUT_ACTION_A: "p%d_action_a",
+													INPUT_ACTION_B: "p%d_action_b",
+													INPUT_START: "p%d_start",
+												}
 # Map joypad buttons → abstract actions (adjust to your liking)
 # 0=A 1=B 2=X 3=Y 6=BACK 7=START on XInput; tweak for your target
 const JOY_TO_ACTION := {
-						   0: "fire",
-						   7: "start"
+						   0: INPUT_ACTION_A,
+						   1: INPUT_ACTION_B,
+						   6: INPUT_START
 					   }
 # Keyboard action names that already exist in your Input Map
-const P1_KEYS := {
-					 "left": "p1_left",
-					 "right": "p1_right",
-					 "up": "p1_up",
-					 "down": "p1_down",
-					 "fire": "p1_fire",
-					 "start": "p1_start"
-				 }
-const P2_KEYS := {
-					 "left": "p2_left",
-					 "right": "p2_right",
-					 "up": "p2_up",
-					 "down": "p2_down",
-					 "fire": "p2_fire",
-					 "start": "p2_start"
-				 }
+var P1_KEYS := _compute_player_input_map(1)
+var P2_KEYS := _compute_player_input_map(2)
 # --- State ---------------------------------------------------------------
 
 var p1_device_id: int = -1   # -1 = no gamepad (uses keyboard)
 var p2_device_id: int = -1
 
 
+func _compute_player_input_map(player: int) -> Dictionary:
+	var input_mapping: Dictionary = {}
+	# Set up input mapping for player
+	for key in PLAYER_INPUT_MAPPING_FORMAT.keys():
+		var action_name: String = PLAYER_INPUT_MAPPING_FORMAT[key] % player
+		if InputMap.has_action(action_name):
+			input_mapping[key] = action_name
+		else:
+			push_error("Input action not found: ", action_name)
+	return input_mapping
+
+
 func _physics_process(_delta: float) -> void:
-	# Player 1 movement
-	var p1_dir := _get_dir_for_player(1)
-	emit_signal("move", 1, p1_dir)
-	# Player 2 movement
-	var p2_dir := _get_dir_for_player(2)
-	emit_signal("move", 2, p2_dir)
+	for p in [1, 2]:
+		move.emit( p, _get_dir_for_player(p))
 
 
 func _input(event: InputEvent) -> void:
-	# Route joypad events by device id → player index
-	if event is InputEventJoypadButton:
-		var player := _player_for_device(event.device)
-		if player != 0:
-			if event.pressed and not event.is_echo():
-				if JOY_TO_ACTION.has(event.button_index):
-					emit_signal("action_pressed", player, JOY_TO_ACTION[event.button_index])
-			else:
-				if JOY_TO_ACTION.has(event.button_index):
-					emit_signal("action_released", player, JOY_TO_ACTION[event.button_index])
-			get_viewport().set_input_as_handled()
-			return
-
-	# Keyboard: only for players that DON'T have a gamepad
-	if event is InputEventKey and not event.is_echo():
-		# P1 keyboard actions
-		if p1_device_id == -1:
-			_handle_keyboard_action_event(1, event, P1_KEYS)
-		# P2 keyboard actions
-		if p2_device_id == -1:
-			_handle_keyboard_action_event(2, event, P2_KEYS)
+	match mode:
+		Mode.TABLE:
+			# Keyboard: only for players that DON'T have a gamepad
+			if event is InputEventKey and not event.is_echo():
+				_handle_keyboard_action_event(1, event, P1_KEYS)
+				_handle_keyboard_action_event(2, event, P2_KEYS)
+		Mode.COUCH:
+			# Route joypad events by device id → player index
+			if event is InputEventJoypadButton:
+				var player := _player_for_device(event.device)
+				if player != 0:
+					if event.pressed and not event.is_echo():
+						if JOY_TO_ACTION.has(event.button_index):
+							action_pressed.emit( player, JOY_TO_ACTION[event.button_index])
+					else:
+						if JOY_TO_ACTION.has(event.button_index):
+							action_released.emit( player, JOY_TO_ACTION[event.button_index])
+					get_viewport().set_input_as_handled()
+					return
 
 
 # --- Helpers -------------------------------------------------------------
 
 func _get_dir_for_player(player: int) -> Vector2:
+
 	# If player has a gamepad, read stick; otherwise, read keyboard axes.
 	var dev := p1_device_id if player == 1 else p2_device_id
 	if dev != -1:
-		var x := Input.get_joy_axis(dev, AXIS_LEFT_X)
-		var y := Input.get_joy_axis(dev, AXIS_LEFT_Y)
+		var x := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
+		var y := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
 		var v := Vector2(x, y)
 		# invert Y if you want up to be negative stick Y (depends on your game)
 		if v.length() < DEADZONE:
@@ -118,8 +130,8 @@ func _get_dir_for_player(player: int) -> Vector2:
 		return v
 	else:
 		var keys   := P1_KEYS if player == 1 else P2_KEYS
-		var x_axis := Input.get_action_strength(keys["right"]) - Input.get_action_strength(keys["left"])
-		var y_axis := Input.get_action_strength(keys["down"]) - Input.get_action_strength(keys["up"])
+		var x_axis := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
+		var y_axis := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
 		var v      := Vector2(x_axis, y_axis)
 		return v.normalized() if v.length() > 1.0 else v
 
@@ -132,30 +144,20 @@ func _player_for_device(device_id: int) -> int:
 	return 0
 
 
-func _assign_gamepads() -> void:
-	var devices := Input.get_connected_joypads()
-	devices.sort()  # lowest id first for stability
-	# Optionally: dedupe "ghost" XInput mirrors by GUID/name here.
-
-	p1_device_id = -1
-	p2_device_id = -1
-	if devices.size() >= 1:
-		p1_device_id = devices[0]
-	if devices.size() >= 2:
-		p2_device_id = devices[1]
-
-
 # If only one pad, P2 stays -1 and uses keyboard.
-
 func _handle_keyboard_action_event(player: int, event: InputEventKey, keys: Dictionary) -> void:
 	# Map key events to abstract actions; movement is polled each frame separately.
 	if event.pressed:
-		if event.is_action_pressed(keys["fire"]):
-			emit_signal("action_pressed", player, "fire")
-		if event.is_action_pressed(keys["start"]):
-			emit_signal("action_pressed", player, "start")
+		if event.is_action_pressed(keys[INPUT_ACTION_A]):
+			action_pressed.emit( player, INPUT_ACTION_A)
+		if event.is_action_pressed(keys[INPUT_ACTION_B]):
+			action_pressed.emit( player, INPUT_ACTION_B)
+		if event.is_action_pressed(keys[INPUT_START]):
+			action_pressed.emit( player, INPUT_START)
 	else:
-		if event.is_action_released(keys["fire"]):
-			emit_signal("action_released", player, "fire")
-		if event.is_action_released(keys["start"]):
-			emit_signal("action_released", player, "start")
+		if event.is_action_released(keys[INPUT_ACTION_A]):
+			action_released.emit( player, INPUT_ACTION_A)
+		if event.is_action_released(keys[INPUT_ACTION_B]):
+			action_released.emit( player, INPUT_ACTION_B)
+		if event.is_action_released(keys[INPUT_START]):
+			action_released.emit( player, INPUT_START)

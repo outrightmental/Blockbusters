@@ -1,21 +1,6 @@
 class_name Ship
 extends Collidable
 
-var input_mapping: Dictionary = {
-									"left": "ui_left",
-									"right": "ui_right",
-									"up": "ui_up",
-									"down": "ui_down",
-									"action_a": "ui_accept",
-									"action_b": "ui_cancel",
-								}
-
-const dir_vectors := {
-						 "right": Vector2(1, 0),
-						 "left": Vector2(-1, 0),
-						 "up": Vector2(0, -1),
-						 "down": Vector2(0, 1),
-					 }
 enum ShipMovementState {
 	ACCELERATE,
 	DRIFT,
@@ -27,6 +12,7 @@ var input_direction_start_ticks_msec: float = 0.0
 var input_direction_pressed: bool = false
 # keep track of ship movement state and associated sounds
 var movement_state: ShipMovementState = ShipMovementState.NONE
+var movement_dir: Vector2             = Vector2.ZERO
 
 @onready var movement_audio_key: String = "movement_%d" % player_num
 
@@ -93,13 +79,6 @@ func apply_heat(delta: float) -> void:
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(Config.PLAYER_SHIP_LINEAR_DAMP)
-	# Set up input mapping for player
-	for key in input_mapping.keys():
-		var action_name: String = Config.player_input_mapping_format[key] % player_num
-		if InputMap.has_action(action_name):
-			input_mapping[key] = action_name
-		else:
-			push_error("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
@@ -124,6 +103,11 @@ func _ready() -> void:
 	# Update the heated effect visibility
 	_update_heated_effect()
 
+	# Connect to input signals
+	InputManager.move.connect(_on_input_move)
+	InputManager.action_pressed.connect(_on_input_action_pressed)
+	InputManager.action_released.connect(_on_input_action_released)
+
 
 # Set the colors of the ship based on player_num
 func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
@@ -140,8 +124,6 @@ func _physics_process(delta: float) -> void:
 	if is_disabled:
 		if Time.get_ticks_msec() > disabled_until_ticks_msec:
 			do_enable()
-	else:
-		_input_process(delta)
 
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
@@ -151,6 +133,10 @@ func _physics_process(delta: float) -> void:
 		angle_diff += TAU
 	actual_rotation += angle_diff * Config.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
+
+	# If the ship is not disabled, apply a force in the direction of the input
+	if movement_dir.length() > 0 and not is_disabled:
+		apply_impulse(movement_dir * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
 
 	# Update the laser charge
 	_update_laser(delta)
@@ -165,28 +151,34 @@ func _physics_process(delta: float) -> void:
 	_update_movement_audio_position()
 
 
-# Process input for the ship (if not disabled)
-func _input_process(delta: float) -> void:
-	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["action_a"]):
+func _on_input_action_pressed(player: int, action: String) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return  # Ignore input if the ship is disabled
+	if action == InputManager.INPUT_ACTION_A:
 		_do_activate_laser()
-	if Input.is_action_just_released(input_mapping["action_a"]):
-		_do_deactivate_laser()
-	if Input.is_action_just_pressed(input_mapping["action_b"]):
+	elif action == InputManager.INPUT_ACTION_B:
 		_do_launch_projectile_explosive()
 
-	# Get input vector from which keys are pressed
-	var input_vector: Vector2 = Vector2.ZERO
-	for key in dir_vectors.keys():
-		if Input.is_action_pressed(input_mapping[key]):
-			input_vector += dir_vectors[key]
 
-	# Normalize the input vector to avoid faster diagonal movement
-	if input_vector.length() > 1:
-		input_vector = input_vector.normalized()
+func _on_input_action_released(player: int, action: String) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return  # Ignore input if the ship is disabled
+	if action == InputManager.INPUT_ACTION_A:
+		_do_deactivate_laser()
+
+
+func _on_input_move(player: int, dir: Vector2) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return # Ignore input if the ship is disabled
 
 	# Reset input pressed state if no keys are pressed		
-	if input_vector == Vector2.ZERO:
+	if dir == Vector2.ZERO:
 		input_direction_pressed = false
 		_update_movement_state(ShipMovementState.NONE)
 	else:
@@ -197,14 +189,14 @@ func _input_process(delta: float) -> void:
 
 		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Config.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
-			target_rotation = input_vector.angle()
+			target_rotation = dir.angle()
 			_update_movement_state(ShipMovementState.DRIFT)
 		else:
 			target_rotation = linear_velocity.angle()
 			_update_movement_state(ShipMovementState.ACCELERATE)
 
 	# Apply force in the direction of the input vector
-	apply_impulse(input_vector * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
+	movement_dir = dir
 
 
 # Called when the player wants to activate the primary tool

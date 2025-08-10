@@ -93,14 +93,3 @@ const BOARD_SEED_F3: int                    = 973_523_665
 const BOARD_SEED_F4: int                    = 167_653_873
 const BOARD_SEED_F5: int                    = 423_587_300
 const BOARD_SEED_F6: int                    = 798_647_400
-#
-# Formatting template for player input
-const player_input_mapping_format: Dictionary = {
-													"left": "p%d_left",
-													"right": "p%d_right",
-													"up": "p%d_up",
-													"down": "p%d_down",
-													"action_a": "p%d_action_a",
-													"action_b": "p%d_action_b",
-													"start": "p%d_start",
-												}
