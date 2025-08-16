@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://dr3o8o314dpy"]
+[gd_scene load_steps=56 format=3 uid="uid://dr3o8o314dpy"]
 
 [ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
 [ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
@@ -253,6 +253,33 @@ pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
+[sub_resource type="Resource" id="Resource_dw7xo"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_t5ogi")
+volume = -6.0
+pitch_scale = 1.0
+pitch_randomness = 0.4
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_61tem"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_t5ogi")
+volume = -12.0
+pitch_scale = 1.0
+pitch_randomness = 0.4
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_crge0"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("3_t5ogi")
+volume = -18.0
+pitch_scale = 1.0
+pitch_randomness = 0.4
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
 [node name="AudioManager" type="Node2D"]
 script = ExtResource("1_siwhy")
 sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
@@ -280,5 +307,8 @@ sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
 21: SubResource("Resource_clr00"),
 22: SubResource("Resource_e1l55"),
 23: SubResource("Resource_ypvv3"),
-24: SubResource("Resource_umsmm")
+24: SubResource("Resource_umsmm"),
+26: SubResource("Resource_dw7xo"),
+27: SubResource("Resource_61tem"),
+28: SubResource("Resource_crge0")
 })

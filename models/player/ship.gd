@@ -328,6 +328,13 @@ func _update_movement_audio_position() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body == self:
 		return  # Ignore self
+	if body is Block:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_WHOLE)
+	elif body is BlockHalf:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_HALF)
+	elif body is BlockQuart:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_QUART)
+	
 	if body is Collidable and not body is ProjectileExplosive:
 		if body is Block and body.freeze:
 			return
