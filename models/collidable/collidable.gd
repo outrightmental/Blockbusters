@@ -2,7 +2,7 @@ class_name Collidable
 extends RigidBody2D
 
 # Unique identifier for the collidable object
-@export var number: int = 0
+@export var number: int = _nextNumber()
 
 # Static variable to hold the number counter
 static var _numberCounter: int = 0
@@ -14,6 +14,8 @@ var created_at: int = 0
 var heat: float         = 0.0
 var heat_delta: float   = 0.0
 var last_heated_at: int = 0
+var heating: bool = false
+@onready var heating_audio_key: String = "heating_%d" % number
 
 
 # Get the acceleration between the last processed frame and now
@@ -38,9 +40,9 @@ func apply_heat(delta: float) -> void:
 
 
 # Called when the bubble is instantiated
-func _init():
+func _nextNumber() -> int:
 	_numberCounter += 1
-	number = _numberCounter
+	return _numberCounter
 
 
 # Called when the scene is added to the tree
