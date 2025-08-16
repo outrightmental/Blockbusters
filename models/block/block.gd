@@ -30,7 +30,6 @@ func _ready() -> void:
 	# Start inactive
 	freeze = true
 	shapes.modulate.a = Constant.BLOCK_INACTIVE_OPACITY
-	pass
 
 
 # When a gem can be added
@@ -55,7 +54,6 @@ func add_gem() -> void:
 	gem.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
 	self.add_child(gem)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
-	pass
 
 
 # Break the block apart into two halves
@@ -86,7 +84,6 @@ func do_break() -> void:
 	self.get_parent().add_child(half1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
-	pass
 
 
 func _do_release_gem() -> bool:
@@ -106,35 +103,25 @@ func _do_release_gem() -> bool:
 func do_activate() -> void:
 	freeze = false
 	shapes.modulate.a = 1
-	pass
 
 
 # Play a sound when colliding with another object
 func _on_body_entered(_body: Node) -> void:
 	print ("Block collided with: ", _body.name)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_COLLIDES_WITH_BLOCK)
-	pass
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
-	_update_heat(_delta)
-	pass
-
-
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
-func _update_heat(delta: float) -> void:
 	_update_heated_effect()
-	if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
-		do_break()
-	if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
-		do_activate()
-	pass
 
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
+	if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
+		do_break()
+	if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+		do_activate()
 	if heated_effect == null:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
@@ -142,7 +129,6 @@ func _update_heated_effect() -> void:
 		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
-	pass
 
 
 # Called when the block is instantiated

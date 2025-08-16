@@ -29,10 +29,6 @@ var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
-
-# variable for being heated
-var heated_sec: float   = 0.0
-var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
@@ -63,6 +59,7 @@ func do_disable(responsible_player_num: int) -> void:
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DISABLED)
 
+
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false
@@ -70,13 +67,6 @@ func do_enable() -> void:
 	_set_colors(1.0)
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_REENABLED)
-
-
-# Apply heat if not disabled
-func apply_heat(delta: float) -> void:
-	if is_disabled:
-		return
-	heated_delta += delta
 
 
 # Called when the node enters the scene tree for the first time.
@@ -152,6 +142,9 @@ func _physics_process(delta: float) -> void:
 
 	# Update the movement state audio
 	_update_movement_audio_position()
+
+	# Update the ship heated effect
+	_update_heated_effect()
 
 
 func _on_input_action_pressed(player: int, action: String) -> void:
@@ -263,22 +256,6 @@ func _update_laser(delta: float) -> void:
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
 
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
-func _update_heat(delta: float) -> void:
-	if heated_delta > 0:
-		heated_sec += heated_delta
-		heated_delta = 0.0
-		_update_heated_effect()
-		if heated_sec >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
-			do_disable(player_num)
-	elif heated_sec > 0:
-		heated_sec -= delta
-		if heated_sec < 0:
-			heated_sec = 0.0
-		_update_heated_effect()
-
-
 # Apply forces to the bodies in the forcefield
 func _update_forcefield(_delta: float) -> void:
 	var forcefield_target_mass: float = 0
@@ -315,9 +292,13 @@ func _update_forcefield(_delta: float) -> void:
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
-	if heated_sec > 0:
+	if heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
+		do_disable(player_num)
+	if heated_effect == null:
+		return
+	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heated_sec / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 

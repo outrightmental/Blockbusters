@@ -27,7 +27,7 @@ func acceleration() -> Vector2:
 func age() -> float:
 	return Time.get_ticks_msec() - created_at
 
-
+	
 # Apply heat
 func apply_heat(delta: float) -> void:
 	heat_delta += delta
