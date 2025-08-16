@@ -45,7 +45,7 @@ func _update_heat(delta: float) -> void:
 		heat += heat_delta
 		heat_delta = 0.0
 		_update_heated_effect()
-		if heat >= Config.BLOCK_HALF_HEATED_BREAK_SEC:
+		if heat >= Constant.BLOCK_HALF_HEATED_BREAK_SEC:
 			call_deferred("do_shatter")
 	elif heat > 0:
 		heat -= delta
@@ -61,7 +61,7 @@ func _update_heated_effect() -> void:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heat / Config.BLOCK_HALF_HEATED_BREAK_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HALF_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 	pass

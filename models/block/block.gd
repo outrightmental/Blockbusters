@@ -24,7 +24,7 @@ const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatt
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_linear_damp(Config.BLOCK_LINEAR_DAMP)
+	set_linear_damp(Constant.BLOCK_LINEAR_DAMP)
 	add_to_group(Game.BLOCK_GROUP)
 	# Update the heated effect visibility
 	_update_heated_effect()
@@ -33,7 +33,7 @@ func _ready() -> void:
 	set_contact_monitor(true)
 	# Start inactive
 	freeze = true
-	shapes.modulate.a = Config.BLOCK_INACTIVE_OPACITY
+	shapes.modulate.a = Constant.BLOCK_INACTIVE_OPACITY
 	pass
 
 
@@ -56,7 +56,7 @@ func add_gem() -> void:
 	gem.position = Vector2(0, 0)
 	gem.add_collision_exception_with(self)
 	gem.freeze = true
-	gem.modulate.a = Config.BLOCK_INNER_GEM_ALPHA
+	gem.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
 	self.add_child(gem)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 	pass
@@ -67,12 +67,12 @@ func do_break() -> void:
 	# Half 1
 	var half1: Node = half1_scene.instantiate()
 	half1.position = position
-	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
+	half1.linear_velocity = linear_velocity + Vector2(-Constant.BLOCK_BREAK_APART_VELOCITY, -Constant.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
 	half2.position = position
-	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
+	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
 	# Gem
 	if _do_release_gem():
@@ -80,8 +80,8 @@ func do_break() -> void:
 		gem.add_collision_exception_with(half2)
 	# Transfer heat to the broken pieces
 	if heat > 0:
-		half1.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
-		half2.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
+		half1.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
+		half2.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
 	# Add the halves to the scene
 	self.get_parent().add_child(half2)
 	self.get_parent().add_child(half1)
@@ -136,9 +136,9 @@ func _update_heat(delta: float) -> void:
 		heat += heat_delta
 		heat_delta = 0.0
 		_update_heated_effect()
-		if heat >= Config.BLOCK_HEATED_BREAK_SEC:
+		if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
 			call_deferred("do_break")
-		if freeze and heat >= Config.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+		if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
 			call_deferred("do_activate")
 	elif heat > 0:
 		heat -= delta
@@ -154,7 +154,7 @@ func _update_heated_effect() -> void:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heat / Config.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 	pass
