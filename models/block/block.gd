@@ -1,12 +1,8 @@
 class_name Block
-extends Collidable
+extends Heatable
 
 # Variables
 var gem: Node = null
-# variable for being heated
-var heat: float   = 0.0
-var heat_delta: float = 0.0
-
 # Preloaded scenes
 const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
 const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
@@ -24,17 +20,19 @@ const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatt
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super._ready()
 	set_linear_damp(Constant.BLOCK_LINEAR_DAMP)
 	add_to_group(Game.BLOCK_GROUP)
-	# Update the heated effect visibility
-	_update_heated_effect()
+
 	# On collision
-	body_entered.connect(_on_body_entered)
 	set_contact_monitor(true)
+
 	# Start inactive
 	freeze = true
 	shapes.modulate.a = Constant.BLOCK_INACTIVE_OPACITY
-	pass
+
+	# Update the heated effect visibility
+	_update_heated_effect()
 
 
 # When a gem can be added
@@ -59,7 +57,6 @@ func add_gem() -> void:
 	gem.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
 	self.add_child(gem)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
-	pass
 
 
 # Break the block apart into two halves
@@ -74,10 +71,13 @@ func do_break() -> void:
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
-	# Gem
+	# If the block has a gem, release it, and play the sound effect depending on whether there was a gem or not
 	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_GEM)
+	else:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_NOGEM)
 	# Transfer heat to the broken pieces
 	if heat > 0:
 		half1.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)
@@ -87,7 +87,6 @@ func do_break() -> void:
 	self.get_parent().add_child(half1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
-	pass
 
 
 func _do_release_gem() -> bool:
@@ -103,53 +102,26 @@ func _do_release_gem() -> bool:
 	return false
 
 
-# Apply heat
-func apply_heat(delta: float) -> void:
-	heat_delta += delta
-	pass
-
-
 # Activate
 func do_activate() -> void:
 	freeze = false
 	shapes.modulate.a = 1
-	pass
-
-
-# Play a sound when colliding with another object
-func _on_body_entered(_body: Node) -> void:
-	print ("Block collided with: ", _body.name)
-	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_COLLIDES_WITH_BLOCK)
-	pass
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
-	_update_heat(_delta)
-	pass
-
-
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
-func _update_heat(delta: float) -> void:
-	if heat_delta > 0:
-		heat += heat_delta
-		heat_delta = 0.0
-		_update_heated_effect()
-		if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
-			call_deferred("do_break")
-		if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
-			call_deferred("do_activate")
-	elif heat > 0:
-		heat -= delta
-		if heat < 0:
-			heat = 0.0
-		_update_heated_effect()
-	pass
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	_update_heated_effect()
 
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
+	if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
+		do_break()
+		return
+	elif freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+		do_activate()
+		return
 	if heated_effect == null:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
@@ -157,9 +129,3 @@ func _update_heated_effect() -> void:
 		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
-	pass
-
-
-# Called when the block is instantiated
-func _init():
-	super._init()

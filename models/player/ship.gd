@@ -1,5 +1,5 @@
 class_name Ship
-extends Collidable
+extends Heatable
 
 enum ShipMovementState {
 	ACCELERATE,
@@ -29,10 +29,6 @@ var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
-
-# variable for being heated
-var heated_sec: float   = 0.0
-var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
@@ -60,6 +56,8 @@ func do_disable(responsible_player_num: int) -> void:
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
 	Game.player_did_harm.emit(responsible_player_num)
+	# Play sound effect
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DISABLED)
 
 
 # Called when the ship is re-enabled
@@ -67,17 +65,13 @@ func do_enable() -> void:
 	is_disabled = false
 	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
-
-
-# Apply heat if not disabled
-func apply_heat(delta: float) -> void:
-	if is_disabled:
-		return
-	heated_delta += delta
+	# Play sound effect
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_REENABLED)
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super._ready()
 	set_linear_damp(Constant.PLAYER_SHIP_LINEAR_DAMP)
 
 	# Set the sprite texture based on player_num
@@ -90,9 +84,12 @@ func _ready() -> void:
 	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
+	# When the ship collides with another body
+	self.body_entered.connect(_on_collision)
+
 	# Connect the forcefield body entered signal
-	forcefield_area.body_entered.connect(_on_body_entered)
-	forcefield_area.body_exited.connect(_on_body_exited)
+	forcefield_area.body_entered.connect(_on_forcefield_entered)
+	forcefield_area.body_exited.connect(_on_forcefield_exited)
 	# Set the forcefield color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
 		$ForcefieldEffect.color = Constant.PLAYER_COLORS[player_num][0]
@@ -141,14 +138,14 @@ func _physics_process(delta: float) -> void:
 	# Update the laser charge
 	_update_laser(delta)
 
-	# Update the heated state
-	_update_heat(delta)
-
 	# Apply forcefield forces
 	_update_forcefield(delta)
 
 	# Update the movement state audio
 	_update_movement_audio_position()
+
+	# Update the ship heated effect
+	_update_heated_effect()
 
 
 func _on_input_action_pressed(player: int, action: String) -> void:
@@ -260,22 +257,6 @@ func _update_laser(delta: float) -> void:
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
 
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
-func _update_heat(delta: float) -> void:
-	if heated_delta > 0:
-		heated_sec += heated_delta
-		heated_delta = 0.0
-		_update_heated_effect()
-		if heated_sec >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
-			do_disable(player_num)
-	elif heated_sec > 0:
-		heated_sec -= delta
-		if heated_sec < 0:
-			heated_sec = 0.0
-		_update_heated_effect()
-
-
 # Apply forces to the bodies in the forcefield
 func _update_forcefield(_delta: float) -> void:
 	var forcefield_target_mass: float = 0
@@ -312,9 +293,14 @@ func _update_forcefield(_delta: float) -> void:
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
-	if heated_sec > 0:
+	if not is_disabled and heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
+		do_disable(player_num)
+		return
+	if heated_effect == null:
+		return
+	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heated_sec / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 
@@ -341,10 +327,23 @@ func _update_movement_audio_position() -> void:
 	pass
 
 
+# Called when the ship collides with another body
+func _on_collision(body: Node2D) -> void:
+	if body is Block:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_WHOLE)
+	elif body is BlockHalf:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_HALF)
+	elif body is BlockQuart:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_QUART)
+	elif body is Gem:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_GEM)
+
+
 # Called when another body enters the forcefield area
-func _on_body_entered(body: Node2D) -> void:
+func _on_forcefield_entered(body: Node2D) -> void:
 	if body == self:
 		return  # Ignore self
+	
 	if body is Collidable and not body is ProjectileExplosive:
 		if body is Block and body.freeze:
 			return
@@ -354,13 +353,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 # Called when another body exits the forcefield area
-func _on_body_exited(body: Node2D) -> void:
+func _on_forcefield_exited(body: Node2D) -> void:
 	if body is Collidable and body.number in forcefield_targets:
 		forcefield_targets.erase(body.number)
-
-
-# Called when the ship is instantiated
-func _init():
-	super._init()
-
-	
+		
