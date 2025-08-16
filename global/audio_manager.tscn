@@ -285,8 +285,8 @@ metadata/_custom_type_script = "uid://clyakcye1nc2n"
 script = ExtResource("2_tnf83")
 limit = 5
 sound_effect = ExtResource("4_6qx0k")
-volume = -6.0
-pitch_scale = 2.0
+volume = -16.0
+pitch_scale = 4.0
 pitch_randomness = 0.5
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
