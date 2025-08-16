@@ -14,9 +14,9 @@ func setup(player_num: int, source_ship: Ship = null) -> void:
 	if source_ship:
 		raycast.add_exception(source_ship)
 	# Set the sprite texture based on player_num
-	if player_num in Config.PLAYER_COLORS:
-		line.default_color = Config.PLAYER_COLORS[player_num][0]
-		sparks.color = Config.PLAYER_COLORS[player_num][0]
+	if player_num in Constant.PLAYER_COLORS:
+		line.default_color = Constant.PLAYER_COLORS[player_num][0]
+		sparks.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No color found for player ", player_num)
 
@@ -37,9 +37,9 @@ func _physics_process(delta: float) -> void:
 		line.set_point_position(1, target_point)
 		# Set the line to a random alpha value for a flickering effect
 		alpha = wrapf(
-			alpha + delta * Config.PLAYER_SHIP_LASER_FLICKER_RATE,
+			alpha + delta * Constant.PLAYER_SHIP_LASER_FLICKER_RATE,
 			0.0,
-			Config.PLAYER_SHIP_LASER_ALPHA_MAX
+			Constant.PLAYER_SHIP_LASER_ALPHA_MAX
 		)
 		line.modulate.a = alpha
 		# Emit sparks at the collision point

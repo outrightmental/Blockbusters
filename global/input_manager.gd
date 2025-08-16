@@ -37,10 +37,7 @@ func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
 signal move(player: int, dir: Vector2)                 # per-frame movement vector
 signal action_pressed(player: int, action: String)     # e.g., "fire", "start"
 signal action_released(player: int, action: String)
-# --- Config --------------------------------------------------------------
 
-# Deadzone for sticks
-const DEADZONE := 0.25
 # Names of input actions that are used in the Input Map
 const INPUT_LEFT: String     = "left"
 const INPUT_RIGHT: String    = "right"
@@ -129,7 +126,7 @@ func _get_dir_for_player(player: int) -> Vector2:
 			var y   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
 			var v   := Vector2(x, y)
 			# invert Y if you want up to be negative stick Y (depends on your game)
-			if v.length() < DEADZONE:
+			if v.length() < Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
 				return Vector2.ZERO
 			return v
 	return Vector2.ZERO

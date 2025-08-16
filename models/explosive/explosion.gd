@@ -19,10 +19,10 @@ var affected_bodies: Dictionary[int, Array] = {}
 func _ready() -> void:
 	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = collision_shape.shape.radius
-	heat_radius = explosive_radius * Config.EXPLOSION_HEAT_RADIUS_RATIO
+	heat_radius = explosive_radius * Constant.EXPLOSION_HEAT_RADIUS_RATIO
 	# Set the explosion color based on player_num
-	if player_num in Config.PLAYER_COLORS:
-		$ParticleEmitter.color = Config.PLAYER_COLORS[player_num][0]
+	if player_num in Constant.PLAYER_COLORS:
+		$ParticleEmitter.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No color found for player ", player_num)
 	$ParticleEmitter.emitting = true
@@ -40,7 +40,7 @@ func _physics_process(_delta: float) -> void:
 					_apply_to_body(item)
 				affected_bodies.erase(at_msec)
 
-	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Config.EXPLOSION_LIFETIME_MSEC:
+	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Constant.EXPLOSION_LIFETIME_MSEC:
 		queue_free()
 		return
 
@@ -54,7 +54,7 @@ func _physics_process(_delta: float) -> void:
 		var diff: Vector2   = (body.position - position)
 		var distance: float = diff.length()
 		var dir: Vector2    = diff.normalized()
-		var at_msec: int    = floori(pow(distance/explosive_radius, 2) * Config.EXPLOSION_LIFETIME_MSEC)
+		var at_msec: int    = floori(pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_MSEC)
 		if at_msec not in affected_bodies:
 			affected_bodies[at_msec] = []
 		var item: Dictionary = {}
@@ -71,8 +71,8 @@ func _apply_to_body(item: Dictionary) -> void:
 	var distance = item.distance
 	if not body:
 		return  # Ensure body is valid before proceeding
-	body.apply_central_force(dir * Config.EXPLOSION_FORCE * (1-pow(distance / explosive_radius , 2)))
-	const max_heat = Config.BLOCK_HEATED_BREAK_SEC * Config.BLOCK_EXPLOSION_OVERHEAT_RATIO
+	body.apply_central_force(dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius , 2)))
+	const max_heat = Constant.BLOCK_HEATED_BREAK_SEC * Constant.BLOCK_EXPLOSION_OVERHEAT_RATIO
 	if body is Block or body is BlockHalf or body is BlockQuart or body is Ship:
 		if distance <= heat_radius:
 			body.apply_heat(max_heat * (1-pow(-distance / heat_radius, 2)))

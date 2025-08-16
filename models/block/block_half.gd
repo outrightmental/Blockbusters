@@ -29,18 +29,18 @@ func do_break() -> void:
 	# Quarter A
 	var quartA: Node = (quart_scene_1a if half_num == 1 else quart_scene_2a).instantiate()
 	quartA.position = position
-	quartA.linear_velocity = linear_velocity + (Vector2(-Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Config.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
+	quartA.linear_velocity = linear_velocity + (Vector2(-Constant.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Constant.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
 	# Quarter B
 	var quartB: Node = (quart_scene_1b if half_num == 1 else quart_scene_2b).instantiate()
 	quartB.position = position
-	quartB.linear_velocity = linear_velocity + (Vector2(0, -Config.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Config.BLOCK_HALF_BREAK_APART_VELOCITY))
+	quartB.linear_velocity = linear_velocity + (Vector2(0, -Constant.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Constant.BLOCK_HALF_BREAK_APART_VELOCITY))
 	# Add the quarters to the scene
 	self.get_parent().add_child(quartA)
 	self.get_parent().add_child(quartB)
 	# Transfer heat to the broken pieces
 	if heat > 0:
-		quartA.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
-		quartB.apply_heat(heat * 0.5 * Config.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
+		quartA.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
+		quartB.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
@@ -65,7 +65,7 @@ func _update_heat(delta: float) -> void:
 		heat += heat_delta
 		heat_delta = 0.0
 		_update_heated_effect()
-		if heat >= Config.BLOCK_HALF_HEATED_BREAK_SEC:
+		if heat >= Constant.BLOCK_HALF_HEATED_BREAK_SEC:
 			call_deferred("do_break")
 	elif heat > 0:
 		heat -= delta
@@ -81,7 +81,7 @@ func _update_heated_effect() -> void:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heat / Config.BLOCK_HALF_HEATED_BREAK_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HALF_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 	pass

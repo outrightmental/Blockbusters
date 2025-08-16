@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Config="*res://global/config.gd"
+Constant="*res://global/constant.gd"
 Game="*res://global/game.gd"
 Util="*res://global/util.gd"
 AudioManager="*res://global/audio_manager.tscn"
