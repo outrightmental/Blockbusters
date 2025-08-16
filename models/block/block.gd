@@ -3,9 +3,6 @@ extends Collidable
 
 # Variables
 var gem: Node = null
-# variable for being heated
-var heat: float       = 0.0
-var heat_delta: float = 0.0
 # Preloaded scenes
 const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
 const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
@@ -105,12 +102,6 @@ func _do_release_gem() -> bool:
 	return false
 
 
-# Apply heat
-func apply_heat(delta: float) -> void:
-	heat_delta += delta
-	pass
-
-
 # Activate
 func do_activate() -> void:
 	freeze = false
@@ -134,19 +125,11 @@ func _physics_process(_delta: float) -> void:
 # If the ship is heated, increase the heated time, otherwise decrease it
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
-	if heat_delta > 0:
-		heat += heat_delta
-		heat_delta = 0.0
-		_update_heated_effect()
-		if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
-			call_deferred("do_break")
-		if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
-			call_deferred("do_activate")
-	elif heat > 0:
-		heat -= delta
-		if heat < 0:
-			heat = 0.0
-		_update_heated_effect()
+	_update_heated_effect()
+	if heat >= Constant.BLOCK_HEATED_BREAK_SEC:
+		do_break()
+	if freeze and heat >= Constant.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+		do_activate()
 	pass
 
 

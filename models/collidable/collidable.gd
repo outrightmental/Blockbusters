@@ -6,12 +6,14 @@ extends RigidBody2D
 
 # Static variable to hold the number counter
 static var _numberCounter: int = 0
-
 # Velocity last seen and delta when it was sampled
 var last_velocity: Vector2 = Vector2.ZERO
-
 # Time created
 var created_at: float = 0.0
+# Variables for being heated
+var heat: float       = 0.0
+var heat_delta: float = 0.0
+
 
 # Get the acceleration between the last processed frame and now
 # Acceleration = Change in velocity / time between samples
@@ -25,12 +27,18 @@ func acceleration() -> Vector2:
 func age() -> float:
 	return Time.get_ticks_msec() - created_at
 
- 
+
+# Apply heat
+func apply_heat(delta: float) -> void:
+	heat_delta += delta
+	pass
+
+
 # Called when the bubble is instantiated
 func _init():
 	_numberCounter += 1
 	number = _numberCounter
- 
+
 
 # Called when the scene is added to the tree
 # Load the sprite and connect the signal
@@ -38,8 +46,23 @@ func _ready():
 	created_at = Time.get_ticks_msec()
 	contact_monitor = true
 	max_contacts_reported = 1
-	
-	
+
+
 # Called at a fixed rate
 func _physics_process(_delta):
 	last_velocity = linear_velocity
+	_update_heat(_delta)
+
+
+# If the ship is heated, increase the heated time, otherwise decrease it
+# If the ship is heated for too long, disable it
+func _update_heat(delta: float) -> void:
+	if heat_delta > 0:
+		heat += heat_delta
+		heat_delta = 0.0
+	elif heat > 0:
+		heat -= delta
+		if heat < 0:
+			heat = 0.0
+	pass
+	
