@@ -4,8 +4,12 @@ extends Resource
 
 ## Stores the different types of sounds effects available to be played to distinguish them from another. Each new SoundEffectSetting resource created should add to this enum, to allow them to be easily instantiated via [method AudioManager.create_2d_audio_at_location()] and [method AudioManager.create_audio()].
 enum SOUND_EFFECT_TYPE {
+	BLOCK_BREAK_HALF_NOGEM,
+	BLOCK_BREAK_QUARTERS,
 	BLOCK_COLLIDES_WITH_BLOCK,
 	BLOCK_COLLIDES_WITH_BLOCK_2,
+	BLOCK_HALF_BREAK_GEM,
+	BLOCK_QUARTER_SHATTER_DUST,
 	GAME_START,
 	LASER_ACTIVATE,
 	LASER_IMPACT_BLOCK_HEAT_UP,
@@ -21,9 +25,10 @@ enum SOUND_EFFECT_TYPE {
 	SHIP_ACCELERATES_2,
 	SHIP_COLLIDES_WITH_BLOCK,
 	SHIP_COLLIDES_WITH_BLOCK_2,
+	SHIP_DISABLED,
 	SHIP_DRIFTS_1,
 	SHIP_DRIFTS_2,
-	SHIP_IS_DISABLED,
+	SHIP_REENABLED,
 }
 @export_range(0, 10) var limit: int = 5 ## Maximum number of this SoundEffectSetting to play simultaneously before culled.
 @export var sound_effect: AudioStreamMP3 ## The [AudioStreamMP3] audio resource to play.
