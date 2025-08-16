@@ -30,7 +30,7 @@ func _physics_process(delta: float) -> void:
 		var target_point: Vector2     = Vector2(collision_distance, 0)
 
 		# If the body is heatable, apply heat
-		if body is Collidable:
+		if body is Heatable:
 			body.apply_heat(delta)
 
 		# Make the line visible up to the collision point

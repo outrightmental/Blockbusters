@@ -73,7 +73,7 @@ func _apply_to_body(item: Dictionary) -> void:
 		return  # Ensure body is valid before proceeding
 	body.apply_central_force(dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius , 2)))
 	const max_heat = Constant.BLOCK_HEATED_BREAK_SEC * Constant.BLOCK_EXPLOSION_OVERHEAT_RATIO
-	if body is Collidable:
+	if body is Heatable:
 		if distance <= heat_radius:
 			body.apply_heat(max_heat * (1-pow(-distance / heat_radius, 2)))
 

@@ -10,12 +10,6 @@ static var _numberCounter: int = 0
 var last_velocity: Vector2 = Vector2.ZERO
 # Time created
 var created_at: int = 0
-# Variables for being heated
-var heat: float         = 0.0
-var heat_delta: float   = 0.0
-var last_heated_at: int = 0
-var heating: bool = false
-@onready var heating_audio_key: String = "heating_%d" % number
 
 
 # Get the acceleration between the last processed frame and now
@@ -29,14 +23,6 @@ func acceleration() -> Vector2:
 # Function to get the age of the bubble in milliseconds 
 func age() -> float:
 	return Time.get_ticks_msec() - created_at
-
-
-# Apply heat
-func apply_heat(delta: float) -> void:
-	heat_delta += delta
-	last_heated_at = Time.get_ticks_msec()
-	# TODO sound effect when a thing is heating up
-	pass
 
 
 # Called when the bubble is instantiated
@@ -56,17 +42,3 @@ func _ready():
 # Called at a fixed rate
 func _physics_process(_delta):
 	last_velocity = linear_velocity
-	_update_heat(_delta)
-
-
-# If heat has been applied, increase the total heat, or decrease it if no heat has been applied
-func _update_heat(delta: float) -> void:
-	if heat_delta > 0:
-		heat += heat_delta
-		heat_delta = 0.0
-	elif heat > 0:
-		heat -= delta
-		if heat < 0:
-			heat = 0.0
-	pass
-	

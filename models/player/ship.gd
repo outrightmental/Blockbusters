@@ -1,5 +1,5 @@
 class_name Ship
-extends Collidable
+extends Heatable
 
 enum ShipMovementState {
 	ACCELERATE,
@@ -134,9 +134,6 @@ func _physics_process(delta: float) -> void:
 
 	# Update the laser charge
 	_update_laser(delta)
-
-	# Update the heated state
-	_update_heat(delta)
 
 	# Apply forcefield forces
 	_update_forcefield(delta)
@@ -343,10 +340,4 @@ func _on_body_entered(body: Node2D) -> void:
 func _on_body_exited(body: Node2D) -> void:
 	if body is Collidable and body.number in forcefield_targets:
 		forcefield_targets.erase(body.number)
-
-
-# Called when the ship is instantiated
-func _init():
-	super._init()
-
-	
+		

@@ -50,8 +50,3 @@ func _physics_process(_delta: float) -> void:
 		# Apply force in the direction of the ship
 		apply_central_force(Constant.PROJECTILE_EXPLOSIVE_ACCELERATION * get_global_transform().x.normalized())
 	pass
-
-
-# Called when the ship is instantiated
-func _init():
-	super._init()

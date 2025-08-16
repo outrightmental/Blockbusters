@@ -1,5 +1,5 @@
 class_name BlockQuart
-extends Collidable
+extends Heatable
 
 # Preloaded scene for the block quarter shattering
 const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")

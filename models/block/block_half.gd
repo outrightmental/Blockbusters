@@ -1,5 +1,5 @@
 class_name BlockHalf
-extends Collidable
+extends Heatable
 
 # Whether this block has a gem
 @export var half_num: int

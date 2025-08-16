@@ -32,9 +32,9 @@
 script = ExtResource("2_tnf83")
 limit = 5
 sound_effect = ExtResource("3_t5ogi")
-volume = 0.0
+volume = -6.0
 pitch_scale = 1.0
-pitch_randomness = 0.1
+pitch_randomness = 0.5
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [sub_resource type="Resource" id="Resource_hjth8"]

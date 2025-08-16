@@ -35,6 +35,7 @@ enum SOUND_EFFECT_TYPE {
 	BLOCK_QUARTER_SHATTER_DUST,
 	SHIP_DISABLED,
 	SHIP_REENABLED,
+	HEATING,
 }
 @export_range(0, 10) var limit: int = 5 ## Maximum number of this SoundEffectSetting to play simultaneously before culled.
 @export var sound_effect: AudioStreamMP3 ## The [AudioStreamMP3] audio resource to play.

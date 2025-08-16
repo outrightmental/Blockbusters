@@ -1,5 +1,5 @@
 class_name Block
-extends Collidable
+extends Heatable
 
 # Variables
 var gem: Node = null
@@ -25,7 +25,6 @@ func _ready() -> void:
 	add_to_group(Game.BLOCK_GROUP)
 
 	# On collision
-	body_entered.connect(_on_body_entered)
 	set_contact_monitor(true)
 
 	# Start inactive
@@ -109,12 +108,6 @@ func do_activate() -> void:
 	shapes.modulate.a = 1
 
 
-# Play a sound when colliding with another object
-func _on_body_entered(_body: Node) -> void:
-	print ("Block collided with: ", _body.name)
-	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_COLLIDES_WITH_BLOCK)
-
-
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
@@ -136,8 +129,3 @@ func _update_heated_effect() -> void:
 		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
-
-
-# Called when the block is instantiated
-func _init():
-	super._init()
