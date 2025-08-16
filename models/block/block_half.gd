@@ -1,5 +1,5 @@
 class_name BlockHalf
-extends Collidable
+extends Heatable
 
 # Whether this block has a gem
 @export var half_num: int
@@ -8,9 +8,6 @@ const quart_scene_1a: PackedScene = preload("res://models/block/block_quart_1a.t
 const quart_scene_1b: PackedScene = preload("res://models/block/block_quart_1b.tscn")
 const quart_scene_2a: PackedScene = preload("res://models/block/block_quart_2a.tscn")
 const quart_scene_2b: PackedScene = preload("res://models/block/block_quart_2b.tscn")
-# variable for being heated
-var heat: float   = 0.0
-var heat_delta: float = 0.0
 # Preloaded scene for the block quarter shattering
 const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
 # Cache reference to heated effect
@@ -19,9 +16,10 @@ const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatt
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super._ready()
+
 	# Update the heated effect visibility
 	_update_heated_effect()
-	pass
 
 
 # Break the block half apart into two quarters
@@ -41,42 +39,23 @@ func do_break() -> void:
 	if heat > 0:
 		quartA.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
 		quartB.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
+	# Play sound effect
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_QUARTERS)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
-	pass
-
-
-# Apply heat
-func apply_heat(delta: float) -> void:
-	heat_delta += delta
-	pass
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
-	_update_heat(_delta)
-	pass
-
-
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
-func _update_heat(delta: float) -> void:
-	if heat_delta > 0:
-		heat += heat_delta
-		heat_delta = 0.0
-		_update_heated_effect()
-		if heat >= Constant.BLOCK_HALF_HEATED_BREAK_SEC:
-			call_deferred("do_break")
-	elif heat > 0:
-		heat -= delta
-		if heat < 0:
-			heat = 0.0
-		_update_heated_effect()
-	pass
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	_update_heated_effect()
 
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
+	if heat >= Constant.BLOCK_HALF_HEATED_BREAK_SEC:
+		do_break()
+		return
 	if heated_effect == null:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
@@ -84,4 +63,3 @@ func _update_heated_effect() -> void:
 		heated_effect.modulate.a = clamp(heat / Constant.BLOCK_HALF_HEATED_BREAK_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
-	pass
