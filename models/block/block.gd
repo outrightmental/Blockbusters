@@ -4,9 +4,8 @@ extends Collidable
 # Variables
 var gem: Node = null
 # variable for being heated
-var heat: float   = 0.0
+var heat: float       = 0.0
 var heat_delta: float = 0.0
-
 # Preloaded scenes
 const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
 const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
@@ -74,10 +73,13 @@ func do_break() -> void:
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
-	# Gem
+	# If the block has a gem, release it, and play the sound effect depending on whether there was a gem or not
 	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_GEM)
+	else:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_NOGEM)
 	# Transfer heat to the broken pieces
 	if heat > 0:
 		half1.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_HALF_HEAT_TRANSFER_RATIO)

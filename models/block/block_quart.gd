@@ -24,7 +24,8 @@ func do_shatter() -> void:
 	shatter.position = position
 	self.get_parent().call_deferred("add_child", shatter)
 	self.call_deferred("queue_free")
-
+	# Play sound effect
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_QUARTER_SHATTER_DUST)
 
 # Apply heat
 func apply_heat(delta: float) -> void:

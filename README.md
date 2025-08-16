@@ -4,8 +4,8 @@
 
 # Blockbusters
 
-Fast-paced unfair action sport where contestants sabotage each other to mine & capture gems.
-Built for the the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
+Fast-paced unfair sport where contestants sabotage each other to mine & capture gems.
+Built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
 
 Original design by [outrightmental](https://discord.com/users/outrightmental)
 
