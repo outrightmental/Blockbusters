@@ -9,10 +9,11 @@ static var _numberCounter: int = 0
 # Velocity last seen and delta when it was sampled
 var last_velocity: Vector2 = Vector2.ZERO
 # Time created
-var created_at: float = 0.0
+var created_at: int = 0
 # Variables for being heated
-var heat: float       = 0.0
-var heat_delta: float = 0.0
+var heat: float         = 0.0
+var heat_delta: float   = 0.0
+var last_heated_at: int = 0
 
 
 # Get the acceleration between the last processed frame and now
@@ -27,10 +28,12 @@ func acceleration() -> Vector2:
 func age() -> float:
 	return Time.get_ticks_msec() - created_at
 
-	
+
 # Apply heat
 func apply_heat(delta: float) -> void:
 	heat_delta += delta
+	last_heated_at = Time.get_ticks_msec()
+	# TODO sound effect when a thing is heating up
 	pass
 
 
@@ -59,11 +62,9 @@ func _update_heat(delta: float) -> void:
 	if heat_delta > 0:
 		heat += heat_delta
 		heat_delta = 0.0
-		print ("[%d] Heat increased to %f" % [number, heat])
 	elif heat > 0:
 		heat -= delta
 		if heat < 0:
 			heat = 0.0
-		print ("[%d] Heat decreased to %f" % [number, heat])
 	pass
 	
