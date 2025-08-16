@@ -7,13 +7,13 @@ script = ExtResource("1_gg8fv")
 
 [node name="Line2D" type="Line2D" parent="."]
 points = PackedVector2Array(0, 0, 145, 0)
-width = 1.0
+width = 5.0
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(1400, 0)
 
 [node name="Sparks" type="CPUParticles2D" parent="."]
-amount = 20
+amount = 4
 lifetime = 0.5
 randomness = 0.36
 lifetime_randomness = 0.56

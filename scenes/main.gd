@@ -1,35 +1,40 @@
 extends Node2D
 
-# Signal that never happens, in case the tree is unloaded
-signal never
-
 # Constants
 const GAME_START_DELAY_SECONDS: float = 1.0
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
-	pass
+	_setup()
+	InputManager.input_mode_updated.connect(_setup)
 
-	
+
 # If both players are ready, start the game
 func _on_player_ready_updated() -> void:
-	if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
-		# TODO here we should show an indication that both players are ready and the game will start if nobody unreadies
-		await _delay(GAME_START_DELAY_SECONDS)
-		if $ReadyPlayer1.is_ready and $ReadyPlayer2.is_ready:
+	if $ReadyP1.is_ready and $ReadyP2.is_ready:
+		await Util.delay(GAME_START_DELAY_SECONDS)
+		if $ReadyP1.is_ready and $ReadyP2.is_ready:
 			_goto_scene("res://scenes/play_game.tscn")
+
+
+# Setup the UI based on the current input mode		
+func _setup() -> void:
+	match InputManager.mode:
+		InputManager.Mode.TABLE:
+			$TableMode.show()
+			$CouchMode.hide()
+			$ReadyP1.transform = Transform2D(PI/2, Vector2(122, 291))
+			$ReadyP2.transform = Transform2D(-PI/2, Vector2(906, 288))
+		InputManager.Mode.COUCH:
+			$TableMode.hide()
+			$CouchMode.show()
+			$ReadyP1.transform = Transform2D(0, Vector2(250, 400))
+			$ReadyP2.transform = Transform2D(0, Vector2(776, 400))
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _goto_scene(path: String) -> void:
 	if get_tree():
 		get_tree().change_scene_to_file(path)
-
-
-# Delay, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _delay(seconds: float) -> Signal:
-	if get_tree():
-		return get_tree().create_timer(seconds).timeout
-	else:
-		return never
