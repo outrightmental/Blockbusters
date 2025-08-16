@@ -41,6 +41,8 @@ func do_break() -> void:
 	if heat > 0:
 		quartA.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
 		quartB.apply_heat(heat * 0.5 * Constant.BLOCK_BREAK_QUART_HEAT_TRANSFER_RATIO)
+	# Play sound effect
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_QUARTERS)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
