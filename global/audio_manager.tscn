@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://dr3o8o314dpy"]
+[gd_scene load_steps=58 format=3 uid="uid://dr3o8o314dpy"]
 
 [ext_resource type="Script" uid="uid://cnfqavw3bgl8b" path="res://global/audio_manager.gd" id="1_siwhy"]
 [ext_resource type="Script" uid="uid://clyakcye1nc2n" path="res://global/sound_effect_setting.gd" id="2_tnf83"]
@@ -27,15 +27,7 @@
 [ext_resource type="AudioStream" uid="uid://cpapen5mifyhc" path="res://assets/sound/block_quarter_shatter_dust.mp3" id="25_w8cx2"]
 [ext_resource type="AudioStream" uid="uid://ddl8yaubi8di0" path="res://assets/sound/ship_disabled.mp3" id="26_8iyg1"]
 [ext_resource type="AudioStream" uid="uid://c5pmug70howwu" path="res://assets/sound/ship_reenabled.mp3" id="27_52ggv"]
-
-[sub_resource type="Resource" id="Resource_tnf83"]
-script = ExtResource("2_tnf83")
-limit = 5
-sound_effect = ExtResource("3_t5ogi")
-volume = -6.0
-pitch_scale = 1.0
-pitch_randomness = 0.5
-metadata/_custom_type_script = "uid://clyakcye1nc2n"
+[ext_resource type="AudioStream" uid="uid://dor2jvbvtx5hf" path="res://assets/sound/heating.mp3" id="28_o35lh"]
 
 [sub_resource type="Resource" id="Resource_hjth8"]
 script = ExtResource("2_tnf83")
@@ -253,13 +245,22 @@ pitch_scale = 1.0
 pitch_randomness = 0.0
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
+[sub_resource type="Resource" id="Resource_ba12c"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("28_o35lh")
+volume = -6.0
+pitch_scale = 1.0
+pitch_randomness = 0.0
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
 [sub_resource type="Resource" id="Resource_dw7xo"]
 script = ExtResource("2_tnf83")
 limit = 5
 sound_effect = ExtResource("3_t5ogi")
 volume = -6.0
 pitch_scale = 1.0
-pitch_randomness = 0.4
+pitch_randomness = 0.5
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [sub_resource type="Resource" id="Resource_61tem"]
@@ -267,8 +268,8 @@ script = ExtResource("2_tnf83")
 limit = 5
 sound_effect = ExtResource("3_t5ogi")
 volume = -12.0
-pitch_scale = 1.0
-pitch_randomness = 0.4
+pitch_scale = 1.2
+pitch_randomness = 0.5
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [sub_resource type="Resource" id="Resource_crge0"]
@@ -276,14 +277,23 @@ script = ExtResource("2_tnf83")
 limit = 5
 sound_effect = ExtResource("3_t5ogi")
 volume = -18.0
-pitch_scale = 1.0
-pitch_randomness = 0.4
+pitch_scale = 1.4
+pitch_randomness = 0.5
+metadata/_custom_type_script = "uid://clyakcye1nc2n"
+
+[sub_resource type="Resource" id="Resource_opv48"]
+script = ExtResource("2_tnf83")
+limit = 5
+sound_effect = ExtResource("4_6qx0k")
+volume = -6.0
+pitch_scale = 2.0
+pitch_randomness = 0.5
 metadata/_custom_type_script = "uid://clyakcye1nc2n"
 
 [node name="AudioManager" type="Node2D"]
 script = ExtResource("1_siwhy")
 sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
-0: SubResource("Resource_tnf83"),
+0: null,
 1: SubResource("Resource_hjth8"),
 2: SubResource("Resource_c0cvf"),
 3: SubResource("Resource_c3wau"),
@@ -308,7 +318,9 @@ sound_effect_dict = Dictionary[int, ExtResource("2_tnf83")]({
 22: SubResource("Resource_e1l55"),
 23: SubResource("Resource_ypvv3"),
 24: SubResource("Resource_umsmm"),
+25: SubResource("Resource_ba12c"),
 26: SubResource("Resource_dw7xo"),
 27: SubResource("Resource_61tem"),
-28: SubResource("Resource_crge0")
+28: SubResource("Resource_crge0"),
+29: SubResource("Resource_opv48")
 })

@@ -39,6 +39,7 @@ enum SOUND_EFFECT_TYPE {
 	SHIP_COLLIDES_WITH_BLOCK_WHOLE,
 	SHIP_COLLIDES_WITH_BLOCK_HALF,
 	SHIP_COLLIDES_WITH_BLOCK_QUART,
+	SHIP_COLLIDES_WITH_GEM,
 }
 @export_range(0, 10) var limit: int = 5 ## Maximum number of this SoundEffectSetting to play simultaneously before culled.
 @export var sound_effect: AudioStreamMP3 ## The [AudioStreamMP3] audio resource to play.

@@ -73,7 +73,7 @@ const EXPLOSION_HEAT_RADIUS_RATIO: float = 0.6
 const EXPLOSION_LIFETIME_MSEC: int       = 1000
 #
 # pertaining to heat
-const HEATING_TIMEOUT_MSEC: int = 100 # timeout after heat not applied when we consider the block no longer heating up
+const HEATING_TIMEOUT_MSEC: int = 250 # timeout after heat not applied when we consider the block no longer heating up
 #
 # Board
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart

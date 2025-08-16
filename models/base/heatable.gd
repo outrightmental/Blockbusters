@@ -19,7 +19,6 @@ func apply_heat(delta: float) -> void:
 # If heat has been applied, increase the total heat, or decrease it if no heat has been applied
 func _physics_process(delta):
 	super._physics_process(delta)
-
 	if heat_delta > 0:
 		heat += heat_delta
 		heat_delta = 0.0
@@ -37,4 +36,8 @@ func _physics_process(delta):
 			heating = false
 			AudioManager.stop_2d_audio(heating_audio_key)
 	pass
-	
+
+func _exit_tree() -> void:
+	if heating:
+		AudioManager.stop_2d_audio(heating_audio_key)
+		heating = false

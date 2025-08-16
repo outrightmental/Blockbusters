@@ -16,6 +16,8 @@ mass = 10.0
 physics_material_override = ExtResource("1_3lbs4")
 gravity_scale = 0.0
 continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 script = ExtResource("1_yja86")
 
 [node name="TriangleLight" type="Polygon2D" parent="."]

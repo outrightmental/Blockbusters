@@ -84,9 +84,12 @@ func _ready() -> void:
 	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
+	# When the ship collides with another body
+	self.body_entered.connect(_on_collision)
+
 	# Connect the forcefield body entered signal
-	forcefield_area.body_entered.connect(_on_body_entered)
-	forcefield_area.body_exited.connect(_on_body_exited)
+	forcefield_area.body_entered.connect(_on_forcefield_entered)
+	forcefield_area.body_exited.connect(_on_forcefield_exited)
 	# Set the forcefield color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
 		$ForcefieldEffect.color = Constant.PLAYER_COLORS[player_num][0]
@@ -324,8 +327,20 @@ func _update_movement_audio_position() -> void:
 	pass
 
 
+# Called when the ship collides with another body
+func _on_collision(body: Node2D) -> void:
+	if body is Block:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_WHOLE)
+	elif body is BlockHalf:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_HALF)
+	elif body is BlockQuart:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_QUART)
+	elif body is Gem:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_GEM)
+
+
 # Called when another body enters the forcefield area
-func _on_body_entered(body: Node2D) -> void:
+func _on_forcefield_entered(body: Node2D) -> void:
 	if body == self:
 		return  # Ignore self
 	if body is Block:
@@ -334,6 +349,8 @@ func _on_body_entered(body: Node2D) -> void:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_HALF)
 	elif body is BlockQuart:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_QUART)
+	elif body is Gem:
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_GEM)
 	
 	if body is Collidable and not body is ProjectileExplosive:
 		if body is Block and body.freeze:
@@ -344,7 +361,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 # Called when another body exits the forcefield area
-func _on_body_exited(body: Node2D) -> void:
+func _on_forcefield_exited(body: Node2D) -> void:
 	if body is Collidable and body.number in forcefield_targets:
 		forcefield_targets.erase(body.number)
 		
