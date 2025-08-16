@@ -19,10 +19,9 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Gem:
 		Game.player_did_collect_gem.emit(player_num)
-		Game.gems_free -= 1
 		Game.gems_collected += 1
-		Game.gem_count_updated.emit()
 		body.do_shatter()
+		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_COLLECTS_GEM)
 	pass
 
 
@@ -33,10 +32,6 @@ func _set_colors() -> void:
 	else:
 		push_error("No colors found for player_num: ", player_num)
 	pass
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+	
 
 	

@@ -1,21 +1,6 @@
 class_name Ship
 extends Collidable
 
-var input_mapping: Dictionary = {
-									"left": "ui_left",
-									"right": "ui_right",
-									"up": "ui_up",
-									"down": "ui_down",
-									"action_a": "ui_accept",
-									"action_b": "ui_cancel",
-								}
-
-const dir_vectors := {
-						 "right": Vector2(1, 0),
-						 "left": Vector2(-1, 0),
-						 "up": Vector2(0, -1),
-						 "down": Vector2(0, 1),
-					 }
 enum ShipMovementState {
 	ACCELERATE,
 	DRIFT,
@@ -27,50 +12,65 @@ var input_direction_start_ticks_msec: float = 0.0
 var input_direction_pressed: bool = false
 # keep track of ship movement state and associated sounds
 var movement_state: ShipMovementState = ShipMovementState.NONE
+var movement_dir: Vector2             = Vector2.ZERO
+
 @onready var movement_audio_key: String = "movement_%d" % player_num
+
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
 # keep track of the time when the projectile explosive was last launched
 var projectile_explosive_start_ticks_msec: float = 0.0
 # keep track of whether the ship is disabled, and when
-var is_disabled: bool             = false
-var disabled_at_ticks_msec: float = 0.0
+var is_disabled: bool                = false
+var disabled_until_ticks_msec: float = 0.0
 # variables for laser tool
-var laser: LaserBeam        = null
+var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+
 @onready var laser_audio_key: String = "laser_%d" % player_num
+
 # variable for being heated
 var heated_sec: float   = 0.0
 var heated_delta: float = 0.0
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/player/laser_beam.tscn")
+const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
 # Player number to identify the ship
 @export var player_num: int = 0
 
+# Ship has force field to "Hold" objects #21
+@onready var forcefield_area: Area2D = $ForcefieldArea
+
+var forcefield_targets: Dictionary[int, Node2D] = {}
+
+# Keep track of the previous forcefield direction
+# in order to "hold" objects while the forcefield is turning
+var forcefield_position_previous: Vector2 = Vector2.ZERO
+
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
-	disabled_at_ticks_msec = Time.get_ticks_msec()
-	_set_colors(Config.PLAYER_SHIP_DISABLED_SV_RATIO)
+	disabled_until_ticks_msec = Time.get_ticks_msec() + Config.PLAYER_SHIP_DISABLED_SEC * 1000.0
+	_set_colors(Config.PLAYER_SHIP_DISABLED_S_RATIO, Config.PLAYER_SHIP_DISABLED_V_RATIO)
+	_do_deactivate_laser()
 	Game.player_did_harm.emit(responsible_player_num)
 
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false
-	disabled_at_ticks_msec = 0.0
+	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
 
 
-# Add heat if not disabled
-func do_heat(delta: float) -> void:
+# Apply heat if not disabled
+func apply_heat(delta: float) -> void:
 	if is_disabled:
 		return
 	heated_delta += delta
@@ -79,13 +79,6 @@ func do_heat(delta: float) -> void:
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_linear_damp(Config.PLAYER_SHIP_LINEAR_DAMP)
-	# Set up input mapping for player
-	for key in input_mapping.keys():
-		var action_name: String = Config.player_input_mapping_format[key] % player_num
-		if InputMap.has_action(action_name):
-			input_mapping[key] = action_name
-		else:
-			push_error("Input action not found: ", action_name)
 
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
@@ -97,26 +90,40 @@ func _ready() -> void:
 	# Update the laser charge indicator
 	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
+	# Connect the forcefield body entered signal
+	forcefield_area.body_entered.connect(_on_body_entered)
+	forcefield_area.body_exited.connect(_on_body_exited)
+	# Set the forcefield color based on player_num
+	if player_num in Config.PLAYER_COLORS:
+		$ForcefieldEffect.color = Config.PLAYER_COLORS[player_num][0]
+	else:
+		push_error("No color found for player ", player_num)
+	$ForcefieldEffect.set_emitting(false)
+
 	# Update the heated effect visibility
 	_update_heated_effect()
 
+	# Connect to input signals
+	InputManager.move.connect(_on_input_move)
+	InputManager.action_pressed.connect(_on_input_action_pressed)
+	InputManager.action_released.connect(_on_input_action_released)
+
 
 # Set the colors of the ship based on player_num
-func _set_colors(sv_ratio: float) -> void:
+func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 	if player_num in Config.PLAYER_COLORS:
-		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], sv_ratio)
-		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], sv_ratio)
+		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
+		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
 	else:
 		push_error("No colors found for player_num: ", player_num)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 	if is_disabled:
-		if Time.get_ticks_msec() - disabled_at_ticks_msec > Config.PLAYER_SHIP_DISABLED_MSEC:
+		if Time.get_ticks_msec() > disabled_until_ticks_msec:
 			do_enable()
-	else:
-		_process_input(delta)
 
 	# Adjust the rotation towards the target angle by a factor and delta time
 	var angle_diff: float = fmod(target_rotation - actual_rotation, TAU)
@@ -127,38 +134,51 @@ func _process(delta: float) -> void:
 	actual_rotation += angle_diff * Config.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
 
+	# If the ship is not disabled, apply a force in the direction of the input
+	if movement_dir.length() > 0 and not is_disabled:
+		apply_impulse(movement_dir * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
+
 	# Update the laser charge
 	_update_laser(delta)
 
 	# Update the heated state
 	_update_heat(delta)
-	
+
+	# Apply forcefield forces
+	_update_forcefield(delta)
+
 	# Update the movement state audio
 	_update_movement_audio_position()
 
 
-# Process input for the ship (if not disabled)
-func _process_input(delta: float) -> void:
-	# Check if input action is pressed
-	if Input.is_action_just_pressed(input_mapping["action_a"]):
+func _on_input_action_pressed(player: int, action: String) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return  # Ignore input if the ship is disabled
+	if action == InputManager.INPUT_ACTION_A:
 		_do_activate_laser()
-	if Input.is_action_just_released(input_mapping["action_a"]):
-		_do_deactivate_laser()
-	if Input.is_action_just_pressed(input_mapping["action_b"]):
+	elif action == InputManager.INPUT_ACTION_B:
 		_do_launch_projectile_explosive()
 
-	# Get input vector from which keys are pressed
-	var input_vector: Vector2 = Vector2.ZERO
-	for key in dir_vectors.keys():
-		if Input.is_action_pressed(input_mapping[key]):
-			input_vector += dir_vectors[key]
 
-	# Normalize the input vector to avoid faster diagonal movement
-	if input_vector.length() > 1:
-		input_vector = input_vector.normalized()
+func _on_input_action_released(player: int, action: String) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return  # Ignore input if the ship is disabled
+	if action == InputManager.INPUT_ACTION_A:
+		_do_deactivate_laser()
+
+
+func _on_input_move(player: int, dir: Vector2) -> void:
+	if player != player_num:
+		return  # Ignore input from other players
+	if is_disabled:
+		return # Ignore input if the ship is disabled
 
 	# Reset input pressed state if no keys are pressed		
-	if input_vector == Vector2.ZERO:
+	if dir == Vector2.ZERO:
 		input_direction_pressed = false
 		_update_movement_state(ShipMovementState.NONE)
 	else:
@@ -169,14 +189,14 @@ func _process_input(delta: float) -> void:
 
 		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Config.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
-			target_rotation = input_vector.angle()
+			target_rotation = dir.angle()
 			_update_movement_state(ShipMovementState.DRIFT)
 		else:
 			target_rotation = linear_velocity.angle()
 			_update_movement_state(ShipMovementState.ACCELERATE)
 
 	# Apply force in the direction of the input vector
-	apply_impulse(input_vector * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
+	movement_dir = dir
 
 
 # Called when the player wants to activate the primary tool
@@ -190,6 +210,7 @@ func _do_activate_laser() -> void:
 	laser.source_ship = self
 	self.get_parent().call_deferred("add_child", laser)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
+
 
 func _do_deactivate_laser() -> void:
 	if laser:
@@ -226,7 +247,7 @@ func _update_laser(delta: float) -> void:
 		laser.set_position(position)
 		laser.set_rotation(actual_rotation)
 		laser_charge_sec -= delta
-		# todo AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
+		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
@@ -255,6 +276,40 @@ func _update_heat(delta: float) -> void:
 		_update_heated_effect()
 
 
+# Apply forces to the bodies in the forcefield
+func _update_forcefield(_delta: float) -> void:
+	var forcefield_target_mass: float = 0
+	if not is_disabled:
+		var forcefield_position: Vector2 = forcefield_area.global_position - global_position
+		var forcefield_delta: Vector2    = forcefield_position - forcefield_position_previous
+		forcefield_position_previous = forcefield_position
+		for key in forcefield_targets.keys():
+			var body: Node2D = forcefield_targets[key]
+			# if body is not in the scene tree, remove it from the forcefield_targets list
+			if not body or not body.is_inside_tree():
+				forcefield_targets.erase(key)
+				continue
+			# get the direction vector from the body to the center of forcefield
+			var direction: Vector2 = (forcefield_area.global_position - body.global_position).normalized()
+			# apply a force on the body towards the center of forcefield
+			body.apply_central_force(direction * Config.PLAYER_SHIP_FORCEFIELD_INWARD_FORCE * _delta)
+			# apply a force on the body in the direction of the forcefield delta
+			if forcefield_delta.length() > Config.PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD:
+				body.apply_central_force(forcefield_delta * Config.PLAYER_SHIP_FORCEFIELD_MOTION_FORCE * _delta)
+			# accumulate the mass of the bodies in the forcefield
+			if body is RigidBody2D:
+				forcefield_target_mass += body.mass
+	# Update the forcefield effect based on the mass of the ship
+	if forcefield_target_mass > 0:
+		var forcefield_amount = clamp(forcefield_target_mass / Config.PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX, 0.0, 1.0)
+		$ForcefieldEffect.scale_amount_min = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN
+		$ForcefieldEffect.scale_amount_max = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX
+		$ForcefieldEffect.gravity = -Config.PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY * Vector2(cos(rotation), sin(rotation))
+		$ForcefieldEffect.set_emitting(true)
+	else:
+		$ForcefieldEffect.set_emitting(false)
+
+
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
 	if heated_sec > 0:
@@ -264,26 +319,44 @@ func _update_heated_effect() -> void:
 		heated_effect.set_visible(false)
 
 
-func _update_movement_state( state: ShipMovementState) -> void:
-	pass # todo implement movement state audio
-#	if movement_state == state:
-#		return
-#	movement_state = state
-#	AudioManager.stop_2d_audio(movement_audio_key)
-#	if state == ShipMovementState.ACCELERATE:
-#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
-#	elif state == ShipMovementState.DRIFT:
-#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
-#	else:
-#		return
-#	_update_movement_audio_position()
+func _update_movement_state(_state: ShipMovementState) -> void:
+	#	if movement_state == state:
+	#		return
+	#	movement_state = state
+	#	AudioManager.stop_2d_audio(movement_audio_key)
+	#	if state == ShipMovementState.ACCELERATE:
+	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
+	#	elif state == ShipMovementState.DRIFT:
+	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
+	#	else:
+	#		return
+	#	_update_movement_audio_position()
+	pass
 
-	
+
 func _update_movement_audio_position() -> void:
-	pass # todo implement movement state audio
-#	if movement_sound == null:
-#		return
-#	movement_sound.set_global_position(global_position)
+	#	if movement_sound == null:
+	#		return
+	#	movement_sound.set_global_position(global_position)
+	pass
+
+
+# Called when another body enters the forcefield area
+func _on_body_entered(body: Node2D) -> void:
+	if body == self:
+		return  # Ignore self
+	if body is Collidable and not body is ProjectileExplosive:
+		if body is Block and body.freeze:
+			return
+		if forcefield_targets.has(body.number):
+			return
+		forcefield_targets.set(body.number, body)
+
+
+# Called when another body exits the forcefield area
+func _on_body_exited(body: Node2D) -> void:
+	if body is Collidable and body.number in forcefield_targets:
+		forcefield_targets.erase(body.number)
 
 
 # Called when the ship is instantiated

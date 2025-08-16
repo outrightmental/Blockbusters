@@ -1,51 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://dvo0oiws54t1m"]
+[gd_scene load_steps=3 format=3 uid="uid://dvo0oiws54t1m"]
 
 [ext_resource type="Script" uid="uid://c2fge45tdrxy1" path="res://models/player/ready.gd" id="1_i5n61"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_gkuhg"]
-[ext_resource type="FontFile" uid="uid://bm8bvpfu88aux" path="res://assets/fonts/Montserrat/static/Montserrat-Regular.ttf" id="4_vokxs"]
-[ext_resource type="FontFile" uid="uid://csk5t783aicvv" path="res://assets/fonts/Montserrat/static/Montserrat-ExtraBoldItalic.ttf" id="5_rgc1c"]
 
 [node name="Score" type="Node2D"]
 script = ExtResource("1_i5n61")
 
-[node name="GameTitleText" type="RichTextLabel" parent="."]
-offset_left = -213.0
-offset_top = -9.0
-offset_right = 212.0
-offset_bottom = 63.0
-theme_override_fonts/normal_font = ExtResource("2_gkuhg")
-theme_override_font_sizes/normal_font_size = 40
-text = "BLASTEROIDS!"
-horizontal_alignment = 1
-
-[node name="InstructionsText" type="RichTextLabel" parent="."]
-offset_left = -255.0
-offset_top = 73.0
-offset_right = 359.0
-offset_bottom = 204.0
-theme_override_fonts/normal_font = ExtResource("4_vokxs")
-theme_override_font_sizes/normal_font_size = 18
-text = "- Launch a projectile, costs 1 point
-- Blow up the blocks containing gems to free the gems
-- Get a freed gem to your zone, collect it for +2 points
-- Projectile hits a ship, disables it for 3 seconds
-- First player to 10 points wins"
-
-[node name="ReadyText" type="RichTextLabel" parent="."]
-offset_left = -351.0
-offset_top = 230.0
-offset_right = 342.0
-offset_bottom = 275.0
-theme_override_fonts/normal_font = ExtResource("5_rgc1c")
-theme_override_font_sizes/normal_font_size = 18
-text = "Press start to ready up!"
-horizontal_alignment = 1
-
 [node name="PlayerNameText" type="RichTextLabel" parent="."]
 offset_left = -147.0
-offset_top = 287.0
 offset_right = 143.0
-offset_bottom = 341.0
+offset_bottom = 54.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("2_gkuhg")
 theme_override_font_sizes/normal_font_size = 40

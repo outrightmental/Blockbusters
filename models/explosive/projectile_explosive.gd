@@ -3,7 +3,6 @@ extends Collidable
 
 # Preloaded scene for the explosion effect
 const explosion_scene: PackedScene = preload("res://models/explosive/explosion.tscn")
-
 # Player number to identify the projectile
 @export var player_num: int = 0
 
@@ -15,16 +14,16 @@ func _ready() -> void:
 		$TriangleLight.color = Config.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Config.PLAYER_COLORS[player_num][1]
 	else:
-		push_error("No texture found for player_num: ", player_num)
+		push_error("No color found for player ", player_num)
 
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
-	
+
 	# Count this projectile
 	Game.projectiles_in_play += 1
 	Game.projectile_count_updated.emit()
 	pass
-	
+
 
 # Called when the projectile is removed from the stage
 func _exit_tree() -> void:
@@ -39,14 +38,13 @@ func _on_body_entered(_other: Node) -> void:
 	explosion.position = position
 	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)
-	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 	# Remove this projectile from the stage
 	self.queue_free()
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	# If below the maxiumum velocity, apply force
 	if (get_linear_velocity().length() < Config.PROJECTILE_EXPLOSIVE_MAX_VELOCITY):
 		# Apply force in the direction of the ship

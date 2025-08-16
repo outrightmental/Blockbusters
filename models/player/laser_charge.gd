@@ -73,8 +73,8 @@ func _on_availability_updated(update_player_num: int, is_available: bool) -> voi
 	
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
 	pass
 
 	
