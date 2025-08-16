@@ -71,6 +71,7 @@ func do_enable() -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super._ready()
 	set_linear_damp(Constant.PLAYER_SHIP_LINEAR_DAMP)
 
 	# Set the sprite texture based on player_num
@@ -292,8 +293,9 @@ func _update_forcefield(_delta: float) -> void:
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
-	if heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
+	if not is_disabled and heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
 		do_disable(player_num)
+		return
 	if heated_effect == null:
 		return
 	if heat > 0:

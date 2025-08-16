@@ -54,15 +54,16 @@ func _physics_process(_delta):
 	_update_heat(_delta)
 
 
-# If the ship is heated, increase the heated time, otherwise decrease it
-# If the ship is heated for too long, disable it
+# If heat has been applied, increase the total heat, or decrease it if no heat has been applied
 func _update_heat(delta: float) -> void:
 	if heat_delta > 0:
 		heat += heat_delta
 		heat_delta = 0.0
+		print ("[%d] Heat increased to %f" % [number, heat])
 	elif heat > 0:
 		heat -= delta
 		if heat < 0:
 			heat = 0.0
+		print ("[%d] Heat decreased to %f" % [number, heat])
 	pass
 	

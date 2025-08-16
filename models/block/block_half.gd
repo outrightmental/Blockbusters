@@ -16,6 +16,8 @@ const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatt
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super._ready()
+
 	# Update the heated effect visibility
 	_update_heated_effect()
 
@@ -44,14 +46,16 @@ func do_break() -> void:
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
 	_update_heated_effect()
 
 
 # Update the heated effect visibility and intensity
 func _update_heated_effect() -> void:
 	if heat >= Constant.BLOCK_HALF_HEATED_BREAK_SEC:
-		call_deferred("do_break")
+		do_break()
+		return
 	if heated_effect == null:
 		return  # Ensure heated_effect is valid before proceeding
 	if heat > 0:
