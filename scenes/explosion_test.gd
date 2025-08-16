@@ -22,8 +22,8 @@ func _ready() -> void:
 
 # Create the test board
 func _create_board() -> void:
-	for x in range(Config.BOARD_GRID_COLS):
-		for y in range(Config.BOARD_GRID_ROWS):
+	for x in range(Constant.BOARD_GRID_COLS):
+		for y in range(Constant.BOARD_GRID_ROWS):
 			_spawn_block(_grid_position(x, y))
 
 			
@@ -51,7 +51,7 @@ func _spawn_explosion(x: float, y:float) -> Signal:
 
 func _grid_position(x: int, y: int) -> Vector2:
 	# Convert grid coordinates to world coordinates
-	return Vector2( Config.BOARD_GRID_MARGIN * Config.BOARD_BLOCK_SIZE + Config.BOARD_BLOCK_CENTER + x * Config.BOARD_BLOCK_SIZE, Config.BOARD_GRID_MARGIN * Config.BOARD_BLOCK_SIZE +Config.BOARD_BLOCK_CENTER + y * Config.BOARD_BLOCK_SIZE)
+	return Vector2( Constant.BOARD_GRID_MARGIN * Constant.BOARD_BLOCK_SIZE + Constant.BOARD_BLOCK_CENTER + x * Constant.BOARD_BLOCK_SIZE, Constant.BOARD_GRID_MARGIN * Constant.BOARD_BLOCK_SIZE +Constant.BOARD_BLOCK_CENTER + y * Constant.BOARD_BLOCK_SIZE)
 
 
 func _spawn_block(start_position: Vector2) -> Node:

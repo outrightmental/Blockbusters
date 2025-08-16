@@ -26,7 +26,7 @@ var is_disabled: bool                = false
 var disabled_until_ticks_msec: float = 0.0
 # variables for laser tool
 var laser: LaserBeamCluster = null
-var laser_charge_sec: float = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
 
@@ -56,8 +56,8 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
-	disabled_until_ticks_msec = Time.get_ticks_msec() + Config.PLAYER_SHIP_DISABLED_SEC * 1000.0
-	_set_colors(Config.PLAYER_SHIP_DISABLED_S_RATIO, Config.PLAYER_SHIP_DISABLED_V_RATIO)
+	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
+	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
 	Game.player_did_harm.emit(responsible_player_num)
 
@@ -78,7 +78,7 @@ func apply_heat(delta: float) -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_linear_damp(Config.PLAYER_SHIP_LINEAR_DAMP)
+	set_linear_damp(Constant.PLAYER_SHIP_LINEAR_DAMP)
 
 	# Set the sprite texture based on player_num
 	_set_colors(1.0)
@@ -94,8 +94,8 @@ func _ready() -> void:
 	forcefield_area.body_entered.connect(_on_body_entered)
 	forcefield_area.body_exited.connect(_on_body_exited)
 	# Set the forcefield color based on player_num
-	if player_num in Config.PLAYER_COLORS:
-		$ForcefieldEffect.color = Config.PLAYER_COLORS[player_num][0]
+	if player_num in Constant.PLAYER_COLORS:
+		$ForcefieldEffect.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No color found for player ", player_num)
 	$ForcefieldEffect.set_emitting(false)
@@ -111,9 +111,9 @@ func _ready() -> void:
 
 # Set the colors of the ship based on player_num
 func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
-	if player_num in Config.PLAYER_COLORS:
-		$TriangleLight.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
-		$TriangleDark.color = Util.color_at_sv_ratio(Config.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
+	if player_num in Constant.PLAYER_COLORS:
+		$TriangleLight.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
+		$TriangleDark.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
 	else:
 		push_error("No colors found for player_num: ", player_num)
 
@@ -131,12 +131,12 @@ func _physics_process(delta: float) -> void:
 		angle_diff -= TAU
 	elif angle_diff < -PI:
 		angle_diff += TAU
-	actual_rotation += angle_diff * Config.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
+	actual_rotation += angle_diff * Constant.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
 
 	# If the ship is not disabled, apply a force in the direction of the input
 	if movement_dir.length() > 0 and not is_disabled:
-		apply_impulse(movement_dir * Config.PLAYER_SHIP_FORCE_AMOUNT * delta)
+		apply_impulse(movement_dir * Constant.PLAYER_SHIP_FORCE_AMOUNT * delta)
 
 	# Update the laser charge
 	_update_laser(delta)
@@ -187,7 +187,7 @@ func _on_input_move(player: int, dir: Vector2) -> void:
 			input_direction_pressed = true
 			input_direction_start_ticks_msec = Time.get_ticks_msec()
 
-		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Config.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
+		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Constant.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
 			target_rotation = dir.angle()
 			_update_movement_state(ShipMovementState.DRIFT)
@@ -201,7 +201,7 @@ func _on_input_move(player: int, dir: Vector2) -> void:
 
 # Called when the player wants to activate the primary tool
 func _do_activate_laser() -> void:
-	if laser_charge_sec < Config.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
+	if laser_charge_sec < Constant.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
 		return
 	if laser:
 		return
@@ -222,7 +222,7 @@ func _do_deactivate_laser() -> void:
 
 # Called when the player wants to activate the secondary tool
 func _do_launch_projectile_explosive() -> void:
-	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Config.PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
+	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Constant.PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
 		return
 	if not Game.player_can_launch_projectile(player_num):
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FAIL)
@@ -233,7 +233,7 @@ func _do_launch_projectile_explosive() -> void:
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
 	projectile.rotation = actual_rotation
-	projectile.linear_velocity = linear_velocity + rotation_vector * Config.PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
+	projectile.linear_velocity = linear_velocity + rotation_vector * Constant.PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY
 	projectile.player_num = player_num
 	self.get_parent().call_deferred("add_child", projectile)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FIRE)
@@ -252,11 +252,11 @@ func _update_laser(delta: float) -> void:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
-	elif laser_charge_sec < Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC and not is_disabled:
+	elif laser_charge_sec < Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC and not is_disabled:
 		# If the laser is not active, recharge it
-		laser_charge_sec += delta * Config.PLAYER_SHIP_LASER_RECHARGE_RATE
-		if laser_charge_sec > Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
-			laser_charge_sec = Config.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+		laser_charge_sec += delta * Constant.PLAYER_SHIP_LASER_RECHARGE_RATE
+		if laser_charge_sec > Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
+			laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 
 
@@ -267,7 +267,7 @@ func _update_heat(delta: float) -> void:
 		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
-		if heated_sec >= Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
+		if heated_sec >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
 			do_disable(player_num)
 	elif heated_sec > 0:
 		heated_sec -= delta
@@ -292,19 +292,19 @@ func _update_forcefield(_delta: float) -> void:
 			# get the direction vector from the body to the center of forcefield
 			var direction: Vector2 = (forcefield_area.global_position - body.global_position).normalized()
 			# apply a force on the body towards the center of forcefield
-			body.apply_central_force(direction * Config.PLAYER_SHIP_FORCEFIELD_INWARD_FORCE * _delta)
+			body.apply_central_force(direction * Constant.PLAYER_SHIP_FORCEFIELD_INWARD_FORCE * _delta)
 			# apply a force on the body in the direction of the forcefield delta
-			if forcefield_delta.length() > Config.PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD:
-				body.apply_central_force(forcefield_delta * Config.PLAYER_SHIP_FORCEFIELD_MOTION_FORCE * _delta)
+			if forcefield_delta.length() > Constant.PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD:
+				body.apply_central_force(forcefield_delta * Constant.PLAYER_SHIP_FORCEFIELD_MOTION_FORCE * _delta)
 			# accumulate the mass of the bodies in the forcefield
 			if body is RigidBody2D:
 				forcefield_target_mass += body.mass
 	# Update the forcefield effect based on the mass of the ship
 	if forcefield_target_mass > 0:
-		var forcefield_amount = clamp(forcefield_target_mass / Config.PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX, 0.0, 1.0)
-		$ForcefieldEffect.scale_amount_min = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN
-		$ForcefieldEffect.scale_amount_max = forcefield_amount * Config.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX
-		$ForcefieldEffect.gravity = -Config.PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY * Vector2(cos(rotation), sin(rotation))
+		var forcefield_amount = clamp(forcefield_target_mass / Constant.PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX, 0.0, 1.0)
+		$ForcefieldEffect.scale_amount_min = forcefield_amount * Constant.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MIN
+		$ForcefieldEffect.scale_amount_max = forcefield_amount * Constant.PLAYER_SHIP_FORCEFIELD_EFFECT_SCALE_MAX
+		$ForcefieldEffect.gravity = -Constant.PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY * Vector2(cos(rotation), sin(rotation))
 		$ForcefieldEffect.set_emitting(true)
 	else:
 		$ForcefieldEffect.set_emitting(false)
@@ -314,7 +314,7 @@ func _update_forcefield(_delta: float) -> void:
 func _update_heated_effect() -> void:
 	if heated_sec > 0:
 		heated_effect.set_visible(true)
-		heated_effect.modulate.a = clamp(heated_sec / Config.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+		heated_effect.modulate.a = clamp(heated_sec / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 	else:
 		heated_effect.set_visible(false)
 

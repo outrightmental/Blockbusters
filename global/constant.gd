@@ -8,6 +8,7 @@ const PLAYER_COLORS: Dictionary = {
 								  }
 #
 # player ship threshold that's rotation only (strafe) before applying force
+const PLAYER_INPUT_JOYSTICK_DEADZONE := 0.25
 const PLAYER_SCORE_COLLECT_GEM_VALUE: int               = 2
 const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
 const PLAYER_SCORE_INITIAL: int                         = 3
