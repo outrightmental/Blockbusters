@@ -2,8 +2,8 @@ class_name Block
 extends Collidable
 
 # Constants
-const INNER_GEM_ALPHA: float    = 0.6
-const LINEAR_DAMP: float        = 0.1
+const INNER_GEM_ALPHA: float = 0.6
+const LINEAR_DAMP: float     = 0.1
 # Variables
 var gem: Node = null
 # variable for being heated
@@ -21,6 +21,11 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
+# Cache reference to Shapes
+@onready var shapes: Node2D = $Shapes
+# Preloaded scene for the block quarter shattering
+const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -28,6 +33,8 @@ func _ready() -> void:
 	add_to_group(Game.BLOCK_GROUP)
 	# Update the heated effect visibility
 	_update_heated_effect()
+	freeze = true
+	shapes.modulate.a = Config.BLOCK_INACTIVE_OPACITY
 	pass
 
 
@@ -54,40 +61,67 @@ func do_break(broken_by: Node = null) -> void:
 	half1.position = position
 	half1.linear_velocity = linear_velocity + Vector2(-Config.BLOCK_BREAK_APART_VELOCITY, -Config.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
+	half1.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Half 2
 	var half2: Node = half2_scene.instantiate()
 	half2.add_collision_exception_with(self)
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Config.BLOCK_BREAK_APART_VELOCITY, Config.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
+	half2.do_heat(Config.BLOCK_HALF_HEATED_BREAK_SEC * Config.BLOCK_BREAK_HEAT_TRANSFER_RATIO)
 	# Gem
-	if gem:
-		gem = gem_scene.instantiate()
-		gem.position = position
-		gem.linear_velocity = linear_velocity
-		gem.add_collision_exception_with(self)
+	if _do_release_gem():
 		gem.add_collision_exception_with(half1)
 		gem.add_collision_exception_with(half2)
-		self.get_parent().call_deferred("add_child", gem)
-		Game.gems_in_blocks -= 1
-		Game.gems_free += 1
-		Game.gem_count_updated.emit()
 	# Avoid collisions with the block that broke this half
 	if broken_by:
 		half1.dont_break_by.append(broken_by)
 		half2.dont_break_by.append(broken_by)
 	# Add the halves to the scene
-	self.get_parent().call_deferred("add_child", half1)
 	self.get_parent().call_deferred("add_child", half2)
+	self.get_parent().call_deferred("add_child", half1)
 	# Remove the block from the scene
 	self.call_deferred("queue_free")
 	pass
+
+
+# Shatter into dust
+func do_shatter() -> void:
+	_do_release_gem()
+	# Shatter effect
+	var shatter: Node = shatter_scene.instantiate()
+	shatter.position = position
+	self.get_parent().call_deferred("add_child", shatter)
+	self.call_deferred("queue_free")
+
+
+func _do_release_gem() -> bool:
+	# Gem
+	if gem:
+		gem.queue_free()
+		gem = gem_scene.instantiate()
+		gem.position = position
+		gem.linear_velocity = linear_velocity
+		gem.add_collision_exception_with(self)
+		self.get_parent().call_deferred("add_child", gem)
+		Game.gems_in_blocks -= 1
+		Game.gems_free += 1
+		Game.gem_count_updated.emit()
+		return true
+	return false
 
 
 # Add heat
 func do_heat(delta: float) -> void:
 	heated_delta += delta
 	pass
+	
+	
+# Activate
+func do_activate() -> void:
+	freeze = false
+	shapes.modulate.a = 1
+	pass	
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -100,11 +134,13 @@ func _process(_delta: float) -> void:
 # If the ship is heated for too long, disable it
 func _update_heat(delta: float) -> void:
 	if heated_delta > 0:
-		heated_sec += delta
+		heated_sec += heated_delta
 		heated_delta = 0.0
 		_update_heated_effect()
 		if heated_sec >= Config.BLOCK_HEATED_BREAK_SEC:
 			call_deferred("do_break")
+		if freeze and heated_sec >= Config.BLOCK_ACTIVATION_HEAT_THRESHOLD:
+			call_deferred("do_activate")
 	elif heated_sec > 0:
 		heated_sec -= delta
 		if heated_sec < 0:

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b58oyq1o5ha2o"]
 
-[ext_resource type="Script" uid="uid://bsqw6ncm8bgdj" path="res://models/player/projectile_explosive.gd" id="1_e1yt5"]
+[ext_resource type="Script" uid="uid://bsqw6ncm8bgdj" path="res://models/explosive/projectile_explosive.gd" id="1_e1yt5"]
 
 [node name="ProjectileExplosive" type="RigidBody2D"]
 gravity_scale = 0.0

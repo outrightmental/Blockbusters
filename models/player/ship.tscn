@@ -1,27 +1,36 @@
-[gd_scene load_steps=2 format=3 uid="uid://bg7dqpj5bjc6x"]
+[gd_scene load_steps=3 format=3 uid="uid://bg7dqpj5bjc6x"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://fdnyxkdqbh7y" path="res://models/player/ship.tres" id="1_3lbs4"]
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/player/ship.gd" id="1_yja86"]
 
 [node name="Ship" type="RigidBody2D"]
 position = Vector2(3, 0)
+collision_priority = 2.0
+mass = 10.0
+physics_material_override = ExtResource("1_3lbs4")
 gravity_scale = 0.0
+continuous_cd = 2
 script = ExtResource("1_yja86")
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
-position = Vector2(-12, 2)
+position = Vector2(12, -2)
+rotation = 3.14159
 color = Color(1, 0, 0.894118, 1)
-polygon = PackedVector2Array(-5, -19, 29, -2, 0, -2)
+polygon = PackedVector2Array(-5, -19, 33, -10, 29, -2, 9, -2)
 
 [node name="TriangleDark" type="Polygon2D" parent="."]
-position = Vector2(-12, 2)
+position = Vector2(12, -2)
+rotation = 3.14159
 color = Color(0.733333, 0, 0.654902, 1)
-polygon = PackedVector2Array(0, -2, 29, -2, -5, 15)
+polygon = PackedVector2Array(9, -2, 29, -2, 33, 6, -5, 15)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-17, -17, 17, 0, -17, 17, -12, 0)
+rotation = 3.14159
+polygon = PackedVector2Array(-17, -17, 21, -8, 17, 0, 21, 8, -17, 17, -3, 0)
 
 [node name="HeatedEffect" type="Node2D" parent="."]
+rotation = 3.14159
 
 [node name="HeatedSHape" type="Polygon2D" parent="HeatedEffect"]
 position = Vector2(-12, 2)
-polygon = PackedVector2Array(-5, -19, 29, -2, -5, 15, 0, -2)
+polygon = PackedVector2Array(-5, -19, 33, -10, 29, -2.11238, 33, 6, -5, 15, 9, -2)
