@@ -24,7 +24,7 @@ const PLAYER_SHIP_FORCEFIELD_INWARD_FORCE: float        = 10000.0
 const PLAYER_SHIP_FORCEFIELD_MOTION_FORCE: float        = 30000.0
 const PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD: float    = 1.0
 const PLAYER_SHIP_FORCE_AMOUNT: int                     = 5000
-const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 2.0
+const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 5.0
 const PLAYER_SHIP_LASER_ALPHA_MAX: float                = 0.5
 const PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC: float = 1
 const PLAYER_SHIP_LASER_CHARGE_MAX_SEC: float           = 3
@@ -71,6 +71,7 @@ const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 const EXPLOSION_FORCE: int               = 8000
 const EXPLOSION_HEAT_RADIUS_RATIO: float = 0.6
 const EXPLOSION_LIFETIME_MSEC: int       = 1000
+const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 4
 #
 # pertaining to heat
 const HEATING_TIMEOUT_MSEC: int = 250 # timeout after heat not applied when we consider the block no longer heating up
