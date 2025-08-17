@@ -30,8 +30,8 @@ func _setup() -> void:
 		InputManager.Mode.COUCH:
 			$TableMode.hide()
 			$CouchMode.show()
-			$ReadyP1.transform = Transform2D(0, Vector2(250, 400))
-			$ReadyP2.transform = Transform2D(0, Vector2(776, 400))
+			$ReadyP1.transform = Transform2D(0, Vector2(250, 450))
+			$ReadyP2.transform = Transform2D(0, Vector2(776, 450))
 
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
