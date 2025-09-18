@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://cmijftuchxf62"]
+[gd_scene load_steps=7 format=3 uid="uid://cmijftuchxf62"]
 
 [ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
-[ext_resource type="PackedScene" uid="uid://5830e5k6edcl" path="res://models/player/instructions.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://dvo0oiws54t1m" path="res://models/player/ready.tscn" id="4_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://cunv03sc3o40h" path="res://assets/MainScreenTitle.png" id="4_tefeu"]
 [ext_resource type="FontFile" uid="uid://bb8u5b7rplwdy" path="res://assets/fonts/Montserrat/static/Montserrat-Bold.ttf" id="5_tefeu"]
@@ -22,33 +21,56 @@ offset_bottom = 576.0
 color = Color(0, 0, 0, 1)
 
 [node name="TableMode" type="Node2D" parent="."]
-visible = false
 
-[node name="InstructionsP1" parent="TableMode" instance=ExtResource("3_sugp2")]
-position = Vector2(409, 291)
-rotation = 1.5708
-
-[node name="InstructionsP2" parent="TableMode" instance=ExtResource("3_sugp2")]
-position = Vector2(619, 288)
-rotation = -1.5708
-
-[node name="CouchMode" type="Node2D" parent="."]
-
-[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="CouchMode"]
+[node name="AttractVideo" type="VideoStreamPlayer" parent="TableMode"]
 offset_right = 1024.0
 offset_bottom = 576.0
 stream = SubResource("VideoStreamTheora_tbgi4")
 autoplay = true
 loop = true
 
-[node name="ColorRect" type="ColorRect" parent="CouchMode"]
+[node name="StartBG_P1" type="ColorRect" parent="TableMode"]
+offset_left = 60.0
+offset_right = 126.0
+offset_bottom = 576.0
+color = Color(0, 0, 0, 0.862745)
+
+[node name="StartBG_P2" type="ColorRect" parent="TableMode"]
+offset_left = 903.0
+offset_right = 969.0
+offset_bottom = 576.0
+color = Color(0, 0, 0, 0.862745)
+
+[node name="BLOCKBUSTERS_P1" type="Sprite2D" parent="TableMode"]
+position = Vector2(335, 269)
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("4_tefeu")
+
+[node name="BLOCKBUSTERS_P2" type="Sprite2D" parent="TableMode"]
+position = Vector2(735, 268)
+rotation = -1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("4_tefeu")
+
+[node name="CouchMode" type="Node2D" parent="."]
+visible = false
+
+[node name="AttractVideo" type="VideoStreamPlayer" parent="CouchMode"]
+offset_right = 1024.0
+offset_bottom = 576.0
+stream = SubResource("VideoStreamTheora_tbgi4")
+autoplay = true
+loop = true
+
+[node name="PlayerStartBG" type="ColorRect" parent="CouchMode"]
 offset_left = -33.0
 offset_top = 448.0
 offset_right = 1031.0
 offset_bottom = 514.0
 color = Color(0, 0, 0, 0.862745)
 
-[node name="Untitled-1" type="Sprite2D" parent="CouchMode"]
+[node name="BLOCKBUSTERS" type="Sprite2D" parent="CouchMode"]
 position = Vector2(535, 269)
 texture = ExtResource("4_tefeu")
 
