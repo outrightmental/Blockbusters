@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dw5wqex1qict1"]
+
+[ext_resource type="Script" uid="uid://jm0hdlhd6xl5" path="res://models/hud/hud_inventory.gd" id="1_1ario"]
+
+[node name="HudInventory" type="Node2D"]
+script = ExtResource("1_1ario")

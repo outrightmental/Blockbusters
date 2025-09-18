@@ -1,4 +1,4 @@
-class_name LaserCharge
+class_name HudLaserCharge
 extends Node2D
 
 # Constants

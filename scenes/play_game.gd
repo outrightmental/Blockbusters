@@ -3,7 +3,7 @@ extends Node2D
 # Preloaded Scenes
 const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
-const score_scene: PackedScene = preload('res://models/player/score.tscn')
+const score_scene: PackedScene = preload('res://models/hud/hud_score.tscn')
 const block_scene: PackedScene = preload('res://models/block/block.tscn')
 # References to player homes
 @onready var player_home_1 = $HomePlayer1
@@ -31,7 +31,7 @@ func _ready() -> void:
 	# Reset the game
 	Game.reset_game.emit()
 	# Connect the game over signals after resetting the game
-	Game.score_updated.connect(_check_for_game_over)
+	Game.player_score_updated.connect(_check_for_game_over)
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	Game.player_did_collect_gem.connect(_on_player_collect_gem)
 	# Countdown and then start the game
@@ -111,13 +111,13 @@ func _hide_modal() -> void:
 # points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
 # fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
 func _check_for_game_over() -> void:
-	if Game.score[1] == Constant.PLAYER_SCORE_VICTORY:
+	if Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY:
 		_game_over(Game.Result.PLAYER_1_WINS)
 		return
-	elif Game.score[2] == Constant.PLAYER_SCORE_VICTORY:
+	elif Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
 		_game_over(Game.Result.PLAYER_2_WINS)
 		return
-	elif Game.score[1] == Constant.PLAYER_SCORE_VICTORY and Game.score[2] == Constant.PLAYER_SCORE_VICTORY:
+	elif Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY and Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
 		_game_over(Game.Result.DRAW)
 		return
 
@@ -128,10 +128,10 @@ func _check_for_game_over() -> void:
 		if block is Block and block.freeze:
 			total_gem_candidate_blocks += 1
 	if total_gems == 0 and total_gem_candidate_blocks == 0:
-		if Game.score[1]  > Game.score[2]:
+		if Game.player_score[1]  > Game.player_score[2]:
 			_game_over(Game.Result.PLAYER_1_WINS)
 			return
-		elif Game.score[2] > Game.score[1]:
+		elif Game.player_score[2] > Game.player_score[1]:
 			_game_over(Game.Result.PLAYER_2_WINS)
 			return
 		else:
