@@ -46,16 +46,20 @@ func _ready() -> void:
 # Setup the UI based on the current input mode		
 func _setup() -> void:
 	match InputManager.mode:
-		InputManager.Mode.TABLE:
+		InputManager.Mode.COUCH:
 			$PlayerMeta/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
 			$PlayerMeta/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
+			$PlayerMeta/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
 			$PlayerMeta/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
 			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
-		InputManager.Mode.COUCH:
+			$PlayerMeta/InventoryP2.transform = Transform2D(PI/2, Vector2(-1, 1), 0, Vector2(993, 88))
+		InputManager.Mode.TABLE:
 			$PlayerMeta/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
 			$PlayerMeta/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$PlayerMeta/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
 			$PlayerMeta/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
 			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$PlayerMeta/InventoryP2.transform = Transform2D(-PI/2, Vector2(1, 1), 0, Vector2(993, 88))
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
