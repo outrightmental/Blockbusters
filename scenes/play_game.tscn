@@ -29,54 +29,67 @@ position = Vector2(512, 584)
 shape = SubResource("RectangleShape2D_4dcan")
 
 [node name="Left" type="CollisionShape2D" parent="Outer Fence"]
-position = Vector2(-8, 288)
+position = Vector2(56, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
 [node name="Right" type="CollisionShape2D" parent="Outer Fence"]
-position = Vector2(1032, 288)
+position = Vector2(967.9, 286.9)
 shape = SubResource("RectangleShape2D_xet8o")
 
 [node name="RoundTopLeft" type="CollisionPolygon2D" parent="Outer Fence"]
+position = Vector2(64, 0)
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
 [node name="RoundTopRight" type="CollisionPolygon2D" parent="Outer Fence"]
-position = Vector2(1024, 0)
+position = Vector2(959.9, -1.0999)
 rotation = 1.57079
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
 [node name="RoundBottomRight" type="CollisionPolygon2D" parent="Outer Fence"]
-position = Vector2(1024, 576)
+position = Vector2(959.9, 574.9)
 rotation = 3.14159
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
 [node name="RoundBottomLeft" type="CollisionPolygon2D" parent="Outer Fence"]
-position = Vector2(0, 576)
+position = Vector2(64, 576)
 rotation = 4.71238
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="ShowRoundCorners" type="Node2D" parent="."]
+[node name="ShowBoardEdges" type="Node2D" parent="."]
 
-[node name="TopLeft" type="Polygon2D" parent="ShowRoundCorners"]
+[node name="RoundTopLeft" type="Polygon2D" parent="ShowBoardEdges"]
+position = Vector2(64, 0)
 color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="TopRight" type="Polygon2D" parent="ShowRoundCorners"]
-position = Vector2(1024, 0)
+[node name="RoundTopRight" type="Polygon2D" parent="ShowBoardEdges"]
+position = Vector2(959.9, -1.0999)
 rotation = 1.57079
 color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="BottomRight" type="Polygon2D" parent="ShowRoundCorners"]
-position = Vector2(1024, 576)
+[node name="RoundBottomRight" type="Polygon2D" parent="ShowBoardEdges"]
+position = Vector2(959.9, 574.9)
 rotation = -3.14159
 color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="BottomLeft" type="Polygon2D" parent="ShowRoundCorners"]
-position = Vector2(0, 576)
+[node name="RoundBottomLeft" type="Polygon2D" parent="ShowBoardEdges"]
+position = Vector2(64, 576)
 rotation = -1.57079
 color = Color(0.188235, 0.188235, 0.188235, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
+
+[node name="Left" type="ColorRect" parent="ShowBoardEdges"]
+offset_right = 64.0
+offset_bottom = 576.0
+color = Color(0.19, 0.19, 0.19, 1)
+
+[node name="Right" type="ColorRect" parent="ShowBoardEdges"]
+offset_left = 960.0
+offset_right = 1024.0
+offset_bottom = 576.0
+color = Color(0.19, 0.19, 0.19, 1)
 
 [node name="Modal" type="Node2D" parent="."]
 visible = false
