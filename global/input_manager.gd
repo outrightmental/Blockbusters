@@ -23,7 +23,7 @@ func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
 	var joypads: Array = Input.get_connected_joypads()
 	if joypads.size() >= 2:
 		print ("[GAME] Activating dual gamepad input mode")
-		mode = Mode.TABLE # todo go back mode = Mode.COUCH
+		mode = Mode.COUCH
 		joypads.sort()  # lowest id first for stability
 		# Optionally: dedupe "ghost" XInput mirrors by GUID/name here.
 		p1_device_id = joypads[0]

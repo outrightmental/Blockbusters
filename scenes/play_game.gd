@@ -160,8 +160,8 @@ func _create_board() -> void:
 	var block_attempt_count: int = 0
 	_generate_mesh(floor(randf() * Constant.BOARD_SEED_MAX))
 	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
-	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.08, viewport_size.y * 0.5), 0)
-	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.92, viewport_size.y * 0.5), PI)
+	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
+	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position, player_ship_1.position, player_ship_2.position]
 
 	while block_count < Constant.BOARD_BLOCK_COUNT_MAX and block_attempt_count < Constant.BOARD_BLOCK_ATTEMPT_MAX:
@@ -201,7 +201,7 @@ func _is_clear_of(distance: int, source: Vector2, target: Vector2) -> bool:
 
 func _grid_position(x: int, y: int) -> Vector2:
 	# Convert grid coordinates to world coordinates
-	return Vector2( Constant.BOARD_GRID_MARGIN * Constant.BOARD_BLOCK_SIZE + Constant.BOARD_BLOCK_CENTER + x * Constant.BOARD_BLOCK_SIZE, Constant.BOARD_GRID_MARGIN * Constant.BOARD_BLOCK_SIZE +Constant.BOARD_BLOCK_CENTER + y * Constant.BOARD_BLOCK_SIZE)
+	return Vector2( Constant.BOARD_GRID_COLS_MARGIN * Constant.BOARD_BLOCK_SIZE + Constant.BOARD_BLOCK_CENTER + x * Constant.BOARD_BLOCK_SIZE, Constant.BOARD_GRID_ROWS_MARGIN * Constant.BOARD_BLOCK_SIZE +Constant.BOARD_BLOCK_CENTER + y * Constant.BOARD_BLOCK_SIZE)
 
 
 # Spawn a player ship at the given position and rotation
