@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://c8045jji6nnmx" path="res://shaders/circle_outline.gdshader" id="2_033dx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ilkru"]
+resource_local_to_scene = true
 shader = ExtResource("2_033dx")
 shader_parameter/color = Color(1, 1, 1, 0.196078)
 shader_parameter/diameter = 1.0

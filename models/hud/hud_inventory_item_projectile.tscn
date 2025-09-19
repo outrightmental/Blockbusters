@@ -4,8 +4,8 @@
 
 [node name="HudItemProjectile" type="Node2D"]
 script = ExtResource("1_xovak")
-player_num = null
 type = null
+player_num = null
 metadata/_edit_vertical_guides_ = [10.0]
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
