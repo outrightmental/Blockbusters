@@ -30,15 +30,16 @@ autoplay = true
 loop = true
 
 [node name="StartBG_P1" type="ColorRect" parent="TableMode"]
-offset_left = 60.0
-offset_right = 126.0
+offset_right = 140.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 0.862745)
 
 [node name="StartBG_P2" type="ColorRect" parent="TableMode"]
-offset_left = 903.0
-offset_right = 969.0
-offset_bottom = 576.0
+offset_left = 1024.0
+offset_top = 576.0
+offset_right = 1174.0
+offset_bottom = 1152.0
+rotation = 3.14159
 color = Color(0, 0, 0, 0.862745)
 
 [node name="BLOCKBUSTERS_P1" type="Sprite2D" parent="TableMode"]

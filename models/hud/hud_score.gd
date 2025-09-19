@@ -1,4 +1,4 @@
-class_name Score
+class_name HudScore
 extends Node2D
 
 # Constants
@@ -11,7 +11,7 @@ const COLOR_SV_RATIO: float = 0.7
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.score_updated.connect(_on_score_updated)
+	Game.player_score_updated.connect(_on_player_score_updated)
 	_set_color()
 
 
@@ -26,9 +26,9 @@ func _set_color() -> void:
 
 	
 # Update the score for this player
-func _on_score_updated() -> void:
-	if Game.score.has(player_num):
-		$Text.set_text(str(Game.score[player_num]))
+func _on_player_score_updated() -> void:
+	if Game.player_score.has(player_num):
+		$Text.set_text(str(Game.player_score[player_num]))
 	else:
 		push_error("No score found for player_num: ", player_num)
 	pass

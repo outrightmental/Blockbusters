@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://rpl4j57m2rt4"]
 
-[ext_resource type="Script" uid="uid://dtlkjnkk5ntn6" path="res://models/player/laser_charge.gd" id="1_iqkjo"]
+[ext_resource type="Script" uid="uid://dtlkjnkk5ntn6" path="res://models/hud/hud_laser_charge.gd" id="1_iqkjo"]
 
 [node name="LaserCharge" type="Node2D"]
 script = ExtResource("1_iqkjo")

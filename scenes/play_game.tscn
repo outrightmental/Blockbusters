@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bgvuuvhomj1ox"]
+[gd_scene load_steps=9 format=3 uid="uid://bgvuuvhomj1ox"]
 
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/play_game.gd" id="1_s826b"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_4xfa0"]
 [ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/home.tscn" id="3_466yg"]
-[ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/player/score.tscn" id="3_bgg7l"]
-[ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/player/laser_charge.tscn" id="4_sbpvv"]
+[ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/hud/hud_score.tscn" id="3_bgg7l"]
+[ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_laser_charge.tscn" id="4_sbpvv"]
+[ext_resource type="PackedScene" uid="uid://dw5wqex1qict1" path="res://models/hud/hud_inventory.tscn" id="6_xugar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
 size = Vector2(1024, 16)
@@ -135,6 +136,11 @@ position = Vector2(31, 388)
 rotation = 1.5708
 player_num = 1
 
+[node name="InventoryP1" parent="PlayerMeta" instance=ExtResource("6_xugar")]
+position = Vector2(31, 88)
+rotation = 1.5708
+player_num = 1
+
 [node name="ScoreP2" parent="PlayerMeta" instance=ExtResource("3_bgg7l")]
 position = Vector2(993, 288)
 rotation = -1.5708
@@ -142,6 +148,11 @@ player_num = 2
 
 [node name="EnergyP2" parent="PlayerMeta" instance=ExtResource("4_sbpvv")]
 position = Vector2(993, 188)
+rotation = -1.5708
+player_num = 2
+
+[node name="InventoryP2" parent="PlayerMeta" instance=ExtResource("6_xugar")]
+position = Vector2(993, 488)
 rotation = -1.5708
 player_num = 2
 
