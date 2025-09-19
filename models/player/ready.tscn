@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvo0oiws54t1m"]
+[gd_scene load_steps=4 format=3 uid="uid://dvo0oiws54t1m"]
 
 [ext_resource type="Script" uid="uid://c2fge45tdrxy1" path="res://models/player/ready.gd" id="1_i5n61"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_gkuhg"]
+[ext_resource type="FontFile" uid="uid://bb8u5b7rplwdy" path="res://assets/fonts/Montserrat/static/Montserrat-Bold.ttf" id="3_1rfpl"]
 
 [node name="Score" type="Node2D"]
 script = ExtResource("1_i5n61")
@@ -16,3 +17,21 @@ theme_override_font_sizes/normal_font_size = 40
 text = "Player #"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="PressStartText" type="RichTextLabel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 55.0
+offset_right = 100.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+theme_override_fonts/normal_font = ExtResource("3_1rfpl")
+theme_override_font_sizes/normal_font_size = 18
+text = "PRESS START"
+horizontal_alignment = 1

@@ -40,8 +40,10 @@ func _toggle_ready() -> void:
 	_set_color()
 	if is_ready:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_1_READY if player_num == 0 else SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_2_READY)
+		$PressStartText.hide()
 	else:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_UNREADY)
+		$PressStartText.show()
 	Game.player_ready_updated.emit()
 	pass
 
