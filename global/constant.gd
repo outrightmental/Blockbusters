@@ -72,7 +72,7 @@ const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 const EXPLOSION_FORCE: int               = 8000
 const EXPLOSION_HEAT_RADIUS_RATIO: float = 0.6
 const EXPLOSION_LIFETIME_MSEC: int       = 1000
-const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 4
+const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 0.8 # ratio multiplied by ship overheating threshold
 #
 # pertaining to heat
 const HEATING_TIMEOUT_MSEC: int = 250 # timeout after heat not applied when we consider the block no longer heating up
