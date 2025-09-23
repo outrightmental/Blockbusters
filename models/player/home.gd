@@ -22,6 +22,7 @@ func _on_body_entered(body: Node2D) -> void:
 		Game.gems_collected += 1
 		body.do_shatter()
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_COLLECTS_GEM)
+		$AnimationPlayer.play("Goal")
 	pass
 
 
