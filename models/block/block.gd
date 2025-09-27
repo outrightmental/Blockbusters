@@ -2,7 +2,7 @@ class_name Block
 extends Heatable
 
 # Variables
-var gem: Node = null
+var item: Node = null
 # Preloaded scenes
 const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
 const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
@@ -36,9 +36,9 @@ func _ready() -> void:
 
 
 # When a gem can be added
-func can_add_gem() -> bool:
+func can_add_item() -> bool:
 	# If the block already has a gem, return false
-	if gem:
+	if item:
 		return false
 	# If the block is unfrozen, return false
 	if not freeze:
@@ -50,14 +50,17 @@ func can_add_gem() -> bool:
 # Adds a gem inside this block
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true
-	gem = gem_scene.instantiate()
-	gem.position = Vector2(0, 0)
-	gem.add_collision_exception_with(self)
-	gem.freeze = true
-	gem.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
-	self.add_child(gem)
+	item = gem_scene.instantiate()
+	item.position = Vector2(0, 0)
+	item.add_collision_exception_with(self)
+	item.freeze = true
+	item.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
+	self.add_child(item)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 
+# Adds a pickup inside this block
+func add_pickup() -> void:
+	pass
 
 # Break the block apart into two halves
 func do_break() -> void:
@@ -72,9 +75,9 @@ func do_break() -> void:
 	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
 	# If the block has a gem, release it, and play the sound effect depending on whether there was a gem or not
-	if _do_release_gem():
-		gem.add_collision_exception_with(half1)
-		gem.add_collision_exception_with(half2)
+	if _do_release_item():
+		item.add_collision_exception_with(half1)
+		item.add_collision_exception_with(half2)
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_GEM)
 	else:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_NOGEM)
@@ -89,15 +92,12 @@ func do_break() -> void:
 	self.call_deferred("queue_free")
 
 
-func _do_release_gem() -> bool:
-	# Gem
-	if gem:
-		gem.queue_free()
-		gem = gem_scene.instantiate()
-		gem.position = position
-		gem.linear_velocity = linear_velocity
-		gem.add_collision_exception_with(self)
-		self.get_parent().call_deferred("add_child", gem)
+func _do_release_item() -> bool:
+	if item:
+		item.reparent(self.get_parent())
+		item.add_collision_exception_with(self)
+		item.position = position
+		item.linear_velocity = linear_velocity
 		return true
 	return false
 

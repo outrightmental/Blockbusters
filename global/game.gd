@@ -14,6 +14,7 @@ signal player_laser_charge_updated(player_num: int, charge_sec: float)
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
+const PICKUP_GROUP: StringName = "PickupGroup"
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
 enum Result {
 	PLAYER_1_WINS,
