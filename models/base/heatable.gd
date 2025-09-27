@@ -30,7 +30,7 @@ func _physics_process(delta):
 		heat -= delta
 		if heat < 0:
 			heat = 0.0
-	if heating:
+	elif heating:
 		AudioManager.update_2d_audio_global_position(heating_audio_key, global_position)
 		if Time.get_ticks_msec() - last_heated_at > Constant.HEATING_TIMEOUT_MSEC:
 			heating = false

@@ -5,6 +5,7 @@ const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
 const home_scene: PackedScene  = preload('res://models/player/home.tscn')
 const score_scene: PackedScene = preload('res://models/hud/hud_score.tscn')
 const block_scene: PackedScene = preload('res://models/block/block.tscn')
+const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player homes
 @onready var player_home_1 = $HomePlayer1
 @onready var player_home_2 = $HomePlayer2
@@ -35,11 +36,10 @@ func _ready() -> void:
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	Game.player_did_collect_gem.connect(_on_player_collect_gem)
 	# Countdown and then start the game
-	_show_modal("Ready...", Constant.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
+	_pause_game()
+	_show_banner(0, "READY...", "SET...")
 	await Util.delay(Constant.GAME_START_COUNTER_DELAY)
-	_show_modal("Set...", Constant.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
-	await Util.delay(Constant.GAME_START_COUNTER_DELAY)
-	_hide_modal()
+	_unpause_game()
 	pass
 
 
@@ -77,33 +77,41 @@ func _game_over(result: Game.Result) -> void:
 		return
 	is_game_over = true
 	await Util.delay(Constant.GAME_OVER_DELAY_SEC)
+	_pause_game()
 	match result:
 		Game.Result.PLAYER_1_WINS:
-			_show_modal("Player 1 wins!", Constant.PLAYER_COLORS[1][0])
+			_show_banner(1, "VICTORY!")
 		Game.Result.PLAYER_2_WINS:
-			_show_modal("Player 2 wins!", Constant.PLAYER_COLORS[2][0])
+			_show_banner(2, "VICTORY!")
 		Game.Result.DRAW:
-			_show_modal("Draw!", Constant.BOARD_MODAL_NEUTRAL_TEXT_COLOR)
+			_show_banner(0, "DRAW")
 	await Util.delay(Constant.GAME_OVER_SHOW_MODAL_SEC)
-	_hide_modal()
+	_unpause_game()
 	_goto_scene('res://scenes/main.tscn')
 	pass
 
 
-# Show the modal with the given text and color
-func _show_modal(text: String, color: Color) -> void:
-	$Modal.show()
-	$Modal/Text1.text = text
-	$Modal/Text1.set("theme_override_colors/default_color", color)
-	$Modal/Text2.text = text
-	$Modal/Text2.set("theme_override_colors/default_color", color)
-	_pause_game()
+# Spawn a banner at the given position
+func _show_banner(player_num: int, message:String, message_2:String = "") -> void:
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	match InputManager.mode:
+		InputManager.Mode.COUCH:
+			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
+		InputManager.Mode.TABLE:
+			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, 90, 0.6, message, message_2)
+			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, -90, 0.6, message, message_2)
 
-
-# Hide the modal
-func _hide_modal() -> void:
-	$Modal.hide()
-	_unpause_game()
+# Spawn a banner at the given position
+func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, scale:float, message:String, message_2: String = "") -> Signal:
+	var banner: Node        = banner_scene.instantiate()
+	banner.scale = Vector2(scale, scale)
+	banner.position = Vector2(x,y)
+	banner.rotation_degrees = rotation_degrees
+	banner.player_num = player_num
+	banner.message = message
+	banner.message_2 = message_2
+	self.add_child(banner)
+	return Util.delay(0)
 
 
 # Check for game over, e.g. when score or gem count is updated
@@ -146,6 +154,7 @@ func _check_for_game_over() -> void:
 # Called when a player collects a gem
 func _on_player_collect_gem(_player_num: int) -> void:
 	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
+	_show_banner(_player_num, "GOOOAAAAL!")
 	print ("[GAME] Player collected a gem")
 
 
@@ -236,7 +245,7 @@ func _spawn_gem() -> void:
 		random_block.add_gem()
 	else:
 		_check_for_game_over()
-
+		
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _goto_scene(path: String) -> void:
@@ -246,14 +255,12 @@ func _goto_scene(path: String) -> void:
 
 # Pause game, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _pause_game() -> void:
-	if get_tree():
-		get_tree().paused = true
+	InputManager.paused = true
 
 
 # Unpause game, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _unpause_game() -> void:
-	if get_tree():
-		get_tree().paused = false
+	InputManager.paused = false
 
 
 # ------------------------------------------------------------------ #

@@ -1,0 +1,101 @@
+[gd_scene load_steps=6 format=3 uid="uid://dp33d3xmyd48d"]
+
+[ext_resource type="Script" uid="uid://nx52ryopdxqt" path="res://models/hud/hud_banner.gd" id="1_p048d"]
+[ext_resource type="FontFile" uid="uid://dilt1dj5dpihc" path="res://assets/fonts/Montserrat/static/Montserrat-BlackItalic.ttf" id="2_vln56"]
+
+[sub_resource type="Animation" id="Animation_v16g5"]
+resource_name = "fly"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 3.7, 4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-1400, 0), Vector2(0, 0), Vector2(0, 0), Vector2(1500, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Text:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 3.7, 4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-2000, -50), Vector2(-650, -50), Vector2(-550, -50), Vector2(1400, -50)]
+}
+
+[sub_resource type="Animation" id="Animation_p048d"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-850, 288)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Text:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-598, -50)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_p048d"]
+_data = {
+&"RESET": SubResource("Animation_p048d"),
+&"fly": SubResource("Animation_v16g5")
+}
+
+[node name="HudBanner" type="Node2D"]
+script = ExtResource("1_p048d")
+
+[node name="Banner" type="Polygon2D" parent="."]
+position = Vector2(-850, 288)
+antialiased = true
+polygon = PackedVector2Array(-800, 50, -650, -50, 800, -50, 650, 50)
+uv = PackedVector2Array(-55, 40.75, 14, -32.75, 467.44, -32.55, 393.94, 44.45)
+
+[node name="Text" type="RichTextLabel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2000.0
+offset_top = -50.0
+offset_right = -800.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("2_vln56")
+theme_override_font_sizes/normal_font_size = 80
+text = "TESTING"
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 161
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Banner")
+libraries = {
+&"": SubResource("AnimationLibrary_p048d")
+}

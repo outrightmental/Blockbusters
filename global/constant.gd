@@ -59,7 +59,7 @@ const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring befor
 #
 # game behavior
 const GAME_OVER_DELAY_SEC: float      = 1.0 # tiny delay before checking game over state, to allow projectiles to finish
-const GAME_OVER_SHOW_MODAL_SEC: float = 2.5
+const GAME_OVER_SHOW_MODAL_SEC: float = 4.0
 const GAME_START_COUNTER_DELAY: float = 1.0
 #
 # projectile explosive behavior
