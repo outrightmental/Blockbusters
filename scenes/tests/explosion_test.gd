@@ -39,7 +39,7 @@ func _spawn_random_explosions(num: int, delay: float) -> Signal:
 	
 	
 		
-# Spawn an explosion at the center of the board
+# Spawn an explosion at the given position
 func _spawn_explosion(x: float, y:float) -> Signal:
 	var explosion: Node        = explosion_scene.instantiate()
 	explosion.position = Vector2(x,y)

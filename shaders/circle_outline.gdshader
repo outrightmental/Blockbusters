@@ -4,6 +4,7 @@ uniform float diameter = 1.0; // Circle Diameter
 uniform float thickness = 0.05; // Outline thickness
 uniform float frequency = 10.0; // Controls the number of dots
 uniform float phase = 0.0; // Controls the rotation of the circle
+uniform float gap = 0.5; // Controls how much of each dash is empty vs filled
 
 void fragment() {
   vec2 pos = UV - vec2(0.5);
@@ -22,7 +23,7 @@ void fragment() {
 
 
   float ring = outer_circle - inner_circle;
-  ring *= step(0.5, wave);
+  ring *= step(gap, wave);
 
   COLOR = vec4(color.rgb, ring * color.a);
 }
