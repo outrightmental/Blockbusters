@@ -1,10 +1,10 @@
 extends Node2D
 
 # Preloaded Scenes
-const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
-const home_scene: PackedScene  = preload('res://models/player/home.tscn')
-const score_scene: PackedScene = preload('res://models/hud/hud_score.tscn')
-const block_scene: PackedScene = preload('res://models/block/block.tscn')
+const ship_scene: PackedScene   = preload('res://models/player/ship.tscn')
+const home_scene: PackedScene   = preload('res://models/player/home.tscn')
+const score_scene: PackedScene  = preload('res://models/hud/hud_score.tscn')
+const block_scene: PackedScene  = preload('res://models/block/block.tscn')
 const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player homes
 @onready var player_home_1 = $HomePlayer1
@@ -16,6 +16,7 @@ var mesh: Dictionary                     = {}
 var block_count: int                     = 0
 var started_at_ticks_msec: int           = 0
 var spawn_next_gem_at_msec: int          = 0
+var spawn_next_pickup_at_msec: int       = 0
 var gem_dont_spawn_until_ticks_msec: int = 0
 var is_game_over: bool                   = false
 
@@ -23,7 +24,8 @@ var is_game_over: bool                   = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
-	spawn_next_gem_at_msec = started_at_ticks_msec + Constant.SHOW_MODAL_SEC * 1000
+	spawn_next_gem_at_msec = started_at_ticks_msec + int(Constant.SHOW_MODAL_SEC * 1000)
+	spawn_next_pickup_at_msec = spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
 	# Setup the board based on the current input mode
 	_setup()
 	InputManager.input_mode_updated.connect(_setup)
@@ -67,8 +69,12 @@ func _setup() -> void:
 func _physics_process(_delta: float) -> void:
 	# Check if it's time to spawn a gem
 	if Time.get_ticks_msec() >= spawn_next_gem_at_msec:
-		spawn_next_gem_at_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_EVERY_MSEC
+		spawn_next_gem_at_msec = Time.get_ticks_msec() + int(Constant.GEM_SPAWN_EVERY_SEC * 1000)
 		_spawn_gem()
+	# Check if it's time to spawn a pickup
+	if Time.get_ticks_msec() >= spawn_next_pickup_at_msec:
+		spawn_next_pickup_at_msec = Time.get_ticks_msec() + int(Constant.PICKUP_SPAWN_EVERY_SEC * 1000)
+		_spawn_pickup()
 	pass
 
 
@@ -90,7 +96,7 @@ func _game_over(result: Game.Result) -> void:
 
 
 # Spawn a banner at the given position
-func _show_banner(player_num: int, message:String, message_2:String = "") -> void:
+func _show_banner(player_num: int, message: String, message_2: String = "") -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	match InputManager.mode:
 		InputManager.Mode.COUCH:
@@ -99,12 +105,13 @@ func _show_banner(player_num: int, message:String, message_2:String = "") -> voi
 			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
 
+
 # Spawn a banner at the given position
-func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, scale:float, message:String, message_2: String = "") -> void:
-	var banner: Node        = banner_scene.instantiate()
-	banner.scale = Vector2(scale, scale)
-	banner.position = Vector2(x,y)
-	banner.rotation_degrees = rotation_degrees
+func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String = "") -> void:
+	var banner: Node = banner_scene.instantiate()
+	banner.scale = Vector2(_scale, _scale)
+	banner.position = Vector2(x, y)
+	banner.rotation_degrees = _rotation_degrees
 	banner.player_num = player_num
 	banner.message = message
 	banner.message_2 = message_2
@@ -155,7 +162,7 @@ func _on_player_collect_gem(player_num: int) -> void:
 		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
 		_show_banner(player_num, "GOOOAAAAL!")
 	else:
-		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999	
+		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999
 	print ("[GAME] Player collected a gem")
 
 
@@ -163,9 +170,9 @@ func _on_player_collect_gem(player_num: int) -> void:
 func _on_player_enabled(player_num: int, enabled: bool) -> void:
 	match player_num:
 		1:
-			$HudPlayer1.modulate.a = 1 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 		2:
-			$HudPlayer2.modulate.a = 1 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
@@ -241,21 +248,36 @@ func _spawn_block(start_position: Vector2) -> Node:
 
 
 func _spawn_gem() -> void:
-	if gem_dont_spawn_until_ticks_msec > Time.get_ticks_msec():
-		return  # Don't spawn a gem if the last gem was collected too recently
 	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
 		return
-	var candidates: Array[Block]
-	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
-		if block.can_add_gem():
-			candidates.append(block)
-	if candidates.size() > 0:
-		# Randomly select a block to spawn a gem in
-		var random_block: Block = candidates[randi() % candidates.size()]
-		random_block.add_gem()
+	var block = _get_block_spawn_candidate()
+	if block != null:
+		block.add_gem()
 	else:
 		_check_for_game_over()
-		
+
+
+func _spawn_pickup() -> void:
+	if get_tree().get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
+		return
+	var block = _get_block_spawn_candidate()
+	if block != null:
+		block.add_pickup()
+	else:
+		_check_for_game_over()
+
+
+# Get a random block that may have something added to it
+func _get_block_spawn_candidate() -> Block:
+	var candidates: Array[Block]
+	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
+		if block.can_add_item():
+			candidates.append(block)
+	if candidates.size() > 0:
+		# Randomly select a block to spawn a pickup in
+		return candidates[randi() % candidates.size()]
+	return null
+
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _goto_scene(path: String) -> void:

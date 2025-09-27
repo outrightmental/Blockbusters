@@ -339,6 +339,13 @@ func _on_collision(body: Node2D) -> void:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_BLOCK_QUART)
 	elif body is Gem:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_GEM)
+	elif body is Pickup:
+		if Game.player_can_add_item(player_num):
+			# FUTURE: AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_PICKUP)
+			Game.player_did_collect_item.emit(player_num, body.type)
+			body.queue_free()
+		# FUTURE else:
+		# 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PICKUP_FAIL)
 
 
 # Called when another body enters the forcefield area

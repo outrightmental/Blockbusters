@@ -6,6 +6,7 @@ signal player_score_updated()
 signal player_inventory_updated()
 signal player_did_launch_projectile(player_num: int)
 signal player_did_collect_gem(player_num: int)
+signal player_did_collect_item(player_num: int, type: InventoryItemType)
 signal player_did_harm(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
 signal projectile_count_updated
@@ -14,6 +15,7 @@ signal player_laser_charge_updated(player_num: int, charge_sec: float)
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
+const PICKUP_GROUP: StringName = "PickupGroup"
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
 enum Result {
 	PLAYER_1_WINS,
@@ -47,7 +49,12 @@ func player_can_launch_projectile(player_num: int) -> bool:
 		if player_inventory_item == InventoryItemType.PROJECTILE:
 			return true
 	return false
-		
+
+	
+# Check if the player has room in their inventory for a new item
+func player_can_add_item(player_num: int) -> bool:
+	return len(player_inventory[player_num]) < Constant.PLAYER_INVENTORY_MAX_ITEMS
+
 
 func _ready() -> void:
 	reset_game.connect(_do_reset_game)
@@ -58,6 +65,7 @@ func _ready() -> void:
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
 	player_enabled.connect(_on_player_enabled)
+	player_did_collect_item.connect(_on_player_did_collect_item)
 
 
 func _do_reset_game() -> void:
@@ -106,7 +114,13 @@ func _on_player_laser_charge_updated(_player_num: int, _charge_sec: float ) -> v
 
 func _on_player_enabled(_player_num: int, _enabled: bool) -> void:
 	pass
+	
 
+func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> void:
+	print("[GAME] Player %d collected pickup: %s" % [player_num, type])
+	player_inventory[player_num].append(type)
+	player_inventory_updated.emit()
+	pass
 
 func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 	var new_inventory = [];

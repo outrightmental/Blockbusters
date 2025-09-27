@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://bl2llq48pq3cr"]
+
+[ext_resource type="PhysicsMaterial" uid="uid://dw07h3wvuqaey" path="res://models/gem/gem.tres" id="1_4v1y3"]
+[ext_resource type="Script" uid="uid://dgibky2mluyx3" path="res://models/pickup/pickup_projectile.gd" id="2_u62ke"]
+[ext_resource type="Shader" uid="uid://eqs0ghv7w8u6" path="res://shaders/circle_filled.gdshader" id="3_r6o0i"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r6o0i"]
+shader = ExtResource("3_r6o0i")
+shader_parameter/color = Color(1, 1, 1, 0.294118)
+shader_parameter/diameter = 1.0
+
+[node name="PickupProjectile" type="RigidBody2D"]
+mass = 3.0
+physics_material_override = ExtResource("1_4v1y3")
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("2_u62ke")
+metadata/_edit_vertical_guides_ = [10.0]
+
+[node name="TriangleLight" type="Polygon2D" parent="."]
+position = Vector2(1.99997, 20)
+rotation = -1.57079
+polygon = PackedVector2Array(12, -6, 22, -7, 29, -2, 12, -2)
+
+[node name="TriangleDark" type="Polygon2D" parent="."]
+position = Vector2(1.99997, 20)
+rotation = -1.57079
+color = Color(0.73, 0.73, 0.73, 1)
+polygon = PackedVector2Array(12, -2, 29, -2, 22, 3, 12, 2)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_r6o0i")
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(10, 0, 9, 4, 7, 7, 4, 9, 0, 10, -4, 9, -7, 7, -9, 4, -10, 0, -9, -4, -7, -7, -4, -9, 0, -10, 4, -9, 7, -7, 9, -4)
