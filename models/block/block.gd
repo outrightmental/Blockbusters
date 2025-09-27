@@ -94,6 +94,7 @@ func do_break() -> void:
 
 func _do_release_item() -> bool:
 	if item:
+		item.freeze = false
 		item.reparent(self.get_parent())
 		item.add_collision_exception_with(self)
 		item.position = position
