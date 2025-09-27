@@ -56,6 +56,7 @@ func do_disable(responsible_player_num: int) -> void:
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
 	Game.player_did_harm.emit(responsible_player_num)
+	Game.player_enabled.emit(player_num, false)
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DISABLED)
 
@@ -65,6 +66,7 @@ func do_enable() -> void:
 	is_disabled = false
 	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
+	Game.player_enabled.emit(player_num, true)
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_REENABLED)
 

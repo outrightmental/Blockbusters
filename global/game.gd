@@ -7,6 +7,7 @@ signal player_inventory_updated()
 signal player_did_launch_projectile(player_num: int)
 signal player_did_collect_gem(player_num: int)
 signal player_did_harm(player_num: int)
+signal player_enabled(player_num: int, enabled: bool)
 signal projectile_count_updated
 signal player_ready_updated
 signal player_laser_charge_updated(player_num: int, charge_sec: float)
@@ -56,6 +57,7 @@ func _ready() -> void:
 	projectile_count_updated.connect(_on_projectile_count_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
+	player_enabled.connect(_on_player_enabled)
 
 
 func _do_reset_game() -> void:
@@ -99,6 +101,10 @@ func _on_player_ready_updated() -> void:
 
 
 func _on_player_laser_charge_updated(_player_num: int, _charge_sec: float ) -> void:
+	pass
+
+
+func _on_player_enabled(_player_num: int, _enabled: bool) -> void:
 	pass
 
 
