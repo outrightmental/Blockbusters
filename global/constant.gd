@@ -55,7 +55,6 @@ const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
 # gem behavior
 const GEM_MAX_COUNT: int                      = 1
 const GEM_SPAWN_EVERY_MSEC: int               = 100 # delay between spawning gems
-const GEM_SPAWN_INITIAL_MSEC: int             = 1000 # initial delay before spawning the first gem
 const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
 #
 # game behavior

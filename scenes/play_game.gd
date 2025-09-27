@@ -23,7 +23,7 @@ var is_game_over: bool                   = false
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	started_at_ticks_msec = Time.get_ticks_msec()
-	spawn_next_gem_at_msec = started_at_ticks_msec + Constant.GEM_SPAWN_INITIAL_MSEC
+	spawn_next_gem_at_msec = started_at_ticks_msec + Constant.SHOW_MODAL_SEC * 1000
 	# Setup the board based on the current input mode
 	_setup()
 	InputManager.input_mode_updated.connect(_setup)
@@ -100,7 +100,7 @@ func _show_banner(player_num: int, message:String, message_2:String = "") -> voi
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
 
 # Spawn a banner at the given position
-func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, scale:float, message:String, message_2: String = "") -> Signal:
+func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, scale:float, message:String, message_2: String = "") -> void:
 	var banner: Node        = banner_scene.instantiate()
 	banner.scale = Vector2(scale, scale)
 	banner.position = Vector2(x,y)
@@ -108,8 +108,8 @@ func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, s
 	banner.player_num = player_num
 	banner.message = message
 	banner.message_2 = message_2
+	banner.z_index = 1000
 	self.add_child(banner)
-	return Util.delay(0)
 
 
 # Check for game over, e.g. when score or gem count is updated
