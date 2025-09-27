@@ -48,18 +48,19 @@ const BLOCK_HALF_BREAK_APART_VELOCITY: float       = BLOCK_BREAK_APART_VELOCITY 
 const BLOCK_HALF_HEATED_BREAK_SEC: float           = BLOCK_HEATED_BREAK_SEC / 2
 const BLOCK_HEATED_BREAK_SEC: float                = 0.5
 const BLOCK_INACTIVE_OPACITY: float                = 0.25
-const BLOCK_INNER_GEM_ALPHA: float                 = 0.8
+const BLOCK_INNER_ITEM_ALPHA: float                = 0.8
 const BLOCK_LINEAR_DAMP: float                     = 0.1
 const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
 #
 # gem behavior
 const GEM_MAX_COUNT: int                      = 1
 const PICKUP_MAX_COUNT: int                   = 1
-const GEM_SPAWN_EVERY_MSEC: int               = 100 # delay between spawning gems
+const GEM_SPAWN_EVERY_SEC: float               = 0.1 # delay between spawning gems
 const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
 #
 # pickup spawn behavior
-const PICKUP_SPAWN_EVERY_MSEC: int = 5_000 # delay between spawning pickups
+const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pickup
+const PICKUP_SPAWN_EVERY_SEC: float = 5.0 # delay between spawning pickups
 #
 # game behavior
 const SHOW_MODAL_SEC: float = 4.0
@@ -71,9 +72,9 @@ const PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 #
 # pertaining to explosive
-const EXPLOSION_FORCE: int               = 8000
-const EXPLOSION_HEAT_RADIUS_RATIO: float = 0.6
-const EXPLOSION_LIFETIME_MSEC: int       = 1000
+const EXPLOSION_FORCE: int                    = 8000
+const EXPLOSION_HEAT_RADIUS_RATIO: float      = 0.6
+const EXPLOSION_LIFETIME_MSEC: int            = 1000
 const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 0.8 # ratio multiplied by ship overheating threshold
 #
 # pertaining to heat

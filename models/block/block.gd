@@ -4,9 +4,10 @@ extends Heatable
 # Variables
 var item: Node = null
 # Preloaded scenes
-const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
-const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
-const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
+const half1_scene: PackedScene             = preload("res://models/block/block_half_1.tscn")
+const half2_scene: PackedScene             = preload("res://models/block/block_half_2.tscn")
+const gem_scene: PackedScene               = preload("res://models/gem/gem.tscn")
+const pickup_projectile_scene: PackedScene = preload("res://models/pickup/pickup_projectile.tscn")
 # Whether this block has a gem
 @export var has_gem: bool = false
 
@@ -54,13 +55,23 @@ func add_gem() -> void:
 	item.position = Vector2(0, 0)
 	item.add_collision_exception_with(self)
 	item.freeze = true
-	item.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
+	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
 	self.add_child(item)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 
-# Adds a pickup inside this block
+
+# Adds a pickup inside this block -- currently only projectiles
 func add_pickup() -> void:
-	pass
+	$ParticleEmitter.emitting = true
+	item = pickup_projectile_scene.instantiate()
+	item.position = Vector2(0, 0)
+	item.add_collision_exception_with(self)
+	item.freeze = true
+	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
+	self.add_child(item)
+	# sound is currently the same as gem addition
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
+
 
 # Break the block apart into two halves
 func do_break() -> void:
@@ -97,6 +108,7 @@ func _do_release_item() -> bool:
 		item.freeze = false
 		item.reparent(self.get_parent())
 		item.add_collision_exception_with(self)
+		item.modulate.a = 1.0
 		item.position = position
 		item.linear_velocity = linear_velocity
 		return true
