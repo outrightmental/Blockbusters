@@ -95,8 +95,8 @@ func _show_banner(player_num: int, message:String, message_2:String = "") -> voi
 		InputManager.Mode.COUCH:
 			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
 		InputManager.Mode.TABLE:
-			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, 90, 0.6, message, message_2)
-			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, -90, 0.6, message, message_2)
+			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
+			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
 
 # Spawn a banner at the given position
 func _spawn_banner(player_num: int, x: float, y:float, rotation_degrees:float, scale:float, message:String, message_2: String = "") -> Signal:
