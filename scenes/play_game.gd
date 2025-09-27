@@ -35,6 +35,7 @@ func _ready() -> void:
 	Game.player_score_updated.connect(_check_for_game_over)
 	Game.projectile_count_updated.connect(_check_for_game_over)
 	Game.player_did_collect_gem.connect(_on_player_collect_gem)
+	Game.player_enabled.connect(_on_player_enabled)
 	# Countdown and then start the game
 	_pause_game()
 	_show_banner(0, "READY...", "SET...")
@@ -47,19 +48,19 @@ func _ready() -> void:
 func _setup() -> void:
 	match InputManager.mode:
 		InputManager.Mode.TABLE:
-			$PlayerMeta/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
-			$PlayerMeta/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
-			$PlayerMeta/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$PlayerMeta/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
-			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
-			$PlayerMeta/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
+			$HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
+			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
+			$HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
+			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
+			$HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
 		InputManager.Mode.COUCH:
-			$PlayerMeta/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
-			$PlayerMeta/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
-			$PlayerMeta/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$PlayerMeta/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
-			$PlayerMeta/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
-			$PlayerMeta/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
+			$HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
+			$HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
+			$HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
+			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
@@ -156,6 +157,15 @@ func _on_player_collect_gem(player_num: int) -> void:
 	else:
 		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999	
 	print ("[GAME] Player collected a gem")
+
+
+# When ship is disabled, player HUD also appears disabled #155
+func _on_player_enabled(player_num: int, enabled: bool) -> void:
+	match player_num:
+		1:
+			$HudPlayer1.modulate.a = 1 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+		2:
+			$HudPlayer2.modulate.a = 1 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
