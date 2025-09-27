@@ -8,7 +8,7 @@ enum Mode {
 	COUCH,
 }
 # Keep track of the input mode
-@onready var mode: Mode = Mode.TABLE
+@onready var mode: Mode = _detect_mode()
 
 # Whether the input is paused
 @export var paused: bool = false
@@ -18,22 +18,30 @@ enum Mode {
 
 func _ready() -> void:
 	# hot-plug support
-	Input.joy_connection_changed.connect(_on_joy_connection_changed)
+	Input.joy_connection_changed.connect(func(_device: int, _connected: bool):
+		_detect_joypads()
+	)
+	_detect_joypads()
+
+
+# Table / Couch mode are two separate builds #150
+static func _detect_mode() -> Mode:
+	if OS.has_feature("couch_mode"):
+		return Mode.COUCH
+	if OS.has_feature("editor"):
+		return Mode.COUCH
+	else:
+		return Mode.TABLE
 
 
 # Detect the input mode based on the current input devices, see #126
-func _on_joy_connection_changed(_device: int, _connected: bool) -> void:
+func _detect_joypads() -> void:
+	if mode == Mode.TABLE:
+		return
 	var joypads: Array = Input.get_connected_joypads()
-	if joypads.size() >= 2:
-		print ("[GAME] Activating dual gamepad input mode")
-		mode = Mode.COUCH
-		joypads.sort()  # lowest id first for stability
-		# Optionally: dedupe "ghost" XInput mirrors by GUID/name here.
-		p1_device_id = joypads[0]
-		p2_device_id = joypads[1]
-	else:
-		print ("[GAME] Activating single gamepad input mode")
-		mode = Mode.TABLE
+	joypads.sort()  # lowest id first for stability
+	p1_device_id = joypads[0] if joypads.size() >= 1 else -1
+	p2_device_id = joypads[1] if joypads.size() >= 2 else -1
 	input_mode_updated.emit()
 
 
@@ -129,6 +137,8 @@ func _get_dir_for_player(player: int) -> Vector2:
 			return v.normalized() if v.length() > 1.0 else v
 		Mode.COUCH:
 			var dev := p1_device_id if player == 1 else p2_device_id
+			if dev == -1:
+				return Vector2.ZERO
 			var x   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
 			var y   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
 			var v   := Vector2(x, y)
