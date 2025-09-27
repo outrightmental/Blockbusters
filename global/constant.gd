@@ -10,10 +10,10 @@ const PLAYER_COLORS: Dictionary = {
 # player ship threshold that's rotation only (strafe) before applying force
 const PLAYER_INPUT_JOYSTICK_DEADZONE: float             = 0.25
 const PLAYER_INVENTORY_MAX_ITEMS: int                   = 2
-const PLAYER_SCORE_COLLECT_GEM_VALUE: int               = 2
+const PLAYER_SCORE_COLLECT_GEM_VALUE: int               = 1
 const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
 const PLAYER_SCORE_INITIAL: int                         = 0
-const PLAYER_SCORE_VICTORY: int                         = 7
+const PLAYER_SCORE_VICTORY: int                         = 5
 const PLAYER_SHIP_DISABLED_SEC: float                   = 3
 const PLAYER_SHIP_DISABLED_S_RATIO: float               = 0.14
 const PLAYER_SHIP_DISABLED_V_RATIO: float               = 0.38
@@ -58,9 +58,7 @@ const GEM_SPAWN_INITIAL_MSEC: int             = 1000 # initial delay before spaw
 const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
 #
 # game behavior
-const GAME_OVER_DELAY_SEC: float      = 1.0 # tiny delay before checking game over state, to allow projectiles to finish
-const GAME_OVER_SHOW_MODAL_SEC: float = 4.0
-const GAME_START_COUNTER_DELAY: float = 1.0
+const SHOW_MODAL_SEC: float = 4.0
 #
 # projectile explosive behavior
 const PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0

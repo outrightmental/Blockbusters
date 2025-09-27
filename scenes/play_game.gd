@@ -38,7 +38,7 @@ func _ready() -> void:
 	# Countdown and then start the game
 	_pause_game()
 	_show_banner(0, "READY...", "SET...")
-	await Util.delay(Constant.GAME_START_COUNTER_DELAY)
+	await Util.delay(Constant.SHOW_MODAL_SEC)
 	_unpause_game()
 	pass
 
@@ -76,8 +76,6 @@ func _game_over(result: Game.Result) -> void:
 	if is_game_over:
 		return
 	is_game_over = true
-	await Util.delay(Constant.GAME_OVER_DELAY_SEC)
-	_pause_game()
 	match result:
 		Game.Result.PLAYER_1_WINS:
 			_show_banner(1, "VICTORY!")
@@ -85,8 +83,7 @@ func _game_over(result: Game.Result) -> void:
 			_show_banner(2, "VICTORY!")
 		Game.Result.DRAW:
 			_show_banner(0, "DRAW")
-	await Util.delay(Constant.GAME_OVER_SHOW_MODAL_SEC)
-	_unpause_game()
+	await Util.delay(Constant.SHOW_MODAL_SEC)
 	_goto_scene('res://scenes/main.tscn')
 	pass
 
@@ -152,9 +149,12 @@ func _check_for_game_over() -> void:
 
 
 # Called when a player collects a gem
-func _on_player_collect_gem(_player_num: int) -> void:
-	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
-	_show_banner(_player_num, "GOOOAAAAL!")
+func _on_player_collect_gem(player_num: int) -> void:
+	if Game.player_score[player_num] < Constant.PLAYER_SCORE_VICTORY:
+		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
+		_show_banner(player_num, "GOOOAAAAL!")
+	else:
+		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999	
 	print ("[GAME] Player collected a gem")
 
 
