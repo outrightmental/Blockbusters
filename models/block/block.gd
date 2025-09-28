@@ -16,7 +16,7 @@ const pickup_projectile_scene: PackedScene = preload("res://models/pickup/pickup
 # Cache reference to Shapes
 @onready var shapes: Node2D = $Shapes
 # Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 
 
 # Called when the node enters the scene tree for the first time.

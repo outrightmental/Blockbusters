@@ -1,7 +1,7 @@
-class_name  HudItemEmpty
+class_name  HudInventoryItemEmpty
 extends HudInventoryItem
 
-const COLOR_ALPHA_RATIO = 0.2
+const COLOR_ALPHA_RATIO: float = 0.2
 
 # Initialize the type of inventory item
 func _init() -> void:

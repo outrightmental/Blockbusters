@@ -9,7 +9,7 @@ const quart_scene_1b: PackedScene = preload("res://models/block/block_quart_1b.t
 const quart_scene_2a: PackedScene = preload("res://models/block/block_quart_2a.tscn")
 const quart_scene_2b: PackedScene = preload("res://models/block/block_quart_2b.tscn")
 # Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 

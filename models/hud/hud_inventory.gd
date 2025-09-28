@@ -2,15 +2,11 @@ class_name HudInventory
 extends Node2D
 
 const ITEM_SPACING_X = 30
-
 # Player number to identify the inventory
 @export var player_num: int = 0
-
-# Preloaded scene for the projectile item
+# Preloaded scenes for the items
 const item_projectile_scene: PackedScene = preload("res://models/hud/hud_inventory_item_projectile.tscn")
-const item_empty_scene: PackedScene = preload("res://models/hud/hud_inventory_item_empty.tscn")
-
-
+const item_empty_scene: PackedScene      = preload("res://models/hud/hud_inventory_item_empty.tscn")
 # Current items displayed
 var displayed_items: Array[HudInventoryItem] = []
 
@@ -29,16 +25,15 @@ func _on_inventory_updated() -> void:
 				continue
 			else:
 				displayed_items[i].queue_free()
-				var new_item = _instantiate_item(to_show)
+				var new_item: HudInventoryItem = _instantiate_item(to_show)
 				new_item.position.x = ITEM_SPACING_X * i
 				add_child(new_item)
 				displayed_items[i] = new_item
 		else:
-			var new_item = _instantiate_item(to_show)
+			var new_item: HudInventoryItem = _instantiate_item(to_show)
 			new_item.position.x = ITEM_SPACING_X * i
 			add_child(new_item)
 			displayed_items.append(new_item)
-			
 
 
 # Instantiate an item scene by type

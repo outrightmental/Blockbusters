@@ -2,7 +2,7 @@
 
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_0v8nl"]
 [ext_resource type="Script" uid="uid://2es8up3haar4" path="res://models/block/block.gd" id="1_okoc5"]
-[ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/block/block_quart_shatter.tscn" id="2_jakod"]
+[ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/explosive/shatter.tscn" id="2_jakod"]
 
 [node name="Block4" type="RigidBody2D"]
 collision_layer = 3
