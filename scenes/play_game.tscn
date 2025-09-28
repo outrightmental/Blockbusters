@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/play_game.gd" id="1_s826b"]
 [ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/home.tscn" id="3_466yg"]
 [ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/hud/hud_score.tscn" id="3_bgg7l"]
-[ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_laser_charge.tscn" id="4_sbpvv"]
+[ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_energy.tscn" id="4_sbpvv"]
 [ext_resource type="PackedScene" uid="uid://dw5wqex1qict1" path="res://models/hud/hud_inventory.tscn" id="6_xugar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
