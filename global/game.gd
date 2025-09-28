@@ -50,7 +50,8 @@ enum InventoryItemType {
 # Keep track of whether the game is over
 @export var is_over: bool = false
 # Whether the input is paused
-@export var is_paused: bool = false
+@export var is_input_movement_paused: bool = false
+@export var is_input_tools_paused: bool = false
 
 
 # Check if the player can launch a projectile
@@ -66,14 +67,21 @@ func player_can_add_item(player_num: int) -> bool:
 	return len(player_inventory[player_num]) < Constant.PLAYER_INVENTORY_MAX_ITEMS
 
 
-# Pause the game
-func pause() -> void:
-	is_paused = true
+# Pause the player input
+func pause_input() -> void:
+	is_input_movement_paused = true
+	is_input_tools_paused = true
+
+
+# Pause only the player tool use input
+func pause_input_tools() -> void:
+	is_input_tools_paused = true
 
 
 # Unpause the game
-func unpause() -> void:
-	is_paused = false
+func unpause_input() -> void:
+	is_input_movement_paused = false
+	is_input_tools_paused = false
 
 
 func _ready() -> void:
@@ -94,8 +102,8 @@ func _ready() -> void:
 
 
 func _do_reset_game() -> void:
+	unpause_input()
 	is_over = false
-	is_paused = false
 	gems_collected = 0
 	player_score[1] = Constant.PLAYER_SCORE_INITIAL
 	player_score[2] = Constant.PLAYER_SCORE_INITIAL
@@ -150,7 +158,7 @@ func _check_for_game_over() -> void:
 
 
 func _on_game_over() -> void:
-	is_paused = true
+	pause_input()
 	is_over = true
 
 

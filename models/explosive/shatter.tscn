@@ -6,7 +6,7 @@
 _data = [Vector2(0.00656455, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.96539, 0.0, 0, 0]
 point_count = 2
 
-[node name="ParticleEmitter" type="CPUParticles2D"]
+[node name="ParticleEmitter2" type="CPUParticles2D"]
 emitting = false
 amount = 3
 one_shot = true
