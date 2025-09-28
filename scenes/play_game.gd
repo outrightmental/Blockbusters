@@ -37,10 +37,10 @@ func _ready() -> void:
 	Game.player_enabled.connect(_on_player_enabled)
 	Game.over.connect(_on_game_over)
 	# Countdown and then start the game
-	Game.pause()
+	Game.pause_input()
 	_show_banner(0, "READY...", "SET...")
 	await Util.delay(Constant.SHOW_MODAL_SEC)
-	Game.unpause()
+	Game.unpause_input()
 	pass
 
 
@@ -208,7 +208,7 @@ func _spawn_block(start_position: Vector2) -> Node:
 
 
 func _spawn_gem() -> void:
-	if Game.is_paused:
+	if Game.is_over:
 		return
 	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
 		return
@@ -220,7 +220,7 @@ func _spawn_gem() -> void:
 
 
 func _spawn_pickup(type: Game.InventoryItemType) -> void:
-	if Game.is_paused:
+	if Game.is_over:
 		return
 	if get_tree().get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
 		return
