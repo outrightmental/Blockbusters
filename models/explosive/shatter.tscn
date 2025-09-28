@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dur1xvqlvin4x"]
 
-[ext_resource type="Script" uid="uid://ckyuu8yfcxdh" path="res://models/block/block_quart_shatter.gd" id="1_v26ot"]
+[ext_resource type="Script" uid="uid://ckyuu8yfcxdh" path="res://models/explosive/shatter.gd" id="1_aksoy"]
 
 [sub_resource type="Curve" id="Curve_v26ot"]
 _data = [Vector2(0.00656455, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.96539, 0.0, 0, 0]
@@ -16,4 +16,4 @@ gravity = Vector2(0, 0)
 initial_velocity_max = 50.0
 scale_amount_max = 3.0
 scale_amount_curve = SubResource("Curve_v26ot")
-script = ExtResource("1_v26ot")
+script = ExtResource("1_aksoy")
