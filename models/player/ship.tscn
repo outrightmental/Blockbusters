@@ -19,7 +19,6 @@ continuous_cd = 2
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_yja86")
-player_num = null
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
 position = Vector2(12, -2)

@@ -24,7 +24,7 @@ var previous_value: float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	Game.player_energy_updated.connect(_on_charge_updated)
-	progress_bar.max_value = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+	progress_bar.max_value = 1.0
 	_set_color()
 
 
