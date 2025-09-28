@@ -61,7 +61,7 @@ func add_gem() -> void:
 
 
 # Adds a pickup inside this block -- currently only projectiles
-func add_pickup() -> void:
+func add_pickup(type: Game.InventoryItemType) -> void:
 	$ParticleEmitter.emitting = true
 	item = pickup_projectile_scene.instantiate()
 	item.position = Vector2(0, 0)

@@ -12,9 +12,12 @@ signal player_enabled(player_num: int, enabled: bool)
 signal projectile_count_updated
 signal player_ready_updated
 signal player_energy_updated(player_num: int, charge_sec: float)
+signal gem_spawned()
+signal pickup_spawned(type: InventoryItemType)
+signal over(result: Result)
 # Group names
-const BLOCK_GROUP: StringName = "BlockGroup"
-const GEM_GROUP: StringName   = "GemGroup"
+const BLOCK_GROUP: StringName  = "BlockGroup"
+const GEM_GROUP: StringName    = "GemGroup"
 const PICKUP_GROUP: StringName = "PickupGroup"
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
 enum Result {
@@ -27,21 +30,28 @@ enum InventoryItemType {
 	PROJECTILE,
 	EMPTY
 }
+
 # Keeping track of the score
-@onready var player_score: Dictionary = {
-									 1: 0,
-									 2: 0,
-								 }
+@export var player_score: Dictionary = {
+										   1: 0,
+										   2: 0,
+									   }
+
 # Keeping track of player inventory
-@onready var player_inventory: Dictionary = {
-									 1: [],
-									 2: [],
-								 }
+@export var player_inventory: Dictionary = {
+											   1: [],
+											   2: [],
+										   }
 
 # Keeping track of the gem count
-@onready var gems_collected: int = 0
+@export var gems_collected: int = 0
 # Keeping track of the projectile count
-@onready var projectiles_in_play: int = 0
+@export var projectiles_in_play: int = 0
+# Keep track of whether the game is over
+@export var is_over: bool = false
+# Whether the input is paused
+@export var is_paused: bool = false
+
 
 # Check if the player can launch a projectile
 func player_can_launch_projectile(player_num: int) -> bool:
@@ -50,10 +60,20 @@ func player_can_launch_projectile(player_num: int) -> bool:
 			return true
 	return false
 
-	
+
 # Check if the player has room in their inventory for a new item
 func player_can_add_item(player_num: int) -> bool:
 	return len(player_inventory[player_num]) < Constant.PLAYER_INVENTORY_MAX_ITEMS
+
+
+# Pause the game
+func pause() -> void:
+	is_paused = true
+
+
+# Unpause the game
+func unpause() -> void:
+	is_paused = false
 
 
 func _ready() -> void:
@@ -66,9 +86,16 @@ func _ready() -> void:
 	player_energy_updated.connect(_on_player_energy_updated)
 	player_enabled.connect(_on_player_enabled)
 	player_did_collect_item.connect(_on_player_did_collect_item)
+	player_score_updated.connect(_check_for_game_over)
+	projectile_count_updated.connect(_check_for_game_over)
+	gem_spawned.connect(_check_for_game_over)
+	pickup_spawned.connect(_check_for_game_over)
+	over.connect(_on_game_over)
 
 
 func _do_reset_game() -> void:
+	is_over = false
+	is_paused = false
 	gems_collected = 0
 	player_score[1] = Constant.PLAYER_SCORE_INITIAL
 	player_score[2] = Constant.PLAYER_SCORE_INITIAL
@@ -81,6 +108,50 @@ func _do_reset_game() -> void:
 	print("[GAME] Resetting player inventory to: ", player_inventory)
 	player_score_updated.emit()
 	player_inventory_updated.emit()
+
+
+# Check for game over, e.g. when score or gem count is updated
+# ---
+# The game is a stalemate if a state is reached where no player can win based on the number of gems left in play, 
+# ---
+# The game is a stalemate if neither player can afford to launch a projectile, and there are not enough free gems (gems 
+# not enclosed in blocks) for either player to win, BUT deciding stalemate based on whether players don't have enough 
+# points to launch projectiles is tricky, because it's possible that a player launched their last projectile and is in 
+# fact going to win after that projectile explodes, so we need to also test that no projectiles are in play
+func _check_for_game_over() -> void:
+	if is_over:
+		return
+	if Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY:
+		over.emit(Game.Result.PLAYER_1_WINS)
+		return
+	elif Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
+		over.emit(Game.Result.PLAYER_2_WINS)
+		return
+	elif Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY and Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
+		over.emit(Game.Result.DRAW)
+		return
+
+	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
+	var total_gem_candidate_blocks: int = 0
+	var blocks: Array[Node]             = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
+	for block in blocks:
+		if block is Block and block.freeze:
+			total_gem_candidate_blocks += 1
+	if total_gems == 0 and total_gem_candidate_blocks == 0:
+		if Game.player_score[1]  > Game.player_score[2]:
+			over.emit(Game.Result.PLAYER_1_WINS)
+			return
+		elif Game.player_score[2] > Game.player_score[1]:
+			over.emit(Game.Result.PLAYER_2_WINS)
+			return
+		else:
+			over.emit(Game.Result.DRAW)
+			return
+
+
+func _on_game_over() -> void:
+	is_paused = true
+	is_over = true
 
 
 func _on_player_launch_projectile(player_num: int) -> void:
@@ -114,7 +185,7 @@ func _on_player_energy_updated(_player_num: int, _charge_sec: float ) -> void:
 
 func _on_player_enabled(_player_num: int, _enabled: bool) -> void:
 	pass
-	
+
 
 func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> void:
 	print("[GAME] Player %d collected pickup: %s" % [player_num, type])
@@ -122,9 +193,10 @@ func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> vo
 	player_inventory_updated.emit()
 	pass
 
+
 func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 	var new_inventory = [];
-	var removed:bool = false;
+	var removed: bool = false;
 	for player_inventory_item in player_inventory[player_num]:
 		if player_inventory_item == item and not removed:
 			removed = true
