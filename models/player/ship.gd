@@ -87,7 +87,7 @@ func _ready() -> void:
 	target_rotation = rotation
 
 	# Update the laser charge indicator
-	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+	Game.player_energy_updated.emit(player_num, laser_charge_sec)
 
 	# When the ship collides with another body
 	self.body_entered.connect(_on_collision)
@@ -218,7 +218,7 @@ func _do_deactivate_laser() -> void:
 	if laser:
 		laser.call_deferred("queue_free")
 		laser = null
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+		Game.player_energy_updated.emit(player_num, laser_charge_sec)
 		AudioManager.stop_2d_audio(laser_audio_key)
 
 
@@ -253,13 +253,13 @@ func _update_laser(delta: float) -> void:
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+		Game.player_energy_updated.emit(player_num, laser_charge_sec)
 	elif laser_charge_sec < Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC and not is_disabled:
 		# If the laser is not active, recharge it
 		laser_charge_sec += delta * Constant.PLAYER_SHIP_LASER_RECHARGE_RATE
 		if laser_charge_sec > Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
 			laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+		Game.player_energy_updated.emit(player_num, laser_charge_sec)
 
 
 # Apply forces to the bodies in the forcefield
