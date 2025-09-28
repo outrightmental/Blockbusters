@@ -52,6 +52,7 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
+	heatable = false
 	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
@@ -64,6 +65,9 @@ func do_disable(responsible_player_num: int) -> void:
 # Called when the ship is re-enabled
 func do_enable() -> void:
 	is_disabled = false
+	heatable = true
+	heat = 0.0
+	laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
 	Game.player_enabled.emit(player_num, true)
@@ -83,9 +87,6 @@ func _ready() -> void:
 	actual_rotation = rotation
 	target_rotation = rotation
 
-	# Update the laser charge indicator
-	Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
-
 	# When the ship collides with another body
 	self.body_entered.connect(_on_collision)
 
@@ -101,6 +102,9 @@ func _ready() -> void:
 
 	# Update the heated effect visibility
 	_update_heated_effect()
+
+	# Update the HUD energy display
+	_update_hud_energy()
 
 	# Connect to input signals
 	InputManager.move.connect(_on_input_move)
@@ -148,6 +152,9 @@ func _physics_process(delta: float) -> void:
 
 	# Update the ship heated effect
 	_update_heated_effect()
+
+	# Update the HUD energy display
+	_update_hud_energy()
 
 
 func _on_input_action_pressed(player: int, action: String) -> void:
@@ -215,7 +222,6 @@ func _do_deactivate_laser() -> void:
 	if laser:
 		laser.call_deferred("queue_free")
 		laser = null
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 		AudioManager.stop_2d_audio(laser_audio_key)
 
 
@@ -250,13 +256,19 @@ func _update_laser(delta: float) -> void:
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
 			_do_deactivate_laser()
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
 	elif laser_charge_sec < Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC and not is_disabled:
 		# If the laser is not active, recharge it
 		laser_charge_sec += delta * Constant.PLAYER_SHIP_LASER_RECHARGE_RATE
-		if laser_charge_sec > Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC:
-			laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
-		Game.player_laser_charge_updated.emit(player_num, laser_charge_sec)
+		laser_charge_sec = clamp(laser_charge_sec, 0.0, Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC)
+
+
+# Update the HUD energy display
+func _update_hud_energy() -> void:
+	match is_disabled:
+		true:
+			Game.player_energy_updated.emit(player_num, 1 - (disabled_until_ticks_msec - Time.get_ticks_msec()) / (Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0))
+		false:
+			Game.player_energy_updated.emit(player_num, laser_charge_sec / Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC)
 
 
 # Apply forces to the bodies in the forcefield
@@ -294,7 +306,9 @@ func _update_forcefield(_delta: float) -> void:
 
 
 # Update the heated effect visibility and intensity
+# Finite ship disabling #164
 func _update_heated_effect() -> void:
+	heat = clamp(heat, 0, Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC)
 	if not is_disabled and heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
 		do_disable(player_num)
 		return
@@ -344,15 +358,17 @@ func _on_collision(body: Node2D) -> void:
 			# FUTURE: AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_PICKUP)
 			Game.player_did_collect_item.emit(player_num, body.type)
 			body.queue_free()
-		# FUTURE else:
-		# 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PICKUP_FAIL)
+
+
+# FUTURE else:
+# 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PICKUP_FAIL)
 
 
 # Called when another body enters the forcefield area
 func _on_forcefield_entered(body: Node2D) -> void:
 	if body == self:
 		return  # Ignore self
-	
+
 	if body is Collidable and not body is ProjectileExplosive:
 		if body is Block and body.freeze:
 			return

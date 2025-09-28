@@ -11,7 +11,7 @@ signal player_did_harm(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
 signal projectile_count_updated
 signal player_ready_updated
-signal player_laser_charge_updated(player_num: int, charge_sec: float)
+signal player_energy_updated(player_num: int, charge_sec: float)
 # Group names
 const BLOCK_GROUP: StringName = "BlockGroup"
 const GEM_GROUP: StringName   = "GemGroup"
@@ -63,7 +63,7 @@ func _ready() -> void:
 	player_did_harm.connect(_on_player_harm)
 	projectile_count_updated.connect(_on_projectile_count_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
-	player_laser_charge_updated.connect(_on_player_laser_charge_updated)
+	player_energy_updated.connect(_on_player_energy_updated)
 	player_enabled.connect(_on_player_enabled)
 	player_did_collect_item.connect(_on_player_did_collect_item)
 
@@ -108,7 +108,7 @@ func _on_player_ready_updated() -> void:
 	pass
 
 
-func _on_player_laser_charge_updated(_player_num: int, _charge_sec: float ) -> void:
+func _on_player_energy_updated(_player_num: int, _charge_sec: float ) -> void:
 	pass
 
 

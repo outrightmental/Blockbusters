@@ -6,13 +6,15 @@ var heat: float         = 0.0
 var heat_delta: float   = 0.0
 var last_heated_at: int = 0
 var heating: bool       = false
+var heatable: bool      = true
 
 @onready var heating_audio_key: String = "heating_%d" % number
 
 
 # Apply heat
 func apply_heat(delta: float) -> void:
-	heat_delta += delta
+	if heatable:
+		heat_delta += delta
 	pass
 
 
@@ -36,6 +38,7 @@ func _physics_process(delta):
 			heating = false
 			AudioManager.stop_2d_audio(heating_audio_key)
 	pass
+
 
 func _exit_tree() -> void:
 	if heating:

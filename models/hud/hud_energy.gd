@@ -1,16 +1,15 @@
-class_name HudLaserCharge
+class_name HudEnergy
 extends Node2D
 
 # Constants
-const AVAILABLE_FILL_COLOR_SV_RATIO: float = 0.7
+const AVAILABLE_FILL_COLOR_SV_RATIO: float   = 0.7
 const UNAVAILABLE_FILL_COLOR_SV_RATIO: float = 0.45
-const BG_COLOR_SV_RATIO: float = 0.3
-const CORNER_RADIUS: int = 5
-
+const BG_COLOR_SV_RATIO: float               = 0.3
+const CORNER_RADIUS: int                     = 5
 # Styles
-var available_fill_style = StyleBoxFlat.new()
+var available_fill_style   = StyleBoxFlat.new()
 var unavailable_fill_style = StyleBoxFlat.new()
-var bg_style             = StyleBoxFlat.new()
+var bg_style               = StyleBoxFlat.new()
 
 # Player number to identify the home
 @export var player_num: int = 0
@@ -21,10 +20,11 @@ var bg_style             = StyleBoxFlat.new()
 # Cache previous value to determine charge/uncharge state
 var previous_value: float = 0.0
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.player_laser_charge_updated.connect(_on_charge_updated)
-	progress_bar.max_value = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
+	Game.player_energy_updated.connect(_on_charge_updated)
+	progress_bar.max_value = 1.0
 	_set_color()
 
 
@@ -60,7 +60,7 @@ func _on_charge_updated(update_player_num: int, charge_sec: float) -> void:
 			progress_bar.set("theme_override_styles/fill", unavailable_fill_style)
 	previous_value = charge_sec
 
-	
+
 # Update the availability of the laser for this player
 func _on_availability_updated(update_player_num: int, is_available: bool) -> void:
 	if update_player_num != player_num:
@@ -70,7 +70,6 @@ func _on_availability_updated(update_player_num: int, is_available: bool) -> voi
 		progress_bar.set("theme_override_styles/fill", available_fill_style)
 	else:
 		progress_bar.set("theme_override_styles/fill", unavailable_fill_style)
-	
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.

@@ -170,9 +170,11 @@ func _on_player_collect_gem(player_num: int) -> void:
 func _on_player_enabled(player_num: int, enabled: bool) -> void:
 	match player_num:
 		1:
-			$HudPlayer1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer1/ScoreP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer1/InventoryP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 		2:
-			$HudPlayer2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer2/ScoreP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 
 
 # Create the board with blocks and gems, and spawn player homes, ships, and scores
