@@ -1,5 +1,5 @@
 [gd_resource type="PhysicsMaterial" format=3 uid="uid://fdnyxkdqbh7y"]
 
 [resource]
-rough = true
+friction = 0.0
 absorbent = true
