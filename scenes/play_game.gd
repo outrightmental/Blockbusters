@@ -99,7 +99,9 @@ func _show_banner(player_num: int, message: String, message_2: String = "") -> v
 		InputManager.Mode.TABLE:
 			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
-
+	Game.pause_input_tools()
+	await Util.delay(Constant.SHOW_MODAL_SEC)
+	Game.unpause_input()
 
 # Spawn a banner at the given position
 func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String = "") -> void:
