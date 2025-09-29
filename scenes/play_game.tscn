@@ -137,7 +137,7 @@ offset_bottom = 576.0
 color = Color(0.1, 0.1, 0.1, 1)
 
 [node name="Background" type="ColorRect" parent="."]
-z_index = -10
+z_index = -100
 offset_right = 1024.0
 offset_bottom = 576.0
 color = Color(0, 0, 0, 1)

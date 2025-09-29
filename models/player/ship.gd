@@ -214,6 +214,7 @@ func _do_activate_laser() -> void:
 	laser         = laser_scene.instantiate()
 	laser.player_num = player_num
 	laser.source_ship = self
+	laser.z_index = -100  # Ensure laser is behind the ship
 	self.get_parent().call_deferred("add_child", laser)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
 
