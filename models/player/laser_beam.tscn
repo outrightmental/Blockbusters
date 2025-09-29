@@ -5,11 +5,20 @@
 [node name="LaserBeam" type="Node2D"]
 script = ExtResource("1_gg8fv")
 
-[node name="Line2D" type="Line2D" parent="."]
+[node name="LineOne" type="Line2D" parent="."]
 points = PackedVector2Array(0, 0, 145, 0)
 width = 5.0
 
-[node name="RayCast2D" type="RayCast2D" parent="."]
+[node name="RaycastOne" type="RayCast2D" parent="."]
+target_position = Vector2(1400, 0)
+
+[node name="LineTwo" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(0, 0, 145, 0)
+width = 5.0
+
+[node name="RaycastTwo" type="RayCast2D" parent="."]
+visible = false
 target_position = Vector2(1400, 0)
 
 [node name="Sparks" type="CPUParticles2D" parent="."]
