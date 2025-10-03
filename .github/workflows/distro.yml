@@ -26,9 +26,9 @@ jobs:
 
   export-windows-noisebridge:
     needs: nothing_left_todo
-    name: Windows (Noisebridge) Export
+    name: Noisebridge Export
     env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows-Noisebridge.zip
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Noisebridge.zip
     runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
@@ -56,7 +56,7 @@ jobs:
           mkdir -v -p build/windows
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Windows (Noisebridge)" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
+          godot --headless --verbose --export-release "Noisebridge" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
 
       - name: Compress Windows Build to Zip
         run: |
