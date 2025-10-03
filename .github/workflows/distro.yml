@@ -24,9 +24,11 @@ jobs:
       - name: Nothing left TODO
         run: .github/nothing_left_todo.sh
 
-  export-windows:
+  export-windows-noisebridge:
     needs: nothing_left_todo
-    name: Windows Export
+    name: Windows (Noisebridge) Export
+    env:
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows-Noisebridge.zip
     runs-on: ubuntu-22.04  # Use 22.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
@@ -54,47 +56,150 @@ jobs:
           mkdir -v -p build/windows
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Windows Desktop" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
+          godot --headless --verbose --export-release "Windows (Noisebridge)" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
 
       - name: Compress Windows Build to Zip
         run: |
           cd build/windows
-          zip -r ../Blockbusters-${{ github.ref_name }}-Windows.zip . 
+          zip -r ../$ARTIFACT_NAME . 
 
       - name: Upload Artifact to Release Tag
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/Blockbusters-${{ github.ref_name }}-Windows.zip
-          asset_name: Blockbusters-${{ github.ref_name }}-Windows.zip
+          file: build/$ARTIFACT_NAME
+          asset_name: $ARTIFACT_NAME
           tag: ${{ github.ref }}
           overwrite: true
 
-#  export-linux:
-#    name: Linux Export
-#    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
-#    container:
-#      image: barichello/godot-ci:4.4.1
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          lfs: true
-#      - name: Setup
-#        run: |
-#          mkdir -v -p ~/.local/share/godot/export_templates/
-#          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-#      - name: Linux Build
-#        run: |
-#          mkdir -v -p build/linux
-#          EXPORT_DIR="$(readlink -f build)"
-#          cd $PROJECT_PATH
-#          godot --headless --verbose --export-release "Linux/X11" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
-#      - name: Upload Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: linux
-#          path: build/linux
+  export-windows:
+    needs: nothing_left_todo
+    name: Windows Export
+    env:
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows.zip
+    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Update config/version in project.godot
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          sed -i 's/^config\/version=.*/config\/version="${TAG_NAME}"/' project.godot
+
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          mv /root/.config/godot ~/.config/godot
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+      - name: Windows Build
+        run: |
+          mkdir -v -p build/windows
+          EXPORT_DIR="$(readlink -f build)"
+          cd $PROJECT_PATH
+          godot --headless --verbose --export-release "Windows" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
+
+      - name: Compress Windows Build to Zip
+        run: |
+          cd build/windows
+          zip -r ../$ARTIFACT_NAME . 
+
+      - name: Upload Artifact to Release Tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/$ARTIFACT_NAME
+          asset_name: $ARTIFACT_NAME
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  export-linux:
+    name: Linux Export
+    env:
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Linux.zip
+    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          
+      - name: Linux Build
+        run: |
+          mkdir -v -p build/linux
+          EXPORT_DIR="$(readlink -f build)"
+          cd $PROJECT_PATH
+          godot --headless --verbose --export-release "Linux/X11" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
+          
+      - name: Compress Linux Build to Zip
+        run: |
+          cd build/windows
+          zip -r ../$ARTIFACT_NAME . 
+
+      - name: Upload Artifact to Release Tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/$ARTIFACT_NAME
+          asset_name: $ARTIFACT_NAME
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  export-mac:
+    name: macOS Export
+    env:
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-macOS.zip
+    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          
+      - name: Mac Build
+        run: |
+          mkdir -v -p build/mac
+          EXPORT_DIR="$(readlink -f build)"
+          cd $PROJECT_PATH
+          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/mac/$EXPORT_NAME.zip"
+          
+      - name: Compress Windows Build to Zip
+        run: |
+          cd build/windows
+          zip -r ../$ARTIFACT_NAME . 
+
+      - name: Upload Artifact to Release Tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/$ARTIFACT_NAME
+          asset_name: $ARTIFACT_NAME
+          tag: ${{ github.ref }}
+          overwrite: true
+
 #
 #  export-web:
 #    name: Web Export
@@ -130,28 +235,3 @@ jobs:
 #          branch: gh-pages # The branch the action should deploy to.
 #          folder: build/web # The folder the action should deploy.
 #
-#  export-mac:
-#    name: Mac Export
-#    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
-#    container:
-#      image: barichello/godot-ci:4.4.1
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          lfs: true
-#      - name: Setup
-#        run: |
-#          mkdir -v -p ~/.local/share/godot/export_templates/
-#          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-#      - name: Mac Build
-#        run: |
-#          mkdir -v -p build/mac
-#          EXPORT_DIR="$(readlink -f build)"
-#          cd $PROJECT_PATH
-#          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/mac/$EXPORT_NAME.zip"
-#      - name: Upload Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: mac
-#          path: build/mac
