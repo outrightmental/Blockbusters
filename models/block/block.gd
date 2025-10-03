@@ -2,11 +2,12 @@ class_name Block
 extends Heatable
 
 # Variables
-var gem: Node = null
+var item: Node = null
 # Preloaded scenes
-const half1_scene: PackedScene = preload("res://models/block/block_half_1.tscn")
-const half2_scene: PackedScene = preload("res://models/block/block_half_2.tscn")
-const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
+const half1_scene: PackedScene             = preload("res://models/block/block_half_1.tscn")
+const half2_scene: PackedScene             = preload("res://models/block/block_half_2.tscn")
+const gem_scene: PackedScene               = preload("res://models/gem/gem.tscn")
+const pickup_projectile_scene: PackedScene = preload("res://models/pickup/pickup_projectile.tscn")
 # Whether this block has a gem
 @export var has_gem: bool = false
 
@@ -15,7 +16,7 @@ const gem_scene: PackedScene   = preload("res://models/gem/gem.tscn")
 # Cache reference to Shapes
 @onready var shapes: Node2D = $Shapes
 # Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -36,9 +37,9 @@ func _ready() -> void:
 
 
 # When a gem can be added
-func can_add_gem() -> bool:
+func can_add_item() -> bool:
 	# If the block already has a gem, return false
-	if gem:
+	if item:
 		return false
 	# If the block is unfrozen, return false
 	if not freeze:
@@ -50,12 +51,25 @@ func can_add_gem() -> bool:
 # Adds a gem inside this block
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true
-	gem = gem_scene.instantiate()
-	gem.position = Vector2(0, 0)
-	gem.add_collision_exception_with(self)
-	gem.freeze = true
-	gem.modulate.a = Constant.BLOCK_INNER_GEM_ALPHA
-	self.add_child(gem)
+	item = gem_scene.instantiate()
+	item.position = Vector2(0, 0)
+	item.add_collision_exception_with(self)
+	item.freeze = true
+	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
+	self.add_child(item)
+	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
+
+
+# Adds a pickup inside this block -- currently only projectiles
+func add_pickup(type: Game.InventoryItemType) -> void:
+	$ParticleEmitter.emitting = true
+	item = pickup_projectile_scene.instantiate()
+	item.position = Vector2(0, 0)
+	item.add_collision_exception_with(self)
+	item.freeze = true
+	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
+	self.add_child(item)
+	# sound is currently the same as gem addition
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 
 
@@ -72,9 +86,9 @@ func do_break() -> void:
 	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2
 	# If the block has a gem, release it, and play the sound effect depending on whether there was a gem or not
-	if _do_release_gem():
-		gem.add_collision_exception_with(half1)
-		gem.add_collision_exception_with(half2)
+	if _do_release_item():
+		item.add_collision_exception_with(half1)
+		item.add_collision_exception_with(half2)
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_GEM)
 	else:
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.BLOCK_BREAK_HALF_NOGEM)
@@ -89,15 +103,14 @@ func do_break() -> void:
 	self.call_deferred("queue_free")
 
 
-func _do_release_gem() -> bool:
-	# Gem
-	if gem:
-		gem.queue_free()
-		gem = gem_scene.instantiate()
-		gem.position = position
-		gem.linear_velocity = linear_velocity
-		gem.add_collision_exception_with(self)
-		self.get_parent().call_deferred("add_child", gem)
+func _do_release_item() -> bool:
+	if item:
+		item.freeze = false
+		item.reparent(self.get_parent())
+		item.add_collision_exception_with(self)
+		item.modulate.a = 1.0
+		item.position = position
+		item.linear_velocity = linear_velocity
 		return true
 	return false
 

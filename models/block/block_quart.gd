@@ -2,7 +2,7 @@ class_name BlockQuart
 extends Heatable
 
 # Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/block/block_quart_shatter.tscn")
+const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 

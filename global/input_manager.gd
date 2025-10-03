@@ -10,10 +10,6 @@ enum Mode {
 # Keep track of the input mode
 @onready var mode: Mode = _detect_mode()
 
-# Whether the input is paused
-@export var paused: bool = false
-
-
 # --- Lifecycle -----------------------------------------------------------
 
 func _ready() -> void:
@@ -96,14 +92,14 @@ func _compute_player_input_map(player: int) -> Dictionary:
 
 
 func _physics_process(_delta: float) -> void:
-	if paused:
+	if Game.is_input_movement_paused:
 		return
 	for p in [1, 2]:
 		move.emit( p, _get_dir_for_player(p))
 
 
 func _input(event: InputEvent) -> void:
-	if paused:
+	if Game.is_input_tools_paused:
 		return
 	match mode:
 		Mode.TABLE:
@@ -159,7 +155,7 @@ func _player_for_device(device_id: int) -> int:
 
 # If only one pad, P2 stays -1 and uses keyboard.
 func _handle_keyboard_action_event(player: int, event: InputEventKey, keys: Dictionary) -> void:
-	if paused:
+	if Game.is_input_tools_paused:
 		return
 	# Map key events to abstract actions; movement is polled each frame separately.
 	if event.pressed:
