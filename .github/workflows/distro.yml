@@ -29,7 +29,7 @@ jobs:
     name: Windows (Noisebridge) Export
     env:
       ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows-Noisebridge.zip
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
@@ -77,7 +77,7 @@ jobs:
     name: Windows Export
     env:
       ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows.zip
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
@@ -125,7 +125,7 @@ jobs:
     name: macOS Export
     env:
       ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-macOS.zip
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
@@ -145,11 +145,11 @@ jobs:
           mkdir -v -p build/mac
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/mac/$EXPORT_NAME.zip"
+          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/macos/$EXPORT_NAME.zip"
 
       - name: Compress Windows Build to Zip
         run: |
-          cd build/windows
+          cd build/macos
           zip -r ../$ARTIFACT_NAME . 
 
       - name: Upload Artifact to Release Tag
@@ -166,7 +166,7 @@ jobs:
     name: Linux Export
     env:
       ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Linux.zip
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
@@ -190,7 +190,7 @@ jobs:
           
       - name: Compress Linux Build to Zip
         run: |
-          cd build/windows
+          cd build/linux
           zip -r ../$ARTIFACT_NAME . 
 
       - name: Upload Artifact to Release Tag
@@ -205,7 +205,7 @@ jobs:
 #
 #  export-web:
 #    name: Web Export
-#    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+#    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
 #    container:
 #      image: barichello/godot-ci:4.4.1
 #    steps:
