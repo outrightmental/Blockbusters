@@ -120,7 +120,49 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
 
+  export-macos:
+    needs: nothing_left_todo
+    name: macOS Export
+    env:
+      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-macOS.zip
+    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+      - name: Mac Build
+        run: |
+          mkdir -v -p build/mac
+          EXPORT_DIR="$(readlink -f build)"
+          cd $PROJECT_PATH
+          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/mac/$EXPORT_NAME.zip"
+
+      - name: Compress Windows Build to Zip
+        run: |
+          cd build/windows
+          zip -r ../$ARTIFACT_NAME . 
+
+      - name: Upload Artifact to Release Tag
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/$ARTIFACT_NAME
+          asset_name: $ARTIFACT_NAME
+          tag: ${{ github.ref }}
+          overwrite: true
+
   export-linux:
+    needs: nothing_left_todo
     name: Linux Export
     env:
       ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Linux.zip
@@ -144,49 +186,9 @@ jobs:
           mkdir -v -p build/linux
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Linux/X11" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
+          godot --headless --verbose --export-release "Linux" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
           
       - name: Compress Linux Build to Zip
-        run: |
-          cd build/windows
-          zip -r ../$ARTIFACT_NAME . 
-
-      - name: Upload Artifact to Release Tag
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/$ARTIFACT_NAME
-          asset_name: $ARTIFACT_NAME
-          tag: ${{ github.ref }}
-          overwrite: true
-
-  export-mac:
-    name: macOS Export
-    env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-macOS.zip
-    runs-on: ubuntu-22.04  # Use 22.04 with godot 4
-    container:
-      image: barichello/godot-ci:4.4.1
-    steps:
-      
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          lfs: true
-          
-      - name: Setup
-        run: |
-          mkdir -v -p ~/.local/share/godot/export_templates/
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          
-      - name: Mac Build
-        run: |
-          mkdir -v -p build/mac
-          EXPORT_DIR="$(readlink -f build)"
-          cd $PROJECT_PATH
-          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/mac/$EXPORT_NAME.zip"
-          
-      - name: Compress Windows Build to Zip
         run: |
           cd build/windows
           zip -r ../$ARTIFACT_NAME . 
