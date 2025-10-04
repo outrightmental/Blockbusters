@@ -142,7 +142,7 @@ jobs:
 
       - name: Mac Build
         run: |
-          mkdir -v -p build/mac
+          mkdir -v -p build/macos
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
           godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/macos/$EXPORT_NAME.zip"
