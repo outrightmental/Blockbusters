@@ -79,6 +79,7 @@ func _send_ray_two(source_point: Vector2, delta: float) -> void:
 	raycastTwo.position = source_point
 	raycastTwo.target_position = reflect * Constant.PLAYER_SHIP_LASER_MAX_DISTANCE
 	raycastTwo.enabled = true
+	raycastTwo.rotation = PI / 2 # remove this testing piece
 	raycastTwo.force_raycast_update()
 	lineTwo.visible = true
 	lineTwo.modulate.a = alpha
