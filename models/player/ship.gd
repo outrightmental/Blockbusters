@@ -32,7 +32,7 @@ var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster.tscn")
+const laser_scene: PackedScene = preload("res://models/laser/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
