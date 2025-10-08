@@ -20,6 +20,8 @@ var bg_style               = StyleBoxFlat.new()
 # Cache previous value to determine charge/uncharge state
 var previous_value: float = 0.0
 
+# Keep track of whether energy is available
+var is_available: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -34,10 +36,11 @@ func _set_color() -> void:
 		# Setup the available fill style
 		available_fill_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], AVAILABLE_FILL_COLOR_SV_RATIO)
 		available_fill_style.set_corner_radius_all(CORNER_RADIUS)
-		progress_bar.set("theme_override_styles/fill", available_fill_style)
 		# Setup the unavailable fill style
 		unavailable_fill_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], UNAVAILABLE_FILL_COLOR_SV_RATIO)
 		unavailable_fill_style.set_corner_radius_all(CORNER_RADIUS)
+		# Set the initial fill style
+		_set_available(true)
 		# Setup the background color
 		bg_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], BG_COLOR_SV_RATIO)
 		bg_style.set_corner_radius_all(CORNER_RADIUS)
@@ -55,20 +58,22 @@ func _on_charge_updated(update_player_num: int, charge_sec: float) -> void:
 	progress_bar.value = charge_sec
 	if charge_sec > previous_value:
 		if charge_sec >= Constant.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
-			progress_bar.set("theme_override_styles/fill", available_fill_style)
+			_set_available(true)
 		else:
-			progress_bar.set("theme_override_styles/fill", unavailable_fill_style)
+			_set_available(false)
 	previous_value = charge_sec
 
 
 # Update the availability of the laser for this player
-func _on_availability_updated(update_player_num: int, is_available: bool) -> void:
-	if update_player_num != player_num:
+func _set_available(available: bool) -> void:
+	if available == is_available:
 		return
-	# Update the fill style based on availability
+	is_available = available
 	if is_available:
+		print("[HUD] Player %d energy available" % player_num)
 		progress_bar.set("theme_override_styles/fill", available_fill_style)
 	else:
+		print("[HUD] Player %d energy unavailable" % player_num)
 		progress_bar.set("theme_override_styles/fill", unavailable_fill_style)
 
 
