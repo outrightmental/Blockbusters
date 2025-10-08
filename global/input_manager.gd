@@ -18,6 +18,11 @@ func _ready() -> void:
 		_detect_joypads()
 	)
 	_detect_joypads()
+	match mode:
+		Mode.TABLE:
+			print("[INPUT] Table Mode")
+		Mode.COUCH:
+			print("[INPUT] Couch Mode")
 
 
 # Table / Couch mode are two separate builds #150
@@ -101,48 +106,51 @@ func _physics_process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if Game.is_input_tools_paused:
 		return
-	match mode:
-		Mode.TABLE:
-			# Keyboard: only for players that DON'T have a gamepad
-			if event is InputEventKey and not event.is_echo():
-				_handle_keyboard_action_event(1, event, P1_KEYS)
-				_handle_keyboard_action_event(2, event, P2_KEYS)
-		Mode.COUCH:
-			# Route joypad events by device id → player index
-			if event is InputEventJoypadButton:
-				var player := _player_for_device(event.device)
-				if player != 0:
-					if event.pressed and not event.is_echo():
-						if JOY_TO_ACTION.has(event.button_index):
-							action_pressed.emit( player, JOY_TO_ACTION[event.button_index])
-					else:
-						if JOY_TO_ACTION.has(event.button_index):
-							action_released.emit( player, JOY_TO_ACTION[event.button_index])
-					get_viewport().set_input_as_handled()
-					return
+	if event is InputEventKey and not event.is_echo():
+		_handle_keyboard_action_event(1, event, P1_KEYS)
+		_handle_keyboard_action_event(2, event, P2_KEYS)
+	if mode == Mode.COUCH:
+		# Route joypad events by device id → player index
+		if event is InputEventJoypadButton:
+			var player := _player_for_device(event.device)
+			if player != 0:
+				if event.pressed and not event.is_echo():
+					if JOY_TO_ACTION.has(event.button_index):
+						action_pressed.emit( player, JOY_TO_ACTION[event.button_index])
+				else:
+					if JOY_TO_ACTION.has(event.button_index):
+						action_released.emit( player, JOY_TO_ACTION[event.button_index])
+				get_viewport().set_input_as_handled()
+				return
 
 
 # If player has a gamepad, read stick; otherwise, read keyboard axes.
 func _get_dir_for_player(player: int) -> Vector2:
+	var dir: Vector2 = Vector2.ZERO
+	var keys   := P1_KEYS if player == 1 else P2_KEYS
+	var kbd_x := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
+	var kbd_y := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
 	match mode:
 		Mode.TABLE:
-			var keys   := P1_KEYS if player == 1 else P2_KEYS
-			var x_axis := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
-			var y_axis := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
-			var v      := Vector2(x_axis, y_axis)
-			return v.normalized() if v.length() > 1.0 else v
+			match player:
+				1:
+					dir.x -= kbd_y
+					dir.y += kbd_x
+				2:
+					dir.x += kbd_y
+					dir.y -= kbd_x
 		Mode.COUCH:
+			dir.x += kbd_x
+			dir.y += kbd_y
 			var dev := p1_device_id if player == 1 else p2_device_id
-			if dev == -1:
-				return Vector2.ZERO
-			var x   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
-			var y   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
-			var v   := Vector2(x, y)
-			# invert Y if you want up to be negative stick Y (depends on your game)
-			if v.length() < Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
-				return Vector2.ZERO
-			return v
-	return Vector2.ZERO
+			if dev != -1:
+				var joy_x   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
+				var joy_y   := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
+				if abs(joy_x) > Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
+					dir.x += joy_x
+				if abs(joy_y) > Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
+					dir.y += joy_y
+	return dir.normalized()
 
 
 func _player_for_device(device_id: int) -> int:
