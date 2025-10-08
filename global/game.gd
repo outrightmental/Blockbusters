@@ -11,7 +11,7 @@ signal player_did_harm(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
 signal projectile_count_updated
 signal player_ready_updated
-signal player_energy_updated(player_num: int, charge_sec: float)
+signal player_energy_updated(player_num: int, charge_ratio: float, is_available: bool)
 signal gem_spawned()
 signal pickup_spawned(type: InventoryItemType)
 signal over(result: Result)
@@ -187,7 +187,7 @@ func _on_player_ready_updated() -> void:
 	pass
 
 
-func _on_player_energy_updated(_player_num: int, _charge_sec: float ) -> void:
+func _on_player_energy_updated(_player_num: int, _charge_ratio: float, _is_available: bool) -> void:
 	pass
 
 
