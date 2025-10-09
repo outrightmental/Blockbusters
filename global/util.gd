@@ -3,6 +3,7 @@ extends Node
 # Signal that never happens, in case the tree is unloaded
 signal never
 
+
 # Get a color at a specific saturation ratio relative to the original color
 func color_at_sv_ratio(color: Color, s_ratio: float, v_ratio: float = 0) -> Color:
 	return Color.from_hsv(color.h, color.s * s_ratio, color.v * (v_ratio if v_ratio > 0 else s_ratio), color.a)
@@ -19,3 +20,8 @@ func delay(seconds: float) -> Signal:
 		return get_tree().create_timer(seconds).timeout
 	else:
 		return never
+
+
+# Format an angle in radians to a string in degrees with one decimal place
+func fmt_angle(radians: float) -> String:
+	return "%0.1f°" % wrap(rad_to_deg(radians), 0, 360)

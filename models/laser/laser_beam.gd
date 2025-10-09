@@ -65,17 +65,25 @@ func _do_ray_one_collision(delta: float) -> void:
 	# todo only reflect off Gem
 	# if body is Collidable: 
 	_send_ray_two(body, local_target, delta)
-	# else:
-	# 	_do_hit(body, local_target, delta)
-	# 	_hide_ray_two()
+
+
+# else:
+# 	_do_hit(body, local_target, delta)
+# 	_hide_ray_two()
 
 
 # Send ray two from the collision point
 func _send_ray_two(body: Node2D, local_source: Vector2, delta: float) -> void:
-	var normal: Vector2 = raycastOne.get_collision_normal()
-	var local_normal_angle = normal.angle() - get_parent().rotation
+	var normal: Vector2     = raycastOne.get_collision_normal()
+	var local_normal_angle  = normal.angle() - get_parent().rotation
 	var local_reflect_angle = PI + local_normal_angle * 2
-	
+	Game.show_debug_text.emit("normal: %s, local_normal_angle: %s, local_reflect_angle: %s" % [
+	Util.fmt_angle(normal.angle()),
+	Util.fmt_angle(local_normal_angle),
+	Util.fmt_angle(local_reflect_angle)
+	])
+	return # todo don't
+
 	# Position raycastTwo at the collision point and set its direction to the reflection vector
 	raycastTwo.position = local_source
 	raycastTwo.enabled = true
