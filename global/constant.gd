@@ -104,3 +104,6 @@ const BOARD_SEED_F3: int                    = 973_523_665
 const BOARD_SEED_F4: int                    = 167_653_873
 const BOARD_SEED_F5: int                    = 423_587_300
 const BOARD_SEED_F6: int                    = 798_647_400
+#
+# Trigonometry
+const HALF_PI: float = PI / 2

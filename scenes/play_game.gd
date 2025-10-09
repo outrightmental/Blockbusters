@@ -9,6 +9,7 @@ const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player homes
 @onready var player_home_1 = $HomePlayer1
 @onready var player_home_2 = $HomePlayer2
+@onready var debug_text = $DebugText
 
 # Variables
 var grid: Dictionary                     = {}
@@ -41,6 +42,12 @@ func _ready() -> void:
 	_show_banner(0, "READY...", "SET...")
 	await Util.delay(Constant.SHOW_MODAL_SEC)
 	Game.unpause_input()
+	# Show debug text
+	if OS.has_feature("editor"):
+		Game.show_debug_text.connect(_on_show_debug_text)
+		debug_text.show()
+	else:
+		debug_text.hide()
 	pass
 
 
@@ -249,6 +256,11 @@ func _get_block_spawn_candidate() -> Block:
 func _goto_scene(path: String) -> void:
 	if get_tree():
 		get_tree().change_scene_to_file(path)
+		
+		
+# Show debug text
+func _on_show_debug_text(text: String) -> void:
+	debug_text.text = text
 
 
 # ------------------------------------------------------------------ #

@@ -48,12 +48,11 @@ func _send_ray_one(delta) -> void:
 
 # Do the ray one collision
 func _do_ray_one_collision(delta: float) -> void:
-	var collision_distance: float     = global_position.distance_to(raycastOne.get_collision_point())
-	var body: Node2D                  = raycastOne.get_collider()
-	var ray_one_target_point: Vector2 = Vector2(collision_distance, 0)
+	var body: Node2D          = raycastOne.get_collider()
+	var local_target: Vector2 = Vector2(global_position.distance_to(raycastOne.get_collision_point()), 0)
 
 	# Make the line visible up to the collision point
-	lineOne.set_point_position(1, ray_one_target_point)
+	lineOne.set_point_position(1, local_target)
 	# Set the line to a random alpha value for a flickering effect
 	alpha = wrapf(
 		alpha + delta * Constant.PLAYER_SHIP_LASER_FLICKER_RATE,
@@ -63,27 +62,29 @@ func _do_ray_one_collision(delta: float) -> void:
 	lineOne.modulate.a = alpha
 
 	# If the body is a gem, reflect the laser off the surface at the reflection angle
-	if body is Gem:
-		_send_ray_two(ray_one_target_point,  delta)
-	else:
-		_do_hit(ray_one_target_point, body, delta)
-		_hide_ray_two()
+	# todo only reflect off Gem
+	# if body is Collidable: 
+	_send_ray_two(body, local_target, delta)
+	# else:
+	# 	_do_hit(body, local_target, delta)
+	# 	_hide_ray_two()
 
 
 # Send ray two from the collision point
-func _send_ray_two(source_point: Vector2, delta: float) -> void:
-	var normal: Vector2   = raycastOne.get_collision_normal()
-	var incoming: Vector2 = (raycastOne.target_position - raycastOne.position).normalized()
+func _send_ray_two(body: Node2D, local_source: Vector2, delta: float) -> void:
+	var normal: Vector2 = raycastOne.get_collision_normal()
+	var local_normal_angle = normal.angle() - get_parent().rotation
+	var local_reflect_angle = PI + local_normal_angle * 2
+	var incoming: Vector2 = (raycastOne.local_source - global_position).normalized()
 	var reflect: Vector2  = incoming.bounce(normal).normalized()
 	# Position raycastTwo at the collision point and set its direction to the reflection vector
-	raycastTwo.position = source_point
-	raycastTwo.target_position = reflect * Constant.PLAYER_SHIP_LASER_MAX_DISTANCE
+	raycastTwo.position = local_source
 	raycastTwo.enabled = true
-	raycastTwo.rotation = PI / 2 # remove this testing piece
+	# todo instead of rotating the ray, compute its target -- raycastTwo.rotation = rotation - body.rotation
 	raycastTwo.force_raycast_update()
 	lineTwo.visible = true
 	lineTwo.modulate.a = alpha
-	lineTwo.set_point_position(0, source_point)
+	lineTwo.set_point_position(0, local_source)
 	# If raycastTwo is colliding, handle the collision
 	# If no collision, set the line to max distance
 	if raycastTwo.is_colliding():
@@ -101,18 +102,20 @@ func _do_ray_two_collision(delta: float) -> void:
 	# Make the line visible up to the collision point
 	lineTwo.set_point_position(1, ray_two_target_point - raycastTwo.position)
 
+	return # todo don't skip hit detection	
+
 	# If the body is a gem, do not apply heat again, just hide the second ray
 	if not body is Gem:
-		_do_hit(ray_two_target_point, body, delta)
+		_do_hit(body, ray_two_target_point, delta)
 
 
 # Hit a target
-func _do_hit(ray_one_target_point: Vector2, body: Node2D, delta: float) -> void:
+func _do_hit(body: Node2D, target_point: Vector2, delta: float) -> void:
 	# If the body is heatable, apply heat and emit sparks at the collision point
 	if body is Heatable:
 		body.apply_heat(delta)
 		sparks.set_emitting(true)
-		sparks.position =  ray_one_target_point
+		sparks.position =  target_point
 
 
 # Hide the second ray and its line
