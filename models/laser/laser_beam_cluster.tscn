@@ -7,19 +7,15 @@
 script = ExtResource("1_v740t")
 
 [node name="LaserBeamA" parent="." instance=ExtResource("1_nb7gp")]
-visible = false
 position = Vector2(0, -10)
 
 [node name="LaserBeamB" parent="." instance=ExtResource("1_nb7gp")]
-visible = false
 position = Vector2(0, -5)
 
 [node name="LaserBeamC" parent="." instance=ExtResource("1_nb7gp")]
 
 [node name="LaserBeamD" parent="." instance=ExtResource("1_nb7gp")]
-visible = false
 position = Vector2(0, 5)
 
 [node name="LaserBeamE" parent="." instance=ExtResource("1_nb7gp")]
-visible = false
 position = Vector2(0, 10)

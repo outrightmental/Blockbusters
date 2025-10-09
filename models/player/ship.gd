@@ -252,7 +252,7 @@ func _update_laser(delta: float) -> void:
 	if laser:
 		laser.set_position(position)
 		laser.set_rotation(actual_rotation)
-		# todo uncomment: laser_charge_sec -= delta
+		laser_charge_sec -= delta
 		AudioManager.update_2d_audio_global_position(laser_audio_key, global_position)
 		if laser_charge_sec < 0:
 			laser_charge_sec = 0
