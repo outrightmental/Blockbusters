@@ -75,12 +75,11 @@ func _send_ray_two(body: Node2D, local_source: Vector2, delta: float) -> void:
 	var normal: Vector2 = raycastOne.get_collision_normal()
 	var local_normal_angle = normal.angle() - get_parent().rotation
 	var local_reflect_angle = PI + local_normal_angle * 2
-	var incoming: Vector2 = (raycastOne.local_source - global_position).normalized()
-	var reflect: Vector2  = incoming.bounce(normal).normalized()
+	
 	# Position raycastTwo at the collision point and set its direction to the reflection vector
 	raycastTwo.position = local_source
 	raycastTwo.enabled = true
-	# todo instead of rotating the ray, compute its target -- raycastTwo.rotation = rotation - body.rotation
+	raycastTwo.target_position = Vector2(Constant.PLAYER_SHIP_LASER_MAX_DISTANCE, 0).rotated(local_reflect_angle)
 	raycastTwo.force_raycast_update()
 	lineTwo.visible = true
 	lineTwo.modulate.a = alpha
@@ -90,7 +89,7 @@ func _send_ray_two(body: Node2D, local_source: Vector2, delta: float) -> void:
 	if raycastTwo.is_colliding():
 		_do_ray_two_collision(delta)
 	else:
-		lineTwo.set_point_position(1, reflect * Constant.PLAYER_SHIP_LASER_MAX_DISTANCE)
+		lineTwo.set_point_position(1, raycastTwo.target_position)
 
 
 # Do the ray two collision	
