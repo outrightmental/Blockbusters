@@ -62,8 +62,8 @@ func stop_2d_audio(key: String = "") -> void:
 		audio_player.stop()
 		audio_player.finished.emit()
 		playing_2d_audios.erase(key)
-	else:
-		push_warning("Audio Manager failed to find audio with key ", key)
+	#else:
+		#push_warning("Audio Manager failed to find audio with key ", key)
 
 
 ## Update the global position of a 2d audio effect by [param key] if it exists in the [member playing_sounds] dictionary.
@@ -71,5 +71,5 @@ func update_2d_audio_global_position(key: String = "", gp: Vector2 = Vector2.ZER
 	if playing_2d_audios.has(key):
 		var audio_player: AudioStreamPlayer2D = playing_2d_audios[key]
 		audio_player.set_global_position(gp)
-	else:
-		push_warning("Audio Manager failed to find audio with key ", key)
+	#else:
+		#push_warning("Audio Manager failed to find audio with key ", key)

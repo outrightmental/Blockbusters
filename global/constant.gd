@@ -28,6 +28,7 @@ const PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD: float    = 1.0
 const PLAYER_SHIP_FORCE_AMOUNT: int                     = 5000
 const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 10.0
 const PLAYER_SHIP_LASER_ALPHA_MAX: float                = 0.5
+const PLAYER_SHIP_LASER_MAX_DISTANCE: float             = 2000
 const PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC: float = 1
 const PLAYER_SHIP_LASER_CHARGE_MAX_SEC: float           = 3
 const PLAYER_SHIP_LASER_CLUSTER_COUNT: int              = 5
@@ -55,12 +56,12 @@ const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
 # gem behavior
 const GEM_MAX_COUNT: int                      = 1
 const PICKUP_MAX_COUNT: int                   = 1
-const GEM_SPAWN_EVERY_SEC: float               = 0.1 # delay between spawning gems
+const GEM_SPAWN_EVERY_SEC: float              = 0.1 # delay between spawning gems
 const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
 #
 # pickup spawn behavior
 const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pickup
-const PICKUP_SPAWN_EVERY_SEC: float = 5.0 # delay between spawning pickups
+const PICKUP_SPAWN_EVERY_SEC: float   = 5.0 # delay between spawning pickups
 #
 # game behavior
 const SHOW_MODAL_SEC: float = 4.0
@@ -103,3 +104,6 @@ const BOARD_SEED_F3: int                    = 973_523_665
 const BOARD_SEED_F4: int                    = 167_653_873
 const BOARD_SEED_F5: int                    = 423_587_300
 const BOARD_SEED_F6: int                    = 798_647_400
+#
+# Trigonometry
+const HALF_PI: float = PI / 2

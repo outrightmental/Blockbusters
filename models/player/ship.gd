@@ -32,7 +32,7 @@ var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 # Preload the projectile explosive scene
 const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
 # Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/player/laser_beam_cluster.tscn")
+const laser_scene: PackedScene = preload("res://models/laser/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -214,6 +214,7 @@ func _do_activate_laser() -> void:
 	laser         = laser_scene.instantiate()
 	laser.player_num = player_num
 	laser.source_ship = self
+	laser.z_index = -100  # Ensure laser is behind the ship
 	self.get_parent().call_deferred("add_child", laser)
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.LASER_ACTIVATE, laser_audio_key)
 
@@ -266,9 +267,10 @@ func _update_laser(delta: float) -> void:
 func _update_hud_energy() -> void:
 	match is_disabled:
 		true:
-			Game.player_energy_updated.emit(player_num, 1 - (disabled_until_ticks_msec - Time.get_ticks_msec()) / (Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0))
+			var energy := 1 - (disabled_until_ticks_msec - Time.get_ticks_msec()) / (Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0)
+			Game.player_energy_updated.emit(player_num, energy, energy >= 1.0)
 		false:
-			Game.player_energy_updated.emit(player_num, laser_charge_sec / Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC)
+			Game.player_energy_updated.emit(player_num, laser_charge_sec / Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC, laser_charge_sec >= Constant.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC)
 
 
 # Apply forces to the bodies in the forcefield

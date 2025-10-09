@@ -1,20 +1,21 @@
 extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
-signal reset_game()
-signal player_score_updated()
-signal player_inventory_updated()
-signal player_did_launch_projectile(player_num: int)
+signal gem_spawned()
+signal over(result: Result)
+signal pickup_spawned(type: InventoryItemType)
 signal player_did_collect_gem(player_num: int)
 signal player_did_collect_item(player_num: int, type: InventoryItemType)
 signal player_did_harm(player_num: int)
+signal player_did_launch_projectile(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
-signal projectile_count_updated
+signal player_energy_updated(player_num: int, charge_ratio: float, is_available: bool)
+signal player_inventory_updated()
 signal player_ready_updated
-signal player_energy_updated(player_num: int, charge_sec: float)
-signal gem_spawned()
-signal pickup_spawned(type: InventoryItemType)
-signal over(result: Result)
+signal player_score_updated()
+signal projectile_count_updated
+signal reset_game()
+signal show_debug_text(text: String)
 # Group names
 const BLOCK_GROUP: StringName  = "BlockGroup"
 const GEM_GROUP: StringName    = "GemGroup"
@@ -187,11 +188,15 @@ func _on_player_ready_updated() -> void:
 	pass
 
 
-func _on_player_energy_updated(_player_num: int, _charge_sec: float ) -> void:
+func _on_player_energy_updated(_player_num: int, _charge_ratio: float, _is_available: bool) -> void:
 	pass
 
 
 func _on_player_enabled(_player_num: int, _enabled: bool) -> void:
+	pass
+
+
+func _on_show_debug_text(text: String) -> void:
 	pass
 
 

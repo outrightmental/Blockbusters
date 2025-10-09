@@ -17,13 +17,13 @@ var bg_style               = StyleBoxFlat.new()
 # Reference Progress Bar
 @onready var progress_bar: ProgressBar = $ProgressBar
 
-# Cache previous value to determine charge/uncharge state
-var previous_value: float = 0.0
+# Track whether the energy is available
+var is_available: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.player_energy_updated.connect(_on_charge_updated)
+	Game.player_energy_updated.connect(_on_update)
 	progress_bar.max_value = 1.0
 	_set_color()
 
@@ -34,7 +34,6 @@ func _set_color() -> void:
 		# Setup the available fill style
 		available_fill_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], AVAILABLE_FILL_COLOR_SV_RATIO)
 		available_fill_style.set_corner_radius_all(CORNER_RADIUS)
-		progress_bar.set("theme_override_styles/fill", available_fill_style)
 		# Setup the unavailable fill style
 		unavailable_fill_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], UNAVAILABLE_FILL_COLOR_SV_RATIO)
 		unavailable_fill_style.set_corner_radius_all(CORNER_RADIUS)
@@ -42,30 +41,22 @@ func _set_color() -> void:
 		bg_style.bg_color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], BG_COLOR_SV_RATIO)
 		bg_style.set_corner_radius_all(CORNER_RADIUS)
 		progress_bar.set("theme_override_styles/background", bg_style)
+		# Set the inital energy level
+		_on_update(player_num, 1.0, true)
 	else:
 		push_error("No colors found for player_num: ", player_num)
 	pass
 
 
 # Update the laser charge for this player
-func _on_charge_updated(update_player_num: int, charge_sec: float) -> void:
+func _on_update(update_player_num: int, charge_ratio: float, _is_available: bool) -> void:
 	if update_player_num != player_num:
 		return
-	# Update the progress bar value
-	progress_bar.value = charge_sec
-	if charge_sec > previous_value:
-		if charge_sec >= Constant.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC:
-			progress_bar.set("theme_override_styles/fill", available_fill_style)
-		else:
-			progress_bar.set("theme_override_styles/fill", unavailable_fill_style)
-	previous_value = charge_sec
-
-
-# Update the availability of the laser for this player
-func _on_availability_updated(update_player_num: int, is_available: bool) -> void:
-	if update_player_num != player_num:
-		return
+	progress_bar.value = charge_ratio
 	# Update the fill style based on availability
+	if is_available == _is_available:
+		return
+	is_available = _is_available
 	if is_available:
 		progress_bar.set("theme_override_styles/fill", available_fill_style)
 	else:
