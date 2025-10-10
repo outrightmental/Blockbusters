@@ -38,11 +38,11 @@ _data = {
 &"explode": SubResource("Animation_ta7em")
 }
 
-[sub_resource type="Gradient" id="Gradient_b08fd"]
+[sub_resource type="Gradient" id="Gradient_ta7em"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ta7em"]
-gradient = SubResource("Gradient_b08fd")
+gradient = SubResource("Gradient_ta7em")
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)

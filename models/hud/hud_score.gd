@@ -5,7 +5,7 @@ extends Node2D
 const COLOR_SV_RATIO: float = 0.7
 
 
-# Player number to identify the home
+# Player number to identify the goal
 @export var player_num: int = 0
 
 

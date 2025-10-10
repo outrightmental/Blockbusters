@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://bgvuuvhomj1ox"]
 
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/play_game.gd" id="1_s826b"]
-[ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/home.tscn" id="3_466yg"]
+[ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/goal.tscn" id="3_466yg"]
 [ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/hud/hud_score.tscn" id="3_bgg7l"]
 [ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_energy.tscn" id="4_sbpvv"]
 [ext_resource type="FontFile" uid="uid://c70q8gaqjfaug" path="res://assets/fonts/Montserrat/static/Montserrat-Light.ttf" id="6_8rcy1"]
@@ -55,12 +55,12 @@ position = Vector2(64, 576)
 rotation = 4.71238
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="HomePlayer1" parent="." instance=ExtResource("3_466yg")]
+[node name="GoalPlayer1" parent="." instance=ExtResource("3_466yg")]
 z_index = -1
 position = Vector2(512, 0)
 player_num = 1
 
-[node name="HomePlayer2" parent="." instance=ExtResource("3_466yg")]
+[node name="GoalPlayer2" parent="." instance=ExtResource("3_466yg")]
 z_index = -1
 position = Vector2(512, 576)
 player_num = 2

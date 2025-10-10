@@ -112,11 +112,13 @@ func _do_hit(body: Node2D, target_point: Vector2, delta: float) -> void:
 	if body is Heatable:
 		body.apply_heat(delta)
 		sparks.set_emitting(true)
-		sparksLight.set_enabled(true)
 		sparks.position =  target_point
+		if Game.is_lighting_enabled:
+			sparksLight.set_enabled(true)
 	else:
 		sparks.set_emitting(false)
-		sparksLight.set_enabled(false)
+		if Game.is_lighting_enabled:
+			sparksLight.set_enabled(false)
 
 
 # Hide the second ray and its line

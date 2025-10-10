@@ -48,9 +48,11 @@ var forcefield_targets: Dictionary[int, Node2D] = {}
 # in order to "hold" objects while the forcefield is turning
 var forcefield_position_previous: Vector2 = Vector2.ZERO
 
+
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
-	$PointLight2D.enabled = false
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 	is_disabled = true
 	heatable = false
 	heat = 0.0
@@ -65,7 +67,8 @@ func do_disable(responsible_player_num: int) -> void:
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
-	$PointLight2D.enabled = true
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = true
 	is_disabled = false
 	heatable = true
 	laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
@@ -111,6 +114,10 @@ func _ready() -> void:
 	InputManager.move.connect(_on_input_move)
 	InputManager.action_pressed.connect(_on_input_action_pressed)
 	InputManager.action_released.connect(_on_input_action_released)
+
+	# Disable lighting if not enabled in settings
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 
 
 # Set the colors of the ship based on player_num

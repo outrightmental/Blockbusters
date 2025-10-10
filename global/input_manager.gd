@@ -1,14 +1,5 @@
 extends Node
 
-# Signals
-signal input_mode_updated
-# Enum for input modes
-enum Mode {
-	TABLE,
-	COUCH,
-}
-# Keep track of the input mode
-@onready var mode: Mode = _detect_mode()
 
 # --- Lifecycle -----------------------------------------------------------
 
@@ -18,32 +9,22 @@ func _ready() -> void:
 		_detect_joypads()
 	)
 	_detect_joypads()
-	match mode:
-		Mode.TABLE:
+	match Game.mode:
+		Game.Mode.TABLE:
 			print("[INPUT] Table Mode")
-		Mode.COUCH:
+		Game.Mode.COUCH:
 			print("[INPUT] Couch Mode")
 
 
-# Table / Couch mode are two separate builds #150
-static func _detect_mode() -> Mode:
-	if OS.has_feature("couch_mode"):
-		return Mode.COUCH
-	if OS.has_feature("editor"):
-		return Mode.COUCH
-	else:
-		return Mode.TABLE
-
-
-# Detect the input mode based on the current input devices, see #126
+# Detect the input Game.mode based on the current input devices, see #126
 func _detect_joypads() -> void:
-	if mode == Mode.TABLE:
+	if Game.mode == Game.Mode.TABLE:
 		return
 	var joypads: Array = Input.get_connected_joypads()
 	joypads.sort()  # lowest id first for stability
 	p1_device_id = joypads[0] if joypads.size() >= 1 else -1
 	p2_device_id = joypads[1] if joypads.size() >= 2 else -1
-	input_mode_updated.emit()
+	Game.input_mode_updated.emit()
 
 
 signal move(player: int, dir: Vector2)                 # per-frame movement vector
@@ -109,7 +90,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and not event.is_echo():
 		_handle_keyboard_action_event(1, event, P1_KEYS)
 		_handle_keyboard_action_event(2, event, P2_KEYS)
-	if mode == Mode.COUCH:
+	if Game.mode == Game.Mode.COUCH:
 		# Route joypad events by device id → player index
 		if event is InputEventJoypadButton:
 			var player := _player_for_device(event.device)
@@ -130,8 +111,8 @@ func _get_dir_for_player(player: int) -> Vector2:
 	var keys   := P1_KEYS if player == 1 else P2_KEYS
 	var kbd_x := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
 	var kbd_y := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
-	match mode:
-		Mode.TABLE:
+	match Game.mode:
+		Game.Mode.TABLE:
 			match player:
 				1:
 					dir.x -= kbd_y
@@ -139,7 +120,7 @@ func _get_dir_for_player(player: int) -> Vector2:
 				2:
 					dir.x += kbd_y
 					dir.y -= kbd_x
-		Mode.COUCH:
+		Game.Mode.COUCH:
 			dir.x += kbd_x
 			dir.y += kbd_y
 			var dev := p1_device_id if player == 1 else p2_device_id

@@ -23,7 +23,10 @@ func _ready() -> void:
 	# Count this projectile
 	Game.projectiles_in_play += 1
 	Game.projectile_count_updated.emit()
-	pass
+
+	# Disable lighting if not enabled in settings
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 
 
 # Called when the projectile is removed from the stage

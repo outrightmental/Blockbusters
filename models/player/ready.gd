@@ -4,7 +4,7 @@ extends Node2D
 # Constants
 const READY_COLOR_SV_RATIO: float   = 1.0
 const UNREADY_COLOR_SV_RATIO: float = 0.3
-# Player number to identify the home
+# Player number to identify the goal
 @export var player_num: int = 0
 # When the player is ready
 @export var is_ready: bool = false
