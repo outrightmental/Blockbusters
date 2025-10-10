@@ -65,6 +65,7 @@ func _on_finished() -> void:
 
 # Spawn a banner at the given position
 func _on_show_banner(player_num: int, message: String, message_2) -> void:
+	Engine.time_scale = 0.5
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	match Game.mode:
 		Game.Mode.COUCH:
@@ -74,6 +75,7 @@ func _on_show_banner(player_num: int, message: String, message_2) -> void:
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
 	Game.pause_input_tools()
 	await Util.delay(Constant.SHOW_MODAL_SEC)
+	Engine.time_scale = 1.0
 	Game.unpause_input()
 
 
