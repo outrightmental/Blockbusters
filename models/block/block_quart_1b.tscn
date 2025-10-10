@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmvs0xoqad6la"]
+[gd_scene load_steps=4 format=3 uid="uid://bmvs0xoqad6la"]
 
 [ext_resource type="Script" uid="uid://bv31253cb6v3s" path="res://models/block/block_quart.gd" id="1_cpdsg"]
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_gmt1v"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_gmt1v"]
+polygon = PackedVector2Array(-8.00007, -11, 5.99993, -11, -1.00003, -4)
 
 [node name="Block3" type="RigidBody2D"]
 rotation = -1.57079
@@ -10,6 +13,10 @@ collision_mask = 3
 physics_material_override = ExtResource("1_gmt1v")
 gravity_scale = 0.0
 script = ExtResource("1_cpdsg")
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(1, 0)
+occluder = SubResource("OccluderPolygon2D_gmt1v")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-11, -11, -9, -13, 9, -13, 11, -11, 1, -1, -1, -1)

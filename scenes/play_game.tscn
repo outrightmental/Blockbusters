@@ -57,12 +57,12 @@ polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0
 
 [node name="GoalPlayer1" parent="." instance=ExtResource("3_466yg")]
 z_index = -1
-position = Vector2(512, 0)
+position = Vector2(512, -30)
 player_num = 1
 
 [node name="GoalPlayer2" parent="." instance=ExtResource("3_466yg")]
 z_index = -1
-position = Vector2(512, 576)
+position = Vector2(512, 606)
 player_num = 2
 
 [node name="HudPlayer1" type="Node2D" parent="."]

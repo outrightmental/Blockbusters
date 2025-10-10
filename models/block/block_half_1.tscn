@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cnlnuranut6p6"]
+[gd_scene load_steps=4 format=3 uid="uid://cnlnuranut6p6"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_khit3"]
 [ext_resource type="Script" uid="uid://dg02gqyv1rfn4" path="res://models/block/block_half.gd" id="1_o1kjt"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_khit3"]
+polygon = PackedVector2Array(-11, -10, 5, -10, -11, 6)
 
 [node name="Block4" type="RigidBody2D"]
 collision_layer = 3
@@ -12,6 +15,10 @@ gravity_scale = 0.0
 script = ExtResource("1_o1kjt")
 metadata/_edit_vertical_guides_ = [-13.0]
 metadata/_edit_horizontal_guides_ = [-13.0]
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(1, 0)
+occluder = SubResource("OccluderPolygon2D_khit3")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-13, -9, -9, -13, 9, -13, 11, -11, -11, 11, -13, 9)

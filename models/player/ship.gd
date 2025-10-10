@@ -51,7 +51,7 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
-	if not Game.is_lighting_enabled:
+	if Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
 	is_disabled = true
 	heatable = false
@@ -67,7 +67,7 @@ func do_disable(responsible_player_num: int) -> void:
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
-	if not Game.is_lighting_enabled:
+	if Game.is_lighting_enabled:
 		$PointLight2D.enabled = true
 	is_disabled = false
 	heatable = true
