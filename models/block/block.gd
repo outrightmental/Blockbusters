@@ -37,7 +37,7 @@ func _ready() -> void:
 
 
 # When a gem can be added
-func can_add_item() -> bool:
+func is_empty() -> bool:
 	# If the block already has a gem, return false
 	if item:
 		return false
