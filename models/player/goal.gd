@@ -20,9 +20,8 @@ func _ready() -> void:
 # Called when another body enters the collission area
 func _on_body_entered(body: Node2D) -> void:
 	if body is Gem:
-		Game.player_did_collect_gem.emit(player_num)
-		Game.gems_collected += 1
 		body.do_shatter()
+		Game.do_player_goal(player_num)
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PLAYER_COLLECTS_GEM)
 		$AnimationPlayer.play("Goal")
 

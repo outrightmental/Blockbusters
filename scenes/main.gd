@@ -8,7 +8,6 @@ const GAME_START_DELAY_SECONDS: float = 1.0
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
 	_setup()
-	Game.input_mode_updated.connect(_setup)
 
 
 # If both players are ready, start the game

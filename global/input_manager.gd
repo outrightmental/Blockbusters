@@ -24,7 +24,6 @@ func _detect_joypads() -> void:
 	joypads.sort()  # lowest id first for stability
 	p1_device_id = joypads[0] if joypads.size() >= 1 else -1
 	p2_device_id = joypads[1] if joypads.size() >= 2 else -1
-	Game.input_mode_updated.emit()
 
 
 signal move(player: int, dir: Vector2)                 # per-frame movement vector

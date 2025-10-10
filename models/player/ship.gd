@@ -50,7 +50,7 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 
 
 # Called when the ship is disabled
-func do_disable(responsible_player_num: int) -> void:
+func do_disable() -> void:
 	if Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
 	is_disabled = true
@@ -59,7 +59,6 @@ func do_disable(responsible_player_num: int) -> void:
 	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
-	Game.player_did_harm.emit(responsible_player_num)
 	Game.player_enabled.emit(player_num, false)
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DISABLED)
@@ -321,7 +320,7 @@ func _update_forcefield(_delta: float) -> void:
 func _update_heated_effect() -> void:
 	heat = clamp(heat, 0, Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC)
 	if not is_disabled and heat >= Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC:
-		do_disable(player_num)
+		do_disable()
 		return
 	if heated_effect == null:
 		return
