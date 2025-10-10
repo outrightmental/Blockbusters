@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bl2llq48pq3cr"]
+[gd_scene load_steps=7 format=3 uid="uid://bl2llq48pq3cr"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://dw07h3wvuqaey" path="res://models/gem/gem.tres" id="1_4v1y3"]
 [ext_resource type="Script" uid="uid://dgibky2mluyx3" path="res://models/pickup/pickup_projectile.gd" id="2_u62ke"]
@@ -8,6 +8,15 @@
 shader = ExtResource("3_r6o0i")
 shader_parameter/color = Color(1, 1, 1, 0.294118)
 shader_parameter/diameter = 1.0
+
+[sub_resource type="Gradient" id="Gradient_376g1"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_r6o0i"]
+gradient = SubResource("Gradient_376g1")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="PickupProjectile" type="RigidBody2D"]
 mass = 3.0
@@ -39,3 +48,11 @@ offset_bottom = 10.0
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(10, 0, 9, 4, 7, 7, 4, 9, 0, 10, -4, 9, -7, 7, -9, 4, -10, 0, -9, -4, -7, -7, -4, -9, 0, -10, 4, -9, 7, -7, 9, -4)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+z_index = 500
+z_as_relative = false
+energy = 3.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_r6o0i")
+texture_scale = 2.2

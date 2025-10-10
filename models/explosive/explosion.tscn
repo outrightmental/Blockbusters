@@ -67,6 +67,7 @@ libraries = {
 z_index = 500
 z_as_relative = false
 energy = 3.0
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_ta7em")
 texture_scale = 7.0
 

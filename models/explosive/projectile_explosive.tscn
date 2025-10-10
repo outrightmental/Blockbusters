@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://b58oyq1o5ha2o"]
+[gd_scene load_steps=4 format=3 uid="uid://b58oyq1o5ha2o"]
 
 [ext_resource type="Script" uid="uid://bsqw6ncm8bgdj" path="res://models/explosive/projectile_explosive.gd" id="1_e1yt5"]
+
+[sub_resource type="Gradient" id="Gradient_b08fd"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nsg8a"]
+gradient = SubResource("Gradient_b08fd")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="ProjectileExplosive" type="RigidBody2D"]
 gravity_scale = 0.0
@@ -22,3 +31,11 @@ polygon = PackedVector2Array(12, -2, 29, -2, 22, 3, 12, 2)
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(10, -5, 17, 0, 10, 5, 0, 4, 0, -4)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+z_index = 500
+z_as_relative = false
+energy = 3.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_nsg8a")
+texture_scale = 1.5

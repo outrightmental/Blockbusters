@@ -13,6 +13,7 @@ func _ready() -> void:
 	if player_num in Constant.PLAYER_COLORS:
 		$TriangleLight.color = Constant.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Constant.PLAYER_COLORS[player_num][1]
+		$PointLight2D.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No color found for player ", player_num)
 

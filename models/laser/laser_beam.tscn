@@ -48,5 +48,6 @@ z_index = 500
 z_as_relative = false
 enabled = false
 energy = 3.0
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_b08fd")
 texture_scale = 1.5

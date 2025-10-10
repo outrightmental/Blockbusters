@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bg7dqpj5bjc6x"]
+[gd_scene load_steps=8 format=3 uid="uid://bg7dqpj5bjc6x"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://fdnyxkdqbh7y" path="res://models/player/ship.tres" id="1_3lbs4"]
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/player/ship.gd" id="1_yja86"]
@@ -18,6 +18,9 @@ gradient = SubResource("Gradient_376g1")
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_3lbs4"]
+polygon = PackedVector2Array(-19, -7, 12, -14, -4, 0, 12, 14, -19, 7, -11, 0)
 
 [node name="Ship" type="RigidBody2D"]
 collision_priority = 2.0
@@ -81,6 +84,11 @@ scale_amount_curve = SubResource("Curve_3lbs4")
 [node name="PointLight2D" type="PointLight2D" parent="."]
 z_index = 500
 z_as_relative = false
+position = Vector2(21, 0)
 rotation = 3.14159
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_3lbs4")
 texture_scale = 3.0
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_3lbs4")

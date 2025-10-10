@@ -50,8 +50,10 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
+	$PointLight2D.enabled = false
 	is_disabled = true
 	heatable = false
+	heat = 0.0
 	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
@@ -63,9 +65,9 @@ func do_disable(responsible_player_num: int) -> void:
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
+	$PointLight2D.enabled = true
 	is_disabled = false
 	heatable = true
-	heat = 0.0
 	laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)

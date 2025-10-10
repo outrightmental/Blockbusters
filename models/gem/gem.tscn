@@ -31,21 +31,25 @@ scale_amount_max = 6.0
 color = Color(1, 0.895167, 0.63, 1)
 
 [node name="TopLeft" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(-22, 2)
 color = Color(1, 0.809584, 0.593649, 1)
 polygon = PackedVector2Array(22, -12, 22, -2, 12, -2)
 
 [node name="TopRight" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(-12, 2)
 color = Color(1, 0.936525, 0.867951, 1)
 polygon = PackedVector2Array(12, -12, 22, -2, 12, -2)
 
 [node name="BtmLeft" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(-22, 2)
 color = Color(0.91, 0.576333, 0, 1)
 polygon = PackedVector2Array(12, -2, 22, -2, 22, 8)
 
 [node name="BtmRight" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(-12, 2)
 color = Color(1, 0.756968, 0.472732, 1)
 polygon = PackedVector2Array(12, -2, 22, -2, 12, 8)
@@ -59,5 +63,6 @@ z_index = 500
 z_as_relative = false
 color = Color(1, 0.756863, 0.470588, 1)
 energy = 5.0
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_whalw")
 texture_scale = 3.0

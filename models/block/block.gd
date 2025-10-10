@@ -51,6 +51,7 @@ func can_add_item() -> bool:
 # Adds a gem inside this block
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true
+	$LightOccluder2D.visible = false
 	item = gem_scene.instantiate()
 	item.position = Vector2(0, 0)
 	item.add_collision_exception_with(self)
@@ -63,6 +64,7 @@ func add_gem() -> void:
 # Adds a pickup inside this block -- currently only projectiles
 func add_pickup(type: Game.InventoryItemType) -> void:
 	$ParticleEmitter.emitting = true
+	$LightOccluder2D.visible = false
 	match type:
 		Game.InventoryItemType.PROJECTILE:
 			item = pickup_projectile_scene.instantiate()
