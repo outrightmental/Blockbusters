@@ -243,7 +243,7 @@ func _spawn_pickup(type: Game.InventoryItemType) -> void:
 func _get_block_spawn_candidate() -> Block:
 	var candidates: Array[Block]
 	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
-		if block.can_add_item():
+		if block.is_empty():
 			candidates.append(block)
 	if candidates.size() > 0:
 		# Randomly select a block to spawn a pickup in
