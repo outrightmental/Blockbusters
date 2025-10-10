@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://bjiivayicu2qj"]
+[gd_scene load_steps=5 format=3 uid="uid://bjiivayicu2qj"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://c6ktha8bv2lqs" path="res://models/block/block.tres" id="1_0v8nl"]
 [ext_resource type="Script" uid="uid://2es8up3haar4" path="res://models/block/block.gd" id="1_okoc5"]
 [ext_resource type="PackedScene" uid="uid://dur1xvqlvin4x" path="res://models/explosive/shatter.tscn" id="2_jakod"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_0v8nl"]
+polygon = PackedVector2Array(-11, -10, 9, -10, 9, 10, -11, 10)
 
 [node name="Block4" type="RigidBody2D"]
 collision_layer = 3
@@ -15,6 +18,7 @@ script = ExtResource("1_okoc5")
 
 [node name="ParticleEmitter" parent="." instance=ExtResource("2_jakod")]
 z_index = 100
+position = Vector2(1, 0)
 amount = 25
 initial_velocity_max = 100.0
 scale_amount_max = 10.0
@@ -24,6 +28,10 @@ script = null
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(-13, -9, -9, -13, 9, -13, 13, -9, 13, 10, 10, 13, -9, 13, -13, 9)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+position = Vector2(1, 0)
+occluder = SubResource("OccluderPolygon2D_0v8nl")
 
 [node name="HeatedEffect" type="Node2D" parent="."]
 visible = false
@@ -46,4 +54,4 @@ z_index = 5
 position = Vector2(-12, 2)
 rotation = 0.00223032
 color = Color(0.8, 0.8, 0.8, 0.627451)
-polygon = PackedVector2Array(25, 8, 25, -11, 23, -13, 1, 9, 3, 11, 22, 11)
+polygon = PackedVector2Array(25.0156, 6.94423, 25, -11, 23, -13, 1, 9, 3, 11, 21.0245, 10.9531)

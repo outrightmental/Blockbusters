@@ -1,14 +1,14 @@
 extends Node2D
 
 # Preloaded Scenes
-const ship_scene: PackedScene   = preload('res://models/player/ship.tscn')
-const home_scene: PackedScene   = preload('res://models/player/home.tscn')
-const score_scene: PackedScene  = preload('res://models/hud/hud_score.tscn')
+const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
+const goal_scene: PackedScene  = preload('res://models/player/goal.tscn')
+const score_scene: PackedScene = preload('res://models/hud/hud_score.tscn')
 const block_scene: PackedScene  = preload('res://models/block/block.tscn')
 const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
-# References to player homes
-@onready var player_home_1 = $HomePlayer1
-@onready var player_home_2 = $HomePlayer2
+# References to player goals
+@onready var player_goal_1 = $GoalPlayer1
+@onready var player_goal_2 = $GoalPlayer2
 @onready var debug_text = $DebugText
 
 # Variables
@@ -28,7 +28,7 @@ func _ready() -> void:
 	spawn_next_pickup_at_msec = spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
 	# Setup the board based on the current input mode
 	_setup()
-	InputManager.input_mode_updated.connect(_setup)
+	Game.input_mode_updated.connect(_setup)
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
@@ -53,15 +53,15 @@ func _ready() -> void:
 
 # Setup the UI based on the current input mode		
 func _setup() -> void:
-	match InputManager.mode:
-		InputManager.Mode.TABLE:
+	match Game.mode:
+		Game.Mode.TABLE:
 			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
 			$HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
 			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
 			$HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
 			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
 			$HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
-		InputManager.Mode.COUCH:
+		Game.Mode.COUCH:
 			$HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
 			$HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
 			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
@@ -100,10 +100,10 @@ func _on_game_over(result: Game.Result) -> void:
 # Spawn a banner at the given position
 func _show_banner(player_num: int, message: String, message_2: String = "") -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	match InputManager.mode:
-		InputManager.Mode.COUCH:
+	match Game.mode:
+		Game.Mode.COUCH:
 			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
-		InputManager.Mode.TABLE:
+		Game.Mode.TABLE:
 			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
 	Game.pause_input_tools()
@@ -144,7 +144,7 @@ func _on_player_enabled(player_num: int, enabled: bool) -> void:
 			$HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 
 
-# Create the board with blocks and gems, and spawn player homes, ships, and scores
+# Create the board with blocks and gems, and spawn player goals, ships, and scores
 # Instantiate a models/ship/ship.gd for each player, so set player_num = 1 or 2 respectively
 # Player 1 is 10% in from the left, vertical center, and Player 2 is 10% in from the right, vertical center.
 #
@@ -157,7 +157,7 @@ func _create_board() -> void:
 	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
 	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
-	var home_positions: Array[Vector2] = [player_home_1.position, player_home_2.position, player_ship_1.position, player_ship_2.position]
+	var goal_positions: Array[Vector2] = [player_goal_1.position, player_goal_2.position, player_ship_1.position, player_ship_2.position]
 
 	while block_count < Constant.BOARD_BLOCK_COUNT_MAX and block_attempt_count < Constant.BOARD_BLOCK_ATTEMPT_MAX:
 		block_attempt_count += 1
@@ -173,7 +173,7 @@ func _create_board() -> void:
 			continue
 		if mesh[x][y] < Constant.BOARD_GRID_MESH_THRESHOLD:
 			continue
-		if _is_clear_of_all(Constant.BOARD_HOME_CLEARANCE_RADIUS, _grid_position(x, y), home_positions):
+		if _is_clear_of_all(Constant.BOARD_GOAL_CLEARANCE_RADIUS, _grid_position(x, y), goal_positions):
 			block_count += 1
 			grid[x][y] = true
 

@@ -3,7 +3,7 @@ extends Node
 #
 # This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
-									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.733, 0.0, 0.655, 1.0)], # Pink
+									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.6117647, 0.0, 0.54901963)], # Pink
 									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)]   # Blue
 								  }
 #
@@ -16,7 +16,7 @@ const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
 const PLAYER_SCORE_INITIAL: int                         = 0
 const PLAYER_SCORE_VICTORY: int                         = 5
 const PLAYER_SHIP_DISABLED_SEC: float                   = 3
-const PLAYER_SHIP_DISABLED_S_RATIO: float               = 0.14
+const PLAYER_SHIP_DISABLED_S_RATIO: float               = 0.2
 const PLAYER_SHIP_DISABLED_V_RATIO: float               = 0.38
 const PLAYER_SHIP_FORCEFIELD_EFFECT_GRAVITY: float      = 170.0
 const PLAYER_SHIP_FORCEFIELD_EFFECT_KG_MAX: int         = 10
@@ -48,7 +48,7 @@ const BLOCK_EXPLOSION_OVERHEAT_RATIO: float        = 3 # exploson maxes at ratio
 const BLOCK_HALF_BREAK_APART_VELOCITY: float       = BLOCK_BREAK_APART_VELOCITY / 2
 const BLOCK_HALF_HEATED_BREAK_SEC: float           = BLOCK_HEATED_BREAK_SEC / 2
 const BLOCK_HEATED_BREAK_SEC: float                = 0.5
-const BLOCK_INACTIVE_OPACITY: float                = 0.25
+const BLOCK_INACTIVE_MODULATE_VALUE: float         = 0.25
 const BLOCK_INNER_ITEM_ALPHA: float                = 0.8
 const BLOCK_LINEAR_DAMP: float                     = 0.1
 const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
@@ -95,7 +95,7 @@ const BOARD_GRID_COUNT_MAX: int             = BOARD_GRID_COLS * BOARD_GRID_ROWS
 const BOARD_GRID_MESH_THRESHOLD: float      = 0.62
 const BOARD_GRID_ROWS: int                  = 14
 const BOARD_GRID_ROWS_MARGIN: int           = 2
-const BOARD_HOME_CLEARANCE_RADIUS: int      = 130
+const BOARD_GOAL_CLEARANCE_RADIUS: int      = 130
 const BOARD_MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
 const BOARD_SEED_MAX: int                   = 1_000_000_000
 const BOARD_SEED_F1: int                    = 18_285_756

@@ -13,6 +13,7 @@ func _ready() -> void:
 	if player_num in Constant.PLAYER_COLORS:
 		$TriangleLight.color = Constant.PLAYER_COLORS[player_num][0]
 		$TriangleDark.color = Constant.PLAYER_COLORS[player_num][1]
+		$PointLight2D.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No color found for player ", player_num)
 
@@ -22,7 +23,10 @@ func _ready() -> void:
 	# Count this projectile
 	Game.projectiles_in_play += 1
 	Game.projectile_count_updated.emit()
-	pass
+
+	# Disable lighting if not enabled in settings
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 
 
 # Called when the projectile is removed from the stage

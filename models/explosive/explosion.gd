@@ -9,9 +9,9 @@ extends Node2D
 
 # Variables
 var instantiated_at_ticks_msec: int = 0
-var explosive_radius: float           = 0.0
-var heat_radius: float                = 0.0
-var exploded: bool                    = false
+var explosive_radius: float         = 0.0
+var heat_radius: float              = 0.0
+var exploded: bool                  = false
 var affected_bodies: Dictionary[int, Array] = {}
 
 
@@ -20,13 +20,24 @@ func _ready() -> void:
 	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = collision_shape.shape.radius
 	heat_radius = explosive_radius * Constant.EXPLOSION_HEAT_RADIUS_RATIO
+
 	# Set the explosion color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
 		$ParticleEmitter.color = Constant.PLAYER_COLORS[player_num][0]
+		$PointLight2D.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], 1.0, 2.0)
 	else:
 		push_error("No color found for player ", player_num)
+
+	# Start the explosion effect
 	$ParticleEmitter.emitting = true
+	$AnimationPlayer.play("explode")
+
+	# Play the explosion sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
+
+	# Disable lighting if not enabled in settings
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
@@ -55,8 +66,8 @@ func _physics_process(_delta: float) -> void:
 		var distance: float = diff.length()
 		var dir: Vector2    = diff.normalized()
 		var at_msec: int    = floori(pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_MSEC)
-		if at_msec not in affected_bodies:
-			affected_bodies[at_msec] = []
+		if not at_msec in affected_bodies:
+			affected_bodies.set(at_msec, [])
 		var item: Dictionary = {}
 		item.body     = body
 		item.dir      = dir
@@ -71,7 +82,7 @@ func _apply_to_body(item: Dictionary) -> void:
 	var distance = item.distance
 	if not body:
 		return  # Ensure body is valid before proceeding
-	body.apply_central_force(dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius , 2)))
+	body.apply_central_force(dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius, 2)))
 	const max_heat = Constant.BLOCK_HEATED_BREAK_SEC * Constant.BLOCK_EXPLOSION_OVERHEAT_RATIO
 	if body is Heatable:
 		var heat = max_heat * Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC * Constant.EXPLOSION_SHIP_EFFECT_MULTIPLIER if body is Ship else max_heat

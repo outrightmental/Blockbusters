@@ -8,7 +8,7 @@ const GAME_START_DELAY_SECONDS: float = 1.0
 func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
 	_setup()
-	InputManager.input_mode_updated.connect(_setup)
+	Game.input_mode_updated.connect(_setup)
 
 
 # If both players are ready, start the game
@@ -21,13 +21,13 @@ func _on_player_ready_updated() -> void:
 
 # Setup the UI based on the current input mode		
 func _setup() -> void:
-	match InputManager.mode:
-		InputManager.Mode.TABLE:
+	match Game.mode:
+		Game.Mode.TABLE:
 			$TableMode.show()
 			$CouchMode.hide()
 			$ReadyP1.transform = Transform2D(PI/2, Vector2(122, 291))
 			$ReadyP2.transform = Transform2D(-PI/2, Vector2(906, 288))
-		InputManager.Mode.COUCH:
+		Game.Mode.COUCH:
 			$TableMode.hide()
 			$CouchMode.show()
 			$ReadyP1.transform = Transform2D(0, Vector2(250, 450))

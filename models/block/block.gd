@@ -30,7 +30,7 @@ func _ready() -> void:
 
 	# Start inactive
 	freeze = true
-	shapes.modulate.a = Constant.BLOCK_INACTIVE_OPACITY
+	shapes.modulate.v = Constant.BLOCK_INACTIVE_MODULATE_VALUE
 
 	# Update the heated effect visibility
 	_update_heated_effect()
@@ -51,6 +51,7 @@ func can_add_item() -> bool:
 # Adds a gem inside this block
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true
+	$LightOccluder2D.visible = false
 	item = gem_scene.instantiate()
 	item.position = Vector2(0, 0)
 	item.add_collision_exception_with(self)
@@ -63,12 +64,18 @@ func add_gem() -> void:
 # Adds a pickup inside this block -- currently only projectiles
 func add_pickup(type: Game.InventoryItemType) -> void:
 	$ParticleEmitter.emitting = true
-	item = pickup_projectile_scene.instantiate()
-	item.position = Vector2(0, 0)
-	item.add_collision_exception_with(self)
-	item.freeze = true
-	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
-	self.add_child(item)
+	$LightOccluder2D.visible = false
+	match type:
+		Game.InventoryItemType.PROJECTILE:
+			item = pickup_projectile_scene.instantiate()
+			item.position = Vector2(0, 0)
+			item.add_collision_exception_with(self)
+			item.freeze = true
+			item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
+			self.add_child(item)
+		_:
+			push_error("[Block] Unsupported pickup type: %s" % type)
+			return
 	# sound is currently the same as gem addition
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 
@@ -118,7 +125,7 @@ func _do_release_item() -> bool:
 # Activate
 func do_activate() -> void:
 	freeze = false
-	shapes.modulate.a = 1
+	shapes.modulate.v = 1
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.

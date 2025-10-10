@@ -2,6 +2,7 @@ extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
 signal gem_spawned()
+signal input_mode_updated()
 signal over(result: Result)
 signal pickup_spawned(type: InventoryItemType)
 signal player_did_collect_gem(player_num: int)
@@ -31,6 +32,13 @@ enum InventoryItemType {
 	PROJECTILE,
 	EMPTY
 }
+# Enum for input modes
+enum Mode {
+	TABLE,
+	COUCH,
+}
+# Keep track of the input mode
+@export var mode: Mode = _compute_mode()
 
 # Keeping track of the score
 @export var player_score: Dictionary = {
@@ -53,6 +61,7 @@ enum InventoryItemType {
 # Whether the input is paused
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
+@export var is_lighting_enabled: bool = true
 
 
 # Check if the player can launch a projectile
@@ -85,21 +94,29 @@ func unpause_input() -> void:
 	is_input_tools_paused = false
 
 
+# Get the command line arguments on init
+func _init() -> void:
+	for arg in OS.get_cmdline_args():
+		if arg == "--no_lighting":
+			is_lighting_enabled = false
+
+
 func _ready() -> void:
-	reset_game.connect(_do_reset_game)
-	player_did_launch_projectile.connect(_on_player_launch_projectile)
+	gem_spawned.connect(_check_for_game_over)
+	over.connect(_on_game_over)
+	pickup_spawned.connect(_check_for_game_over)
 	player_did_collect_gem.connect(_on_player_collect_gem)
-	player_did_harm.connect(_on_player_harm)
-	projectile_count_updated.connect(_on_projectile_count_updated)
-	player_ready_updated.connect(_on_player_ready_updated)
-	player_energy_updated.connect(_on_player_energy_updated)
-	player_enabled.connect(_on_player_enabled)
 	player_did_collect_item.connect(_on_player_did_collect_item)
+	player_did_harm.connect(_on_player_harm)
+	player_did_launch_projectile.connect(_on_player_launch_projectile)
+	player_enabled.connect(_on_player_enabled)
+	player_energy_updated.connect(_on_player_energy_updated)
+	player_ready_updated.connect(_on_player_ready_updated)
 	player_score_updated.connect(_check_for_game_over)
 	projectile_count_updated.connect(_check_for_game_over)
-	gem_spawned.connect(_check_for_game_over)
-	pickup_spawned.connect(_check_for_game_over)
-	over.connect(_on_game_over)
+	projectile_count_updated.connect(_on_projectile_count_updated)
+	reset_game.connect(_do_reset_game)
+	show_debug_text.connect(_on_show_debug_text)
 
 
 func _do_reset_game() -> void:
@@ -196,7 +213,7 @@ func _on_player_enabled(_player_num: int, _enabled: bool) -> void:
 	pass
 
 
-func _on_show_debug_text(text: String) -> void:
+func _on_show_debug_text(_text: String) -> void:
 	pass
 
 
@@ -216,3 +233,13 @@ func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 		else:
 			new_inventory.append(player_inventory_item)
 	player_inventory[player_num] = new_inventory
+
+
+# Table / Couch mode are two separate builds #150
+static func _compute_mode() -> Mode:
+	if OS.has_feature("couch_mode"):
+		return Mode.COUCH
+	if OS.has_feature("editor"):
+		return Mode.COUCH
+	else:
+		return Mode.TABLE

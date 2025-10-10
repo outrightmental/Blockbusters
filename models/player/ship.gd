@@ -51,8 +51,11 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
+	if Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
 	is_disabled = true
 	heatable = false
+	heat = 0.0
 	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
@@ -64,9 +67,10 @@ func do_disable(responsible_player_num: int) -> void:
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
+	if Game.is_lighting_enabled:
+		$PointLight2D.enabled = true
 	is_disabled = false
 	heatable = true
-	heat = 0.0
 	laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 	disabled_until_ticks_msec = 0.0
 	_set_colors(1.0)
@@ -111,12 +115,17 @@ func _ready() -> void:
 	InputManager.action_pressed.connect(_on_input_action_pressed)
 	InputManager.action_released.connect(_on_input_action_released)
 
+	# Disable lighting if not enabled in settings
+	if not Game.is_lighting_enabled:
+		$PointLight2D.enabled = false
+
 
 # Set the colors of the ship based on player_num
 func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 	if player_num in Constant.PLAYER_COLORS:
 		$TriangleLight.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
 		$TriangleDark.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
+		$PointLight2D.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No colors found for player_num: ", player_num)
 

@@ -11,7 +11,7 @@ var available_fill_style   = StyleBoxFlat.new()
 var unavailable_fill_style = StyleBoxFlat.new()
 var bg_style               = StyleBoxFlat.new()
 
-# Player number to identify the home
+# Player number to identify the goal
 @export var player_num: int = 0
 
 # Reference Progress Bar

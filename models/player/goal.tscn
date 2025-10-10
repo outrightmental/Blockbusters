@@ -1,11 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://cxjls2n6gleb4"]
+[gd_scene load_steps=10 format=3 uid="uid://cxjls2n6gleb4"]
 
-[ext_resource type="Script" uid="uid://c74ya11w7d28b" path="res://models/player/home.gd" id="1_3kla8"]
-[ext_resource type="Shader" uid="uid://c8045jji6nnmx" path="res://shaders/circle_outline.gdshader" id="2_77viv"]
+[ext_resource type="Script" uid="uid://c74ya11w7d28b" path="res://models/player/goal.gd" id="1_sydvp"]
+[ext_resource type="Shader" uid="uid://c8045jji6nnmx" path="res://shaders/circle_outline.gdshader" id="2_s1e4e"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sj5er"]
 resource_local_to_scene = true
-shader = ExtResource("2_77viv")
+shader = ExtResource("2_s1e4e")
 shader_parameter/color = Color(1, 1, 1, 1)
 shader_parameter/diameter = 0.943872
 shader_parameter/thickness = 0.01
@@ -55,6 +55,30 @@ tracks/2/keys = {
 "update": 0,
 "values": [0.5, 0.05, 0.5]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PointLight2D:energy")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [2.0, 5.0, 2.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PointLight2D:texture_scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.4, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [5.0, 8.0, 5.0]
+}
 
 [sub_resource type="Animation" id="Animation_geynu"]
 length = 0.001
@@ -94,6 +118,30 @@ tracks/2/keys = {
 "update": 0,
 "values": [0.5]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("PointLight2D:energy")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [3.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PointLight2D:texture_scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [5.0]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_geynu"]
 _data = {
@@ -101,8 +149,17 @@ _data = {
 &"RESET": SubResource("Animation_geynu")
 }
 
-[node name="Home" type="Node2D"]
-script = ExtResource("1_3kla8")
+[sub_resource type="Gradient" id="Gradient_b08fd"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nd5fw"]
+gradient = SubResource("Gradient_b08fd")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="Goal" type="Node2D"]
+script = ExtResource("1_sydvp")
 
 [node name="CircleLight" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_sj5er")
@@ -112,12 +169,20 @@ offset_right = 120.0
 offset_bottom = 120.0
 color = Color(1, 0, 0, 0.196078)
 
-[node name="HomeArea2D" type="Area2D" parent="."]
+[node name="GoalArea2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HomeArea2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalArea2D"]
 shape = SubResource("CircleShape2D_3kla8")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_geynu")
 }
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+z_index = 500
+z_as_relative = false
+energy = 3.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_nd5fw")
+texture_scale = 5.0

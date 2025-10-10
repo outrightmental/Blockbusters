@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmthhju2vi15y"]
+[gd_scene load_steps=4 format=3 uid="uid://cmthhju2vi15y"]
 
 [ext_resource type="Script" uid="uid://dhby7uwkntyo3" path="res://models/laser/laser_beam.gd" id="1_gg8fv"]
+
+[sub_resource type="Gradient" id="Gradient_b08fd"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_b08fd"]
+gradient = SubResource("Gradient_b08fd")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="LaserBeam" type="Node2D"]
 script = ExtResource("1_gg8fv")
@@ -33,3 +42,12 @@ initial_velocity_min = 99.8
 initial_velocity_max = 201.74
 linear_accel_min = -87.87
 linear_accel_max = -46.03
+
+[node name="PointLight2D" type="PointLight2D" parent="Sparks"]
+z_index = 500
+z_as_relative = false
+enabled = false
+energy = 3.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_b08fd")
+texture_scale = 1.5
