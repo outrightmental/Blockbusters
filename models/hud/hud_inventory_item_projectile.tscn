@@ -9,12 +9,14 @@ player_num = null
 metadata/_edit_vertical_guides_ = [10.0]
 
 [node name="TriangleLight" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(1.99997, 18)
 rotation = -1.57079
 color = Color(1, 0, 0.894118, 1)
 polygon = PackedVector2Array(12, -6, 22, -7, 29, -2, 12, -2)
 
 [node name="TriangleDark" type="Polygon2D" parent="."]
+light_mask = 2
 position = Vector2(1.99997, 18)
 rotation = -1.57079
 color = Color(0.733333, 0, 0.654902, 1)

@@ -18,6 +18,7 @@ script = ExtResource("1_65ihj")
 metadata/_edit_vertical_guides_ = [10.0]
 
 [node name="Shape" type="ColorRect" parent="."]
+light_mask = 2
 material = SubResource("ShaderMaterial_ilkru")
 offset_left = -8.5
 offset_top = -8.5

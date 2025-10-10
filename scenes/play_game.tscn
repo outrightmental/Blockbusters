@@ -66,6 +66,7 @@ position = Vector2(512, 606)
 player_num = 2
 
 [node name="HudPlayer1" type="Node2D" parent="."]
+light_mask = 2
 z_index = 1
 
 [node name="ScoreP1" parent="HudPlayer1" instance=ExtResource("3_bgg7l")]
@@ -86,6 +87,7 @@ rotation = 1.5708
 player_num = 1
 
 [node name="HudPlayer2" type="Node2D" parent="."]
+light_mask = 2
 z_index = 1
 
 [node name="ScoreP2" parent="HudPlayer2" instance=ExtResource("3_bgg7l")]

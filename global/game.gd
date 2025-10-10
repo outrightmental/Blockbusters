@@ -162,7 +162,7 @@ func _check_for_game_over() -> bool:
 	var total_gem_candidate_blocks: int = 0
 	var blocks: Array[Node]             = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
 	for block in blocks:
-		if block is Block and block.freeze:
+		if block.is_empty():
 			total_gem_candidate_blocks += 1
 	if total_gems == 0 and total_gem_candidate_blocks == 0:
 		if Game.player_score[1]  > Game.player_score[2]:
