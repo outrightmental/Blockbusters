@@ -30,7 +30,7 @@ func _ready() -> void:
 
 	# Start inactive
 	freeze = true
-	shapes.modulate.a = Constant.BLOCK_INACTIVE_OPACITY
+	shapes.modulate.v = Constant.BLOCK_INACTIVE_MODULATE_VALUE
 
 	# Update the heated effect visibility
 	_update_heated_effect()

@@ -1,7 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://bypqllqv0b2d7"]
+[gd_scene load_steps=5 format=3 uid="uid://bypqllqv0b2d7"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://dw07h3wvuqaey" path="res://models/gem/gem.tres" id="1_376g1"]
 [ext_resource type="Script" uid="uid://c4htf546sf332" path="res://models/gem/gem.gd" id="1_ud73v"]
+
+[sub_resource type="Gradient" id="Gradient_376g1"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_whalw"]
+gradient = SubResource("Gradient_376g1")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="Gem" type="RigidBody2D"]
 mass = 3.0
@@ -44,3 +53,11 @@ polygon = PackedVector2Array(12, -2, 22, -2, 12, 8)
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(10, 0, 0, 10, -10, 0, 0, -10)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+z_index = 500
+z_as_relative = false
+color = Color(1, 0.756863, 0.470588, 1)
+energy = 5.0
+texture = SubResource("GradientTexture2D_whalw")
+texture_scale = 5.0
