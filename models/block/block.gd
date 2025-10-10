@@ -63,12 +63,17 @@ func add_gem() -> void:
 # Adds a pickup inside this block -- currently only projectiles
 func add_pickup(type: Game.InventoryItemType) -> void:
 	$ParticleEmitter.emitting = true
-	item = pickup_projectile_scene.instantiate()
-	item.position = Vector2(0, 0)
-	item.add_collision_exception_with(self)
-	item.freeze = true
-	item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
-	self.add_child(item)
+	match type:
+		Game.InventoryItemType.PROJECTILE:
+			item = pickup_projectile_scene.instantiate()
+			item.position = Vector2(0, 0)
+			item.add_collision_exception_with(self)
+			item.freeze = true
+			item.modulate.a = Constant.BLOCK_INNER_ITEM_ALPHA
+			self.add_child(item)
+		_:
+			push_error("[Block] Unsupported pickup type: %s" % type)
+			return
 	# sound is currently the same as gem addition
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.GAME_START)
 

@@ -23,10 +23,12 @@ func _ready() -> void:
 	# Set the explosion color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
 		$ParticleEmitter.color = Constant.PLAYER_COLORS[player_num][0]
+		$PointLight2D.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], 1.0, 2.0)
 	else:
 		push_error("No color found for player ", player_num)
 	$ParticleEmitter.emitting = true
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
+	$AnimationPlayer.play("explode")
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.

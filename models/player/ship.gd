@@ -48,7 +48,6 @@ var forcefield_targets: Dictionary[int, Node2D] = {}
 # in order to "hold" objects while the forcefield is turning
 var forcefield_position_previous: Vector2 = Vector2.ZERO
 
-
 # Called when the ship is disabled
 func do_disable(responsible_player_num: int) -> void:
 	is_disabled = true
@@ -117,6 +116,7 @@ func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 	if player_num in Constant.PLAYER_COLORS:
 		$TriangleLight.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][0], s_ratio, v_ratio)
 		$TriangleDark.color = Util.color_at_sv_ratio(Constant.PLAYER_COLORS[player_num][1], s_ratio, v_ratio)
+		$PointLight2D.color = Constant.PLAYER_COLORS[player_num][0]
 	else:
 		push_error("No colors found for player_num: ", player_num)
 

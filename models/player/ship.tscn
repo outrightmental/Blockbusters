@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bg7dqpj5bjc6x"]
+[gd_scene load_steps=7 format=3 uid="uid://bg7dqpj5bjc6x"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://fdnyxkdqbh7y" path="res://models/player/ship.tres" id="1_3lbs4"]
 [ext_resource type="Script" uid="uid://cfnro34pgi2as" path="res://models/player/ship.gd" id="1_yja86"]
@@ -9,6 +9,15 @@ radius = 21.3776
 [sub_resource type="Curve" id="Curve_3lbs4"]
 _data = [Vector2(0.0170455, 0), 0.0, 0.0, 0, 0, Vector2(0.539773, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_376g1"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_3lbs4"]
+gradient = SubResource("Gradient_376g1")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="Ship" type="RigidBody2D"]
 collision_priority = 2.0
@@ -68,3 +77,10 @@ damping_min = 25.0
 damping_max = 50.0
 scale_amount_max = 5.0
 scale_amount_curve = SubResource("Curve_3lbs4")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+z_index = 500
+z_as_relative = false
+rotation = 3.14159
+texture = SubResource("GradientTexture2D_3lbs4")
+texture_scale = 3.0
