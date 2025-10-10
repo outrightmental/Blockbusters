@@ -7,6 +7,7 @@
 script = ExtResource("1_bousv")
 
 [node name="Text" type="RichTextLabel" parent="."]
+light_mask = 2
 offset_left = -42.0
 offset_top = -27.0
 offset_right = 42.0
@@ -19,6 +20,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Underline" type="ColorRect" parent="."]
+light_mask = 2
 offset_left = -12.0
 offset_top = 18.0
 offset_right = 12.0

@@ -69,16 +69,19 @@ player_num = 2
 z_index = 1
 
 [node name="ScoreP1" parent="HudPlayer1" instance=ExtResource("3_bgg7l")]
+light_mask = 2
 position = Vector2(31, 288)
 rotation = 1.5708
 player_num = 1
 
 [node name="EnergyP1" parent="HudPlayer1" instance=ExtResource("4_sbpvv")]
+light_mask = 2
 position = Vector2(31, 388)
 rotation = 1.5708
 player_num = 1
 
 [node name="InventoryP1" parent="HudPlayer1" instance=ExtResource("6_xugar")]
+light_mask = 2
 position = Vector2(31, 88)
 rotation = 1.5708
 player_num = 1
@@ -87,55 +90,65 @@ player_num = 1
 z_index = 1
 
 [node name="ScoreP2" parent="HudPlayer2" instance=ExtResource("3_bgg7l")]
+light_mask = 2
 position = Vector2(993, 288)
 rotation = -1.5708
 player_num = 2
 
 [node name="EnergyP2" parent="HudPlayer2" instance=ExtResource("4_sbpvv")]
+light_mask = 2
 position = Vector2(993, 188)
 rotation = -1.5708
 player_num = 2
 
 [node name="InventoryP2" parent="HudPlayer2" instance=ExtResource("6_xugar")]
+light_mask = 2
 position = Vector2(993, 488)
 rotation = -1.5708
 player_num = 2
 
 [node name="ShowBoardEdges" type="Node2D" parent="."]
+light_mask = 2
 
 [node name="RoundTopLeft" type="Polygon2D" parent="ShowBoardEdges"]
+light_mask = 2
 position = Vector2(64, 0)
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="RoundTopRight" type="Polygon2D" parent="ShowBoardEdges"]
+light_mask = 2
 position = Vector2(959.9, -1.0999)
 rotation = 1.57079
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="RoundBottomRight" type="Polygon2D" parent="ShowBoardEdges"]
+light_mask = 2
 position = Vector2(959.9, 574.9)
 rotation = -3.14159
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="RoundBottomLeft" type="Polygon2D" parent="ShowBoardEdges"]
+light_mask = 2
 position = Vector2(64, 576)
 rotation = -1.57079
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
 [node name="Left" type="ColorRect" parent="ShowBoardEdges"]
+light_mask = 2
 offset_right = 64.0
 offset_bottom = 576.0
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 
 [node name="Right" type="ColorRect" parent="ShowBoardEdges"]
+light_mask = 2
 offset_left = 960.0
 offset_right = 1024.0
 offset_bottom = 576.0
-color = Color(0.1, 0.1, 0.1, 1)
+color = Color(0.2, 0.2, 0.2, 1)
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -100
@@ -144,10 +157,11 @@ offset_bottom = 576.0
 color = Color(0.05, 0.05, 0.05, 1)
 
 [node name="DebugText" type="RichTextLabel" parent="."]
+visible = false
 z_index = 1000
 offset_right = 1025.0
 offset_bottom = 65.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("6_8rcy1")
 theme_override_font_sizes/normal_font_size = 15
-text = "DEBUG TEST TEXT"
+text = "DEBUG TEXT"
