@@ -117,8 +117,9 @@ func _ready() -> void:
 	player_energy_updated.connect(_on_player_energy_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_score_updated.connect(_check_for_game_over)
-	start_new_game.connect(_do_start_new_game)
+	show_banner.connect(_on_show_banner)
 	show_debug_text.connect(_on_show_debug_text)
+	start_new_game.connect(_do_start_new_game)
 
 
 func _do_start_new_game() -> void:
@@ -136,12 +137,12 @@ func _do_start_new_game() -> void:
 	player_score_updated.emit()
 	player_inventory_updated.emit()
 	_started_at_ticks_msec = Time.get_ticks_msec()
-	_spawn_next_gem_at_msec = _started_at_ticks_msec + int(Constant.SHOW_MODAL_SEC * 1000)
-	_spawn_next_pickup_at_msec = _spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
+	_spawn_next_gem_at_msec = _started_at_ticks_msec + int(Constant.BANNER_SHOW_SEC * 1000 * Constant.BANNER_SHOW_TIME_SCALE)
+	_spawn_next_pickup_at_msec = _spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000 * Constant.BANNER_SHOW_TIME_SCALE)
 	# Countdown and then start the game
 	Game.pause_input()
 	show_banner.emit(0, Constant.BANNER_TEXT_READY, Constant.BANNER_TEXT_SET)
-	await Util.delay(Constant.SHOW_MODAL_SEC)
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.BANNER_SHOW_TIME_SCALE)
 	Game.unpause_input()
 
 
@@ -205,13 +206,13 @@ func _do_game_over(result: Result) -> void:
 	pause_input()
 	is_over = true
 	match result:
-		Game.Result.PLAYER_1_WINS:
+		Result.PLAYER_1_WINS:
 			show_banner.emit(1, Constant.BANNER_TEXT_VICTORY, "")
-		Game.Result.PLAYER_2_WINS:
+		Result.PLAYER_2_WINS:
 			show_banner.emit(2, Constant.BANNER_TEXT_VICTORY, "")
-		Game.Result.DRAW:
+		Result.DRAW:
 			show_banner.emit(0, Constant.BANNER_TEXT_DRAW, "")
-	await Util.delay(Constant.SHOW_MODAL_SEC)
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.BANNER_SHOW_TIME_SCALE)
 	finished.emit()
 
 
@@ -236,6 +237,14 @@ func _on_show_debug_text(_text: String) -> void:
 	pass
 
 
+func _on_show_banner(_p: int, _m1: String, _m2: String) -> void:
+	Game.pause_input_tools()
+	Engine.time_scale = Constant.BANNER_SHOW_TIME_SCALE
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.BANNER_SHOW_TIME_SCALE)
+	Game.unpause_input()
+	Engine.time_scale = 1.0
+
+	
 func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> void:
 	print("[GAME] Player %d collected pickup: %s" % [player_num, type])
 	player_inventory[player_num].append(type)
@@ -244,7 +253,7 @@ func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> vo
 
 
 func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
-	var new_inventory = [];
+	var new_inventory: Array[Variant] = [];
 	var removed: bool = false;
 	for player_inventory_item in player_inventory[player_num]:
 		if player_inventory_item == item and not removed:

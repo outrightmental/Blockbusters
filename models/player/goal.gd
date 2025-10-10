@@ -12,6 +12,9 @@ func _ready() -> void:
 	$GoalArea2D.body_entered.connect(_on_body_entered)
 	_set_colors()
 
+	# Compensate for banner time scale in animation player
+	$AnimationPlayer.speed_scale = 1.0 / Constant.BANNER_SHOW_TIME_SCALE
+	
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
