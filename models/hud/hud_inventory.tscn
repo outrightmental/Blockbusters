@@ -3,4 +3,5 @@
 [ext_resource type="Script" uid="uid://jm0hdlhd6xl5" path="res://models/hud/hud_inventory.gd" id="1_1ario"]
 
 [node name="HudInventory" type="Node2D"]
+light_mask = 2
 script = ExtResource("1_1ario")
