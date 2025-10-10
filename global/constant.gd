@@ -109,3 +109,5 @@ const BOARD_SEED_F6: int                    = 798_647_400
 const BANNER_TEXT_GOAL    := "GOOOAAAAL!"
 const BANNER_TEXT_VICTORY := "VICTORY!"
 const BANNER_TEXT_DRAW    := "DRAW"
+const BANNER_TEXT_READY   := "READY..."
+const BANNER_TEXT_SET     := "SET..."

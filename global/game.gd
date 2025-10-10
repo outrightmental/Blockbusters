@@ -140,7 +140,7 @@ func _do_start_new_game() -> void:
 	_spawn_next_pickup_at_msec = _spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
 	# Countdown and then start the game
 	Game.pause_input()
-	show_banner.emit(0, "READY...", "SET...")
+	show_banner.emit(0, Constant.BANNER_TEXT_READY, Constant.BANNER_TEXT_SET)
 	await Util.delay(Constant.SHOW_MODAL_SEC)
 	Game.unpause_input()
 
