@@ -45,7 +45,6 @@ func _ready() -> void:
 	# Show debug text
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
-		debug_text.show()
 	else:
 		debug_text.hide()
 	pass
@@ -261,6 +260,7 @@ func _goto_scene(path: String) -> void:
 # Show debug text
 func _on_show_debug_text(text: String) -> void:
 	debug_text.text = text
+	debug_text.show()
 
 
 # ------------------------------------------------------------------ #
