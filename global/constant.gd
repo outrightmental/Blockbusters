@@ -105,5 +105,7 @@ const BOARD_SEED_F4: int                    = 167_653_873
 const BOARD_SEED_F5: int                    = 423_587_300
 const BOARD_SEED_F6: int                    = 798_647_400
 #
-# Trigonometry
-const HALF_PI: float = PI / 2
+# Banners
+const BANNER_TEXT_GOAL    := "GOOOAAAAL!"
+const BANNER_TEXT_VICTORY := "VICTORY!"
+const BANNER_TEXT_DRAW    := "DRAW"

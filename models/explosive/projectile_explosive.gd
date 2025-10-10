@@ -20,20 +20,9 @@ func _ready() -> void:
 	# Connect the Collision to the on-collision function
 	connect("body_entered", _on_body_entered)
 
-	# Count this projectile
-	Game.projectiles_in_play += 1
-	Game.projectile_count_updated.emit()
-
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
-
-
-# Called when the projectile is removed from the stage
-func _exit_tree() -> void:
-	Game.projectiles_in_play -= 1
-	Game.projectile_count_updated.emit()
-	pass
 
 
 # Called when another body enters the collission area
