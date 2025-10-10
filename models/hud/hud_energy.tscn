@@ -6,6 +6,7 @@
 script = ExtResource("1_iqkjo")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+light_mask = 2
 offset_top = -7.0
 offset_right = 122.0
 offset_bottom = 8.0
