@@ -60,4 +60,4 @@ z_as_relative = false
 color = Color(1, 0.756863, 0.470588, 1)
 energy = 5.0
 texture = SubResource("GradientTexture2D_whalw")
-texture_scale = 5.0
+texture_scale = 3.0

@@ -118,7 +118,7 @@ func _do_release_item() -> bool:
 # Activate
 func do_activate() -> void:
 	freeze = false
-	shapes.modulate.a = 1
+	shapes.modulate.v = 1
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.

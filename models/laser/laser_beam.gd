@@ -6,6 +6,7 @@ extends Node2D
 @onready var raycastTwo: RayCast2D = $RaycastTwo
 @onready var lineTwo: Line2D = $LineTwo
 @onready var sparks: CPUParticles2D = $Sparks
+@onready var sparksLight: PointLight2D = $Sparks/PointLight2D
 
 # variable for flickering effect
 var alpha: float = 0.0
@@ -20,6 +21,8 @@ func setup(player_num: int, source_ship: Ship = null) -> void:
 		lineOne.default_color = Constant.PLAYER_COLORS[player_num][0]
 		lineTwo.default_color = Constant.PLAYER_COLORS[player_num][0]
 		sparks.color = Constant.PLAYER_COLORS[player_num][0]
+		sparksLight.color = Constant.PLAYER_COLORS[player_num][0]
+		
 	else:
 		push_error("No color found for player ", player_num)
 
@@ -109,9 +112,11 @@ func _do_hit(body: Node2D, target_point: Vector2, delta: float) -> void:
 	if body is Heatable:
 		body.apply_heat(delta)
 		sparks.set_emitting(true)
+		sparksLight.set_enabled(true)
 		sparks.position =  target_point
 	else:
 		sparks.set_emitting(false)
+		sparksLight.set_enabled(false)
 
 
 # Hide the second ray and its line
