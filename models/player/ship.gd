@@ -114,6 +114,9 @@ func _ready() -> void:
 	InputManager.action_pressed.connect(_on_input_action_pressed)
 	InputManager.action_released.connect(_on_input_action_released)
 
+	# Laser should stop if in use when banner is shown #198
+	Game.show_banner.connect(func(_p: int, _m1: String, _m2: String): _do_deactivate_laser())
+
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
