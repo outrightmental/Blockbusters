@@ -22,9 +22,7 @@ func _ready() -> void:
 	_setup()
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
-	# Reset the game
-	Game.start_new_game.emit()
-	# Connect the game over signals after resetting the game
+	# Connect the game signals
 	Game.player_enabled.connect(_on_player_enabled)
 	Game.finished.connect(_on_finished)
 	Game.spawn_gem.connect(_on_spawn_gem)
@@ -36,6 +34,8 @@ func _ready() -> void:
 	else:
 		debug_text.hide()
 	pass
+	# Start a new game
+	Game.start_new_game.emit()
 
 
 # Setup the UI based on the current input mode		
