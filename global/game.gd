@@ -1,10 +1,7 @@
 extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
-signal gem_spawned()
-signal over(result: Result)
-signal goal(player_num: int)
-signal pickup_spawned(type: InventoryItemType)
+signal finished()
 signal player_did_collect_item(player_num: int, type: InventoryItemType)
 signal player_did_launch_projectile(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
@@ -12,9 +9,11 @@ signal player_energy_updated(player_num: int, charge_ratio: float, is_available:
 signal player_inventory_updated()
 signal player_ready_updated
 signal player_score_updated()
-signal projectile_count_updated
-signal reset_game()
+signal show_banner(player_num: int, message: String, message_2: String)
 signal show_debug_text(text: String)
+signal spawn_gem()
+signal spawn_pickup(type: Game.InventoryItemType)
+signal start_new_game()
 # Group names
 const BLOCK_GROUP: StringName  = "BlockGroup"
 const GEM_GROUP: StringName    = "GemGroup"
@@ -50,14 +49,18 @@ enum Mode {
 											   2: [],
 										   }
 
-# Keeping track of the projectile count
-@export var projectiles_in_play: int = 0
 # Keep track of whether the game is over
 @export var is_over: bool = false
 # Whether the input is paused
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
 @export var is_lighting_enabled: bool = true
+
+# Internal variables
+var _started_at_ticks_msec: int           = 0
+var _spawn_next_gem_at_msec: int          = 0
+var _spawn_next_pickup_at_msec: int       = 0
+var _gem_dont_spawn_until_ticks_msec: int = 0
 
 
 # Check if the player can launch a projectile
@@ -78,8 +81,9 @@ func do_player_goal(player_num: int) -> void:
 	player_score[player_num] = clamp(player_score[player_num] + Constant.PLAYER_SCORE_GOAL_VALUE, 0, Constant.PLAYER_SCORE_VICTORY)
 	print("[GAME] Player %d scored a goal, new score: %d" % [player_num, player_score[player_num]])
 	player_score_updated.emit()
+	_gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
 	if not _check_for_game_over():
-		goal.emit(player_num)
+		show_banner.emit(player_num, Constant.BANNER_TEXT_GOAL, "")
 
 
 # Pause the player input
@@ -107,21 +111,17 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	gem_spawned.connect(_check_for_game_over)
-	pickup_spawned.connect(_check_for_game_over)
 	player_did_collect_item.connect(_on_player_did_collect_item)
 	player_did_launch_projectile.connect(_on_player_launch_projectile)
 	player_enabled.connect(_on_player_enabled)
 	player_energy_updated.connect(_on_player_energy_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_score_updated.connect(_check_for_game_over)
-	projectile_count_updated.connect(_check_for_game_over)
-	projectile_count_updated.connect(_on_projectile_count_updated)
-	reset_game.connect(_do_reset_game)
+	start_new_game.connect(_do_start_new_game)
 	show_debug_text.connect(_on_show_debug_text)
 
 
-func _do_reset_game() -> void:
+func _do_start_new_game() -> void:
 	unpause_input()
 	is_over = false
 	player_score[1] = Constant.PLAYER_SCORE_INITIAL
@@ -135,6 +135,27 @@ func _do_reset_game() -> void:
 	print("[GAME] Resetting player inventory to: ", player_inventory)
 	player_score_updated.emit()
 	player_inventory_updated.emit()
+	_started_at_ticks_msec = Time.get_ticks_msec()
+	_spawn_next_gem_at_msec = _started_at_ticks_msec + int(Constant.SHOW_MODAL_SEC * 1000)
+	_spawn_next_pickup_at_msec = _spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
+	# Countdown and then start the game
+	Game.pause_input()
+	show_banner.emit(0, Constant.BANNER_TEXT_READY, Constant.BANNER_TEXT_SET)
+	await Util.delay(Constant.SHOW_MODAL_SEC)
+	Game.unpause_input()
+
+
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
+func _physics_process(_delta: float) -> void:
+	# Check if it's time to spawn a gem
+	if not is_over and Time.get_ticks_msec() >= _spawn_next_gem_at_msec:
+		_spawn_next_gem_at_msec = Time.get_ticks_msec() + int(Constant.GEM_SPAWN_EVERY_SEC * 1000)
+		spawn_gem.emit()
+	# Check if it's time to spawn a pickup
+	if not is_over and Time.get_ticks_msec() >= _spawn_next_pickup_at_msec:
+		_spawn_next_pickup_at_msec = Time.get_ticks_msec() + int(Constant.PICKUP_SPAWN_EVERY_SEC * 1000)
+		spawn_pickup.emit(Game.InventoryItemType.PROJECTILE) # FUTURE: other types of pickups
+	pass
 
 
 # Check for game over, e.g. when score or gem count is updated
@@ -181,18 +202,22 @@ func _check_for_game_over() -> bool:
 func _do_game_over(result: Result) -> void:
 	if is_over:
 		return
-	pause_input()	
+	pause_input()
 	is_over = true
-	over.emit(result)
+	match result:
+		Game.Result.PLAYER_1_WINS:
+			show_banner.emit(1, Constant.BANNER_TEXT_VICTORY, "")
+		Game.Result.PLAYER_2_WINS:
+			show_banner.emit(2, Constant.BANNER_TEXT_VICTORY, "")
+		Game.Result.DRAW:
+			show_banner.emit(0, Constant.BANNER_TEXT_DRAW, "")
+	await Util.delay(Constant.SHOW_MODAL_SEC)
+	finished.emit()
 
 
 func _on_player_launch_projectile(player_num: int) -> void:
 	_player_inventory_remove(player_num, InventoryItemType.PROJECTILE)
 	player_inventory_updated.emit()
-
-
-func _on_projectile_count_updated() -> void:
-	print ("[PROJECTILES] in play: ", projectiles_in_play)
 
 
 func _on_player_ready_updated() -> void:

@@ -1,9 +1,9 @@
 extends Node2D
 
 # Preloaded Scenes
-const ship_scene: PackedScene  = preload('res://models/player/ship.tscn')
-const goal_scene: PackedScene  = preload('res://models/player/goal.tscn')
-const score_scene: PackedScene = preload('res://models/hud/hud_score.tscn')
+const ship_scene: PackedScene   = preload('res://models/player/ship.tscn')
+const goal_scene: PackedScene   = preload('res://models/player/goal.tscn')
+const score_scene: PackedScene  = preload('res://models/hud/hud_score.tscn')
 const block_scene: PackedScene  = preload('res://models/block/block.tscn')
 const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player goals
@@ -12,36 +12,25 @@ const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 @onready var debug_text = $DebugText
 
 # Variables
-var grid: Dictionary                     = {}
-var mesh: Dictionary                     = {}
-var block_count: int                     = 0
-var started_at_ticks_msec: int           = 0
-var spawn_next_gem_at_msec: int          = 0
-var spawn_next_pickup_at_msec: int       = 0
-var gem_dont_spawn_until_ticks_msec: int = 0
+var grid: Dictionary = {}
+var mesh: Dictionary = {}
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	started_at_ticks_msec = Time.get_ticks_msec()
-	spawn_next_gem_at_msec = started_at_ticks_msec + int(Constant.SHOW_MODAL_SEC * 1000)
-	spawn_next_pickup_at_msec = spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
 	# Setup the board based on the current input mode
 	_setup()
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
-	Game.reset_game.emit()
+	Game.start_new_game.emit()
 	# Connect the game over signals after resetting the game
-	Game.goal.connect(_on_player_goal)
 	Game.player_enabled.connect(_on_player_enabled)
-	Game.over.connect(_on_game_over)
-	# Countdown and then start the game
-	Game.pause_input()
-	_show_banner(0, "READY...", "SET...")
-	await Util.delay(Constant.SHOW_MODAL_SEC)
-	Game.unpause_input()
-	# Show debug text
+	Game.finished.connect(_on_finished)
+	Game.spawn_gem.connect(_on_spawn_gem)
+	Game.spawn_pickup.connect(_on_spawn_pickup)
+	Game.show_banner.connect(_on_show_banner)
+	# Show debug text in editor only
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
 	else:
@@ -68,36 +57,14 @@ func _setup() -> void:
 			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
 
 
-# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
-	# Check if it's time to spawn a gem
-	if Time.get_ticks_msec() >= spawn_next_gem_at_msec:
-		spawn_next_gem_at_msec = Time.get_ticks_msec() + int(Constant.GEM_SPAWN_EVERY_SEC * 1000)
-		_spawn_gem()
-	# Check if it's time to spawn a pickup
-	if Time.get_ticks_msec() >= spawn_next_pickup_at_msec:
-		spawn_next_pickup_at_msec = Time.get_ticks_msec() + int(Constant.PICKUP_SPAWN_EVERY_SEC * 1000)
-		_spawn_pickup(Game.InventoryItemType.PROJECTILE) # FUTURE: other types of pickups
-	pass
-
-
 # Show the game over modal for some time, then go back to main screen
-func _on_game_over(result: Game.Result) -> void:
-	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999
-	match result:
-		Game.Result.PLAYER_1_WINS:
-			_show_banner(1, "VICTORY!")
-		Game.Result.PLAYER_2_WINS:
-			_show_banner(2, "VICTORY!")
-		Game.Result.DRAW:
-			_show_banner(0, "DRAW")
-	await Util.delay(Constant.SHOW_MODAL_SEC)
+func _on_finished() -> void:
 	_goto_scene('res://scenes/main.tscn')
 	pass
 
 
 # Spawn a banner at the given position
-func _show_banner(player_num: int, message: String, message_2: String = "") -> void:
+func _on_show_banner(player_num: int, message: String, message_2) -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	match Game.mode:
 		Game.Mode.COUCH:
@@ -109,8 +76,9 @@ func _show_banner(player_num: int, message: String, message_2: String = "") -> v
 	await Util.delay(Constant.SHOW_MODAL_SEC)
 	Game.unpause_input()
 
+
 # Spawn a banner at the given position
-func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String = "") -> void:
+func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
 	var banner: Node = banner_scene.instantiate()
 	banner.scale = Vector2(_scale, _scale)
 	banner.position = Vector2(x, y)
@@ -120,12 +88,6 @@ func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float
 	banner.message_2 = message_2
 	banner.z_index = 1000
 	self.add_child(banner)
-
-
-# Called when a player scores a goal
-func _on_player_goal(player_num: int) -> void:
-	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
-	_show_banner(player_num, "GOOOAAAAL!")
 
 
 # When ship is disabled, player HUD also appears disabled #155
@@ -147,6 +109,7 @@ func _on_player_enabled(player_num: int, enabled: bool) -> void:
 # A block will only be placed if that block is above GRID_MESH_THRESHOLD in the gradient mesh
 #
 func _create_board() -> void:
+	var block_count: int         = 0
 	var block_attempt_count: int = 0
 	_generate_mesh(floor(randf() * Constant.BOARD_SEED_MAX))
 	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
@@ -211,7 +174,7 @@ func _spawn_block(start_position: Vector2) -> Node:
 	return block
 
 
-func _spawn_gem() -> void:
+func _on_spawn_gem() -> void:
 	if Game.is_over:
 		return
 	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
@@ -219,11 +182,9 @@ func _spawn_gem() -> void:
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
 		block.add_gem()
-	else:
-		Game.gem_spawned.emit()
 
 
-func _spawn_pickup(type: Game.InventoryItemType) -> void:
+func _on_spawn_pickup(type: Game.InventoryItemType) -> void:
 	if Game.is_over:
 		return
 	if get_tree().get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
@@ -231,8 +192,6 @@ func _spawn_pickup(type: Game.InventoryItemType) -> void:
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
 		block.add_pickup(type)
-	else:
-		Game.pickup_spawned.emit(type)
 
 
 # Get a random block that may have something added to it
@@ -251,8 +210,8 @@ func _get_block_spawn_candidate() -> Block:
 func _goto_scene(path: String) -> void:
 	if get_tree():
 		get_tree().change_scene_to_file(path)
-		
-		
+
+
 # Show debug text
 func _on_show_debug_text(text: String) -> void:
 	debug_text.text = text
