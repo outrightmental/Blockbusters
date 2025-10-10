@@ -144,10 +144,11 @@ offset_bottom = 576.0
 color = Color(0.05, 0.05, 0.05, 1)
 
 [node name="DebugText" type="RichTextLabel" parent="."]
+visible = false
 z_index = 1000
 offset_right = 1025.0
 offset_bottom = 65.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("6_8rcy1")
 theme_override_font_sizes/normal_font_size = 15
-text = "DEBUG TEST TEXT"
+text = "DEBUG TEXT"
