@@ -81,7 +81,6 @@ rotation = 1.5708
 player_num = 1
 
 [node name="InventoryP1" parent="HudPlayer1" instance=ExtResource("6_xugar")]
-light_mask = 2
 position = Vector2(31, 88)
 rotation = 1.5708
 player_num = 1
@@ -102,7 +101,6 @@ rotation = -1.5708
 player_num = 2
 
 [node name="InventoryP2" parent="HudPlayer2" instance=ExtResource("6_xugar")]
-light_mask = 2
 position = Vector2(993, 488)
 rotation = -1.5708
 player_num = 2

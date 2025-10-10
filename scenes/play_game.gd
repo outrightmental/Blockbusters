@@ -28,13 +28,12 @@ func _ready() -> void:
 	spawn_next_pickup_at_msec = spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
 	# Setup the board based on the current input mode
 	_setup()
-	Game.input_mode_updated.connect(_setup)
 	# Create the board before resetting the game (so that scores update on the board)
 	_create_board()
 	# Reset the game
 	Game.reset_game.emit()
 	# Connect the game over signals after resetting the game
-	Game.player_did_collect_gem.connect(_on_player_collect_gem)
+	Game.goal.connect(_on_player_goal)
 	Game.player_enabled.connect(_on_player_enabled)
 	Game.over.connect(_on_game_over)
 	# Countdown and then start the game
@@ -84,6 +83,7 @@ func _physics_process(_delta: float) -> void:
 
 # Show the game over modal for some time, then go back to main screen
 func _on_game_over(result: Game.Result) -> void:
+	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999
 	match result:
 		Game.Result.PLAYER_1_WINS:
 			_show_banner(1, "VICTORY!")
@@ -122,14 +122,10 @@ func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float
 	self.add_child(banner)
 
 
-# Called when a player collects a gem
-func _on_player_collect_gem(player_num: int) -> void:
-	if Game.player_score[player_num] < Constant.PLAYER_SCORE_VICTORY:
-		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
-		_show_banner(player_num, "GOOOAAAAL!")
-	else:
-		gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + 999999
-	print ("[GAME] Player collected a gem")
+# Called when a player scores a goal
+func _on_player_goal(player_num: int) -> void:
+	gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
+	_show_banner(player_num, "GOOOAAAAL!")
 
 
 # When ship is disabled, player HUD also appears disabled #155
