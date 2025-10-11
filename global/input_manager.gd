@@ -40,7 +40,12 @@ var p2_device_id: int = -1
 							2: Vector2.ZERO
 						}
 
+# Process input before anything else
+func _init() -> void:
+	process_priority = -10
 
+
+# Called on app start
 func _ready() -> void:
 	# hot-plug support
 	Input.joy_connection_changed.connect(func(_device: int, _connected: bool): _detect_joypads())
