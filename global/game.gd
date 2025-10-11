@@ -2,10 +2,12 @@ extends Node
 
 # All available signals -- use these constants to reference them to avoid typos
 signal finished()
+signal outcome(result: Result)
 signal player_did_collect_item(player_num: int, type: InventoryItemType)
 signal player_did_launch_projectile(player_num: int)
 signal player_enabled(player_num: int, enabled: bool)
 signal player_energy_updated(player_num: int, charge_ratio: float, is_available: bool)
+signal player_goal(player_num: int)
 signal player_inventory_updated()
 signal player_ready_updated
 signal player_score_updated()
@@ -81,6 +83,7 @@ func do_player_goal(player_num: int) -> void:
 	player_score_updated.emit()
 	_seconds_until_next_pickup = Constant.PICKUP_SPAWN_EVERY_SEC
 	if not _check_for_game_over():
+		player_goal.emit(player_num)
 		show_banner.emit(player_num, Constant.BANNER_TEXT_GOAL, "")
 
 
@@ -186,13 +189,13 @@ func _check_for_game_over() -> bool:
 	if is_over:
 		return true
 	if Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY:
-		_do_game_over(Game.Result.PLAYER_1_WINS)
+		_do_outcome(Game.Result.PLAYER_1_WINS)
 		return true
 	elif Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
-		_do_game_over(Game.Result.PLAYER_2_WINS)
+		_do_outcome(Game.Result.PLAYER_2_WINS)
 		return true
 	elif Game.player_score[1] == Constant.PLAYER_SCORE_VICTORY and Game.player_score[2] == Constant.PLAYER_SCORE_VICTORY:
-		_do_game_over(Game.Result.DRAW)
+		_do_outcome(Game.Result.DRAW)
 		return true
 
 	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
@@ -203,21 +206,22 @@ func _check_for_game_over() -> bool:
 			total_gem_candidate_blocks += 1
 	if total_gems == 0 and total_gem_candidate_blocks == 0:
 		if Game.player_score[1]  > Game.player_score[2]:
-			_do_game_over(Game.Result.PLAYER_1_WINS)
+			_do_outcome(Game.Result.PLAYER_1_WINS)
 			return true
 		elif Game.player_score[2] > Game.player_score[1]:
-			_do_game_over(Game.Result.PLAYER_2_WINS)
+			_do_outcome(Game.Result.PLAYER_2_WINS)
 			return true
 		else:
-			_do_game_over(Game.Result.DRAW)
+			_do_outcome(Game.Result.DRAW)
 			return true
 
 	return false
 
 
-func _do_game_over(result: Result) -> void:
+func _do_outcome(result: Result) -> void:
 	if is_over:
 		return
+	outcome.emit(result)
 	pause_input()
 	is_over = true
 	match result:
@@ -227,7 +231,7 @@ func _do_game_over(result: Result) -> void:
 			show_banner.emit(2, Constant.BANNER_TEXT_VICTORY, "")
 		Result.DRAW:
 			show_banner.emit(0, Constant.BANNER_TEXT_DRAW, "")
-	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.TIME_SLOW_SCALE)
+	await Util.delay(Constant.BANNER_SHOW_FINAL_SEC * Constant.TIME_SLOW_SCALE)
 	finished.emit()
 
 
