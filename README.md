@@ -7,7 +7,7 @@
 Fast-paced unfair arena sport where contestants sabotage each other to mine & capture gems.
 Built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
 
-Original design by [outrightmental](https://discord.com/users/outrightmental)
+by [outrightmental](https://discord.com/users/outrightmental)
 
 | [![Blockbusters Screenshot #1](design/screenshots/blockbusters-screenshot-1.jpg)](design/screenshots/blockbusters-screenshot-1.jpg) | [![Blockbusters Screenshot #2](design/screenshots/blockbusters-screenshot-2.jpg)](design/screenshots/blockbusters-screenshot-2.jpg) | [![Blockbusters Screenshot #3](design/screenshots/blockbusters-screenshot-3.jpg)](design/screenshots/blockbusters-screenshot-3.jpg) |
 |-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
