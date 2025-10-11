@@ -101,9 +101,13 @@ const BOARD_SEED_F4: int               = 167_653_873
 const BOARD_SEED_F5: int               = 423_587_300
 const BOARD_SEED_F6: int               = 798_647_400
 #
+# Slow motion when banner is shown #207
+const TIME_SLOW_SCALE: float =  0.25
+const TIME_TWEEN_SLOW_DURATION: float =  0.1
+const TIME_TWEEN_NORM_DURATION: float =  0.4
+#
 # Banners
-const BANNER_SHOW_SEC: float        =  4.0
-const BANNER_SHOW_TIME_SCALE: float =  0.25
+const BANNER_SHOW_SEC: float        =  3.0
 const BANNER_TEXT_GOAL              := "GOOOAAAAL!"
 const BANNER_TEXT_VICTORY           := "VICTORY!"
 const BANNER_TEXT_DRAW              := "DRAW"

@@ -13,7 +13,7 @@ func _ready() -> void:
 	_set_colors()
 
 	# Compensate for banner time scale in animation player
-	$AnimationPlayer.speed_scale = 1.0 / Constant.BANNER_SHOW_TIME_SCALE
+	$AnimationPlayer.speed_scale = 1.0 / Constant.TIME_SLOW_SCALE
 	
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_enabled:

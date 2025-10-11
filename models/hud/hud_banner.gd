@@ -18,7 +18,7 @@ func _ready() -> void:
 			push_error("No color found for player ", player_num)
 	$Text.set_text(message)
 	$AnimationPlayer.animation_finished.connect(_on_animation_finished)
-	$AnimationPlayer.speed_scale = 1.0 / Constant.BANNER_SHOW_TIME_SCALE
+	$AnimationPlayer.speed_scale = 1.0 / Constant.TIME_SLOW_SCALE
 	$AnimationPlayer.play("fly")
 	if message_2.length() > 0:
 		await Util.delay(2)
