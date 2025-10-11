@@ -40,6 +40,7 @@ var p2_device_id: int = -1
 							2: Vector2.ZERO
 						}
 
+
 # Process input before anything else
 func _init() -> void:
 	process_priority = -10
@@ -57,7 +58,7 @@ func _ready() -> void:
 			print("[INPUT] Couch Mode")
 
 
-# Detect the input Game.mode based on the current input devices, see #126
+# Detect the input gamepads
 func _detect_joypads() -> void:
 	if Game.mode == Game.Mode.TABLE:
 		return
@@ -67,6 +68,7 @@ func _detect_joypads() -> void:
 	p2_device_id = joypads[1] if joypads.size() >= 2 else -1
 
 
+# Compute the input mode based on connected devices
 func _compute_player_input_map(player: int) -> Dictionary:
 	var input_mapping: Dictionary = {}
 	# Set up input mapping for player
@@ -79,6 +81,7 @@ func _compute_player_input_map(player: int) -> Dictionary:
 	return input_mapping
 
 
+# Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
 	if Game.is_input_movement_paused:
 		return
@@ -86,6 +89,7 @@ func _physics_process(_delta: float) -> void:
 		movement[p] = _get_dir_for_player(p)
 
 
+# Handle input events
 func _input(event: InputEvent) -> void:
 	if Game.is_input_tools_paused:
 		return
@@ -111,20 +115,22 @@ func _input(event: InputEvent) -> void:
 func _get_dir_for_player(player: int) -> Vector2:
 	var dir: Vector2 =  Vector2.ZERO
 	var keys         := P1_KEYS if player == 1 else P2_KEYS
-	var kbd_x        := Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT])
-	var kbd_y        := Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
+	var kbd          :=  Vector2(
+							Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT]),
+							Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
+						).normalized()
 	match Game.mode:
 		Game.Mode.TABLE:
 			match player:
 				1:
-					dir.x -= kbd_y
-					dir.y += kbd_x
+					dir.x -= kbd.y
+					dir.y += kbd.x
 				2:
-					dir.x += kbd_y
-					dir.y -= kbd_x
+					dir.x += kbd.y
+					dir.y -= kbd.x
 		Game.Mode.COUCH:
-			dir.x += kbd_x
-			dir.y += kbd_y
+			dir.x += kbd.x
+			dir.y += kbd.y
 			var dev := p1_device_id if player == 1 else p2_device_id
 			if dev != -1:
 				var joy_x := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
@@ -133,9 +139,10 @@ func _get_dir_for_player(player: int) -> Vector2:
 					dir.x += joy_x
 				if abs(joy_y) > Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
 					dir.y += joy_y
-	return dir.normalized()
+	return dir
 
 
+# Get the player for the given device id
 func _player_for_device(device_id: int) -> int:
 	if device_id == p1_device_id:
 		return 1
