@@ -108,7 +108,7 @@ const TIME_TWEEN_NORM_DURATION: float = 0.4
 #
 # Banners
 const BANNER_SHOW_SEC: float       =  2.0
-const BANNER_SHOW_FINAL_SEC: float =  4
+const BANNER_SHOW_FINAL_SEC: float =  4.0
 const BANNER_TEXT_GOAL             := "GOOOAAAAL!"
 const BANNER_TEXT_VICTORY          := "VICTORY!"
 const BANNER_TEXT_DRAW             := "DRAW"
