@@ -110,7 +110,6 @@ func _ready() -> void:
 	_update_hud_energy()
 
 	# Connect to input signals
-	InputManager.move.connect(_on_input_move)
 	InputManager.action_pressed.connect(_on_input_action_pressed)
 	InputManager.action_released.connect(_on_input_action_released)
 
@@ -155,6 +154,9 @@ func _physics_process(delta: float) -> void:
 	if movement_dir.length() > 0 and not is_disabled:
 		apply_impulse(movement_dir * Constant.PLAYER_SHIP_FORCE_AMOUNT * delta)
 
+	# Update movement based on input
+	_update_movement()
+
 	# Update the laser charge
 	_update_laser(delta)
 
@@ -191,14 +193,12 @@ func _on_input_action_released(player: int, action: String) -> void:
 		_do_deactivate_laser()
 
 
-func _on_input_move(player: int, dir: Vector2) -> void:
-	if player != player_num:
-		return  # Ignore input from other players
+func _update_movement() -> void:
 	if is_disabled:
 		return # Ignore input if the ship is disabled
 
 	# Reset input pressed state if no keys are pressed		
-	if dir == Vector2.ZERO:
+	if InputManager.movement[player_num] == Vector2.ZERO:
 		input_direction_pressed = false
 		_update_movement_state(ShipMovementState.NONE)
 	else:
@@ -209,14 +209,14 @@ func _on_input_move(player: int, dir: Vector2) -> void:
 
 		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Constant.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
 			# The time elapsed is less than the strafe threshold, so we turn without applying force
-			target_rotation = dir.angle()
+			target_rotation = InputManager.movement[player_num].angle()
 			_update_movement_state(ShipMovementState.DRIFT)
 		else:
 			target_rotation = linear_velocity.angle()
 			_update_movement_state(ShipMovementState.ACCELERATE)
 
 	# Apply force in the direction of the input vector
-	movement_dir = dir
+	movement_dir = InputManager.movement[player_num]
 
 
 # Called on game outcome
