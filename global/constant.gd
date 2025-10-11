@@ -4,17 +4,20 @@ extends Node
 # This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
 									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.6117647, 0.0, 0.54901963)], # Pink
-									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)]   # Blue
+									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)],   # Blue
+									  3: [Color(0.0, 1.0, 0.0, 1.0), Color(0.0, 0.529, 0.0, 1.0)], # Green
+									  4: [Color(1.0, 0.843, 0.0, 1.0), Color(0.733, 0.6117647, 0.0, 1.0)], # Yellow
 								  }
 #
 # player ship threshold that's rotation only (strafe) before applying force
-const PLAYER_HUD_DISABLED_ALPHA                         = 0.2
-const PLAYER_INPUT_JOYSTICK_DEADZONE: float             = 0.1
+const PLAYER_HUD_DISABLED_ALPHA: float                  = 0.2
+const PLAYER_INPUT_JOYSTICK_DEADZONE: float             = 0.05
 const PLAYER_INVENTORY_MAX_ITEMS: int                   = 2
-const PLAYER_SCORE_GOAL_VALUE: int                      = 1
 const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
+const PLAYER_SCORE_GOAL_VALUE: int                      = 1
 const PLAYER_SCORE_INITIAL: int                         = 0
 const PLAYER_SCORE_VICTORY: int                         = 5
+const PLAYER_SHIP_AIM_INPUT_THRESHOLD: float            = 0.35
 const PLAYER_SHIP_DISABLED_SEC: float                   = 3
 const PLAYER_SHIP_DISABLED_S_RATIO: float               = 0.2
 const PLAYER_SHIP_DISABLED_V_RATIO: float               = 0.38
@@ -28,12 +31,12 @@ const PLAYER_SHIP_FORCEFIELD_MOTION_THRESHOLD: float    = 1.0
 const PLAYER_SHIP_FORCE_AMOUNT: int                     = 5000
 const PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC: float  = 10.0
 const PLAYER_SHIP_LASER_ALPHA_MAX: float                = 0.5
-const PLAYER_SHIP_LASER_MAX_DISTANCE: float             = 2000
 const PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC: float = 1
 const PLAYER_SHIP_LASER_CHARGE_MAX_SEC: float           = 3
 const PLAYER_SHIP_LASER_CLUSTER_COUNT: int              = 5
 const PLAYER_SHIP_LASER_CLUSTER_SPREAD: float           = 5
 const PLAYER_SHIP_LASER_FLICKER_RATE: float             = 5
+const PLAYER_SHIP_LASER_MAX_DISTANCE: float             = 2000
 const PLAYER_SHIP_LASER_RECHARGE_RATE: float            = 0.5
 const PLAYER_SHIP_LINEAR_DAMP: float                    = 0.9
 const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float          = 500
@@ -55,13 +58,13 @@ const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
 #
 # gem behavior
 const GEM_MAX_COUNT: int                      = 1
-const PICKUP_MAX_COUNT: int                   = 1
-const GEM_SPAWN_EVERY_SEC: float              = 0.1 # delay between spawning gems
 const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
+const GEM_SPAWN_EVERY_SEC: float              = 0.1 # delay between spawning gems
+const PICKUP_MAX_COUNT: int                   = 1
 #
 # pickup spawn behavior
-const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pickup
 const PICKUP_SPAWN_EVERY_SEC: float   = 5.0 # delay between spawning pickups
+const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pickup
 #
 # projectile explosive behavior
 const PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
@@ -86,31 +89,31 @@ const BOARD_BLOCK_CENTER: int          = floori(BOARD_BLOCK_SIZE * 0.5)
 const BOARD_BLOCK_COUNT_MAX: int       = floori(BOARD_GRID_COUNT_MAX * BOARD_BLOCK_COUNT_RATIO)
 const BOARD_BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
 const BOARD_BLOCK_SIZE: int            = 32
+const BOARD_GOAL_CLEARANCE_RADIUS: int = 130
 const BOARD_GRID_COLS: int             = 24
 const BOARD_GRID_COLS_MARGIN: int      = 4
 const BOARD_GRID_COUNT_MAX: int        = BOARD_GRID_COLS * BOARD_GRID_ROWS
 const BOARD_GRID_MESH_THRESHOLD: float = 0.62
 const BOARD_GRID_ROWS: int             = 14
 const BOARD_GRID_ROWS_MARGIN: int      = 2
-const BOARD_GOAL_CLEARANCE_RADIUS: int = 130
-const BOARD_SEED_MAX: int              = 1_000_000_000
 const BOARD_SEED_F1: int               = 18_285_756
 const BOARD_SEED_F2: int               = 89_074_356
 const BOARD_SEED_F3: int               = 973_523_665
 const BOARD_SEED_F4: int               = 167_653_873
 const BOARD_SEED_F5: int               = 423_587_300
 const BOARD_SEED_F6: int               = 798_647_400
+const BOARD_SEED_MAX: int              = 1_000_000_000
 #
 # Slow motion when banner is shown #207
 const TIME_SLOW_SCALE: float          = 0.25
-const TIME_TWEEN_SLOW_DURATION: float = 0.1
 const TIME_TWEEN_NORM_DURATION: float = 0.4
+const TIME_TWEEN_SLOW_DURATION: float = 0.1
 #
 # Banners
+const BANNER_SHOW_FINAL_SEC: float =  4.0
 const BANNER_SHOW_SEC: float       =  2.0
-const BANNER_SHOW_FINAL_SEC: float =  4
-const BANNER_TEXT_GOAL             := "GOOOAAAAL!"
-const BANNER_TEXT_VICTORY          := "VICTORY!"
 const BANNER_TEXT_DRAW             := "DRAW"
+const BANNER_TEXT_GOAL             := "GOOOAAAAL!"
 const BANNER_TEXT_READY            := "READY..."
 const BANNER_TEXT_SET              := "SET..."
+const BANNER_TEXT_VICTORY          := "VICTORY!"

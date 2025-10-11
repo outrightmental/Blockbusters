@@ -282,7 +282,7 @@ func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 	player_inventory[player_num] = new_inventory
 
 
-# Table / Couch mode are two separate builds #150
+# Table / Couch mode are two separate builds #150 #126
 func _compute_mode() -> Mode:
 	if OS.has_feature("couch_mode"):
 		return Mode.COUCH
