@@ -57,7 +57,7 @@ func _setup() -> void:
 			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
 
 
-# Show the game over modal for some time, then go back to main screen
+# Show the game over banner for some time, then go back to main screen
 func _on_finished() -> void:
 	_goto_scene('res://scenes/main.tscn')
 	pass
@@ -72,9 +72,6 @@ func _on_show_banner(player_num: int, message: String, message_2) -> void:
 		Game.Mode.TABLE:
 			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
 			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
-	Game.pause_input_tools()
-	await Util.delay(Constant.SHOW_MODAL_SEC)
-	Game.unpause_input()
 
 
 # Spawn a banner at the given position

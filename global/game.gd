@@ -57,10 +57,8 @@ enum Mode {
 @export var is_lighting_enabled: bool = true
 
 # Internal variables
-var _started_at_ticks_msec: int           = 0
-var _spawn_next_gem_at_msec: int          = 0
-var _spawn_next_pickup_at_msec: int       = 0
-var _gem_dont_spawn_until_ticks_msec: int = 0
+var _seconds_until_next_gem: float    = 0
+var _seconds_until_next_pickup: float = 0
 
 
 # Check if the player can launch a projectile
@@ -81,7 +79,7 @@ func do_player_goal(player_num: int) -> void:
 	player_score[player_num] = clamp(player_score[player_num] + Constant.PLAYER_SCORE_GOAL_VALUE, 0, Constant.PLAYER_SCORE_VICTORY)
 	print("[GAME] Player %d scored a goal, new score: %d" % [player_num, player_score[player_num]])
 	player_score_updated.emit()
-	_gem_dont_spawn_until_ticks_msec = Time.get_ticks_msec() + Constant.GEM_SPAWN_AFTER_SCORING_DELAY_MSEC
+	_seconds_until_next_pickup = Constant.PICKUP_SPAWN_EVERY_SEC
 	if not _check_for_game_over():
 		show_banner.emit(player_num, Constant.BANNER_TEXT_GOAL, "")
 
@@ -117,8 +115,9 @@ func _ready() -> void:
 	player_energy_updated.connect(_on_player_energy_updated)
 	player_ready_updated.connect(_on_player_ready_updated)
 	player_score_updated.connect(_check_for_game_over)
-	start_new_game.connect(_do_start_new_game)
+	show_banner.connect(_on_show_banner)
 	show_debug_text.connect(_on_show_debug_text)
+	start_new_game.connect(_do_start_new_game)
 
 
 func _do_start_new_game() -> void:
@@ -135,27 +134,44 @@ func _do_start_new_game() -> void:
 	print("[GAME] Resetting player inventory to: ", player_inventory)
 	player_score_updated.emit()
 	player_inventory_updated.emit()
-	_started_at_ticks_msec = Time.get_ticks_msec()
-	_spawn_next_gem_at_msec = _started_at_ticks_msec + int(Constant.SHOW_MODAL_SEC * 1000)
-	_spawn_next_pickup_at_msec = _spawn_next_gem_at_msec + int(Constant.PICKUP_SPAWN_INITIAL_SEC * 1000)
+	_seconds_until_next_gem = 0
+	_seconds_until_next_pickup = Constant.BANNER_SHOW_SEC * Constant.TIME_SLOW_SCALE + Constant.PICKUP_SPAWN_INITIAL_SEC * Constant.TIME_SLOW_SCALE
 	# Countdown and then start the game
 	Game.pause_input()
 	show_banner.emit(0, Constant.BANNER_TEXT_READY, Constant.BANNER_TEXT_SET)
-	await Util.delay(Constant.SHOW_MODAL_SEC)
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.TIME_SLOW_SCALE)
 	Game.unpause_input()
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
 func _physics_process(_delta: float) -> void:
 	# Check if it's time to spawn a gem
-	if not is_over and Time.get_ticks_msec() >= _spawn_next_gem_at_msec:
-		_spawn_next_gem_at_msec = Time.get_ticks_msec() + int(Constant.GEM_SPAWN_EVERY_SEC * 1000)
+	_seconds_until_next_gem -= _delta
+	if not is_over and _seconds_until_next_gem <= 0:
+		_seconds_until_next_gem = Constant.GEM_SPAWN_EVERY_SEC
 		spawn_gem.emit()
 	# Check if it's time to spawn a pickup
-	if not is_over and Time.get_ticks_msec() >= _spawn_next_pickup_at_msec:
-		_spawn_next_pickup_at_msec = Time.get_ticks_msec() + int(Constant.PICKUP_SPAWN_EVERY_SEC * 1000)
+	_seconds_until_next_pickup -= _delta
+	if not is_over and _seconds_until_next_pickup <= 0:
+		_seconds_until_next_pickup = Constant.PICKUP_SPAWN_EVERY_SEC
 		spawn_pickup.emit(Game.InventoryItemType.PROJECTILE) # FUTURE: other types of pickups
 	pass
+
+
+# Slow down time
+func  _do_time_slow() -> void:
+	var tween := create_tween()
+	tween.tween_property(Engine, "time_scale", Constant.TIME_SLOW_SCALE, Constant.TIME_TWEEN_SLOW_DURATION)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_QUAD)
+
+
+# Return to normal time
+func _do_time_norm() -> void:
+	var tween := create_tween()
+	tween.tween_property(Engine, "time_scale", 1.0, Constant.TIME_TWEEN_NORM_DURATION)
+	tween.set_ease(Tween.EASE_IN)
+	tween.set_trans(Tween.TRANS_QUAD)
 
 
 # Check for game over, e.g. when score or gem count is updated
@@ -205,13 +221,13 @@ func _do_game_over(result: Result) -> void:
 	pause_input()
 	is_over = true
 	match result:
-		Game.Result.PLAYER_1_WINS:
+		Result.PLAYER_1_WINS:
 			show_banner.emit(1, Constant.BANNER_TEXT_VICTORY, "")
-		Game.Result.PLAYER_2_WINS:
+		Result.PLAYER_2_WINS:
 			show_banner.emit(2, Constant.BANNER_TEXT_VICTORY, "")
-		Game.Result.DRAW:
+		Result.DRAW:
 			show_banner.emit(0, Constant.BANNER_TEXT_DRAW, "")
-	await Util.delay(Constant.SHOW_MODAL_SEC)
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.TIME_SLOW_SCALE)
 	finished.emit()
 
 
@@ -236,6 +252,14 @@ func _on_show_debug_text(_text: String) -> void:
 	pass
 
 
+func _on_show_banner(_p: int, _m1: String, _m2: String) -> void:
+	Game.pause_input_tools()
+	_do_time_slow()
+	await Util.delay(Constant.BANNER_SHOW_SEC * Constant.TIME_SLOW_SCALE)
+	Game.unpause_input()
+	_do_time_norm()
+
+
 func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> void:
 	print("[GAME] Player %d collected pickup: %s" % [player_num, type])
 	player_inventory[player_num].append(type)
@@ -244,7 +268,7 @@ func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> vo
 
 
 func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
-	var new_inventory = [];
+	var new_inventory: Array[Variant] = [];
 	var removed: bool = false;
 	for player_inventory_item in player_inventory[player_num]:
 		if player_inventory_item == item and not removed:
@@ -255,7 +279,7 @@ func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 
 
 # Table / Couch mode are two separate builds #150
-static func _compute_mode() -> Mode:
+func _compute_mode() -> Mode:
 	if OS.has_feature("couch_mode"):
 		return Mode.COUCH
 	if OS.has_feature("editor"):

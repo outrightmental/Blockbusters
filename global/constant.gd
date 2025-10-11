@@ -63,9 +63,6 @@ const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring befor
 const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pickup
 const PICKUP_SPAWN_EVERY_SEC: float   = 5.0 # delay between spawning pickups
 #
-# game behavior
-const SHOW_MODAL_SEC: float = 4.0
-#
 # projectile explosive behavior
 const PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
 const PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float    = 500
@@ -84,30 +81,35 @@ const HEATING_TIMEOUT_MSEC: int = 250 # timeout after heat not applied when we c
 # Board
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are32x32 pixels, so the grid is 1024x576 pixels
-const BOARD_BLOCK_ATTEMPT_MAX: int          = 1_000_000 # max attempts to place a block
-const BOARD_BLOCK_CENTER: int               = floori(BOARD_BLOCK_SIZE * 0.5)
-const BOARD_BLOCK_COUNT_MAX: int            = floori(BOARD_GRID_COUNT_MAX * BOARD_BLOCK_COUNT_RATIO)
-const BOARD_BLOCK_COUNT_RATIO: float        = 0.3 # ratio of the grid that is filled with blocks
-const BOARD_BLOCK_SIZE: int                 = 32
-const BOARD_GRID_COLS: int                  = 24
-const BOARD_GRID_COLS_MARGIN: int           = 4
-const BOARD_GRID_COUNT_MAX: int             = BOARD_GRID_COLS * BOARD_GRID_ROWS
-const BOARD_GRID_MESH_THRESHOLD: float      = 0.62
-const BOARD_GRID_ROWS: int                  = 14
-const BOARD_GRID_ROWS_MARGIN: int           = 2
-const BOARD_GOAL_CLEARANCE_RADIUS: int      = 130
-const BOARD_MODAL_NEUTRAL_TEXT_COLOR: Color = Color(1, 1, 1, 1)
-const BOARD_SEED_MAX: int                   = 1_000_000_000
-const BOARD_SEED_F1: int                    = 18_285_756
-const BOARD_SEED_F2: int                    = 89_074_356
-const BOARD_SEED_F3: int                    = 973_523_665
-const BOARD_SEED_F4: int                    = 167_653_873
-const BOARD_SEED_F5: int                    = 423_587_300
-const BOARD_SEED_F6: int                    = 798_647_400
+const BOARD_BLOCK_ATTEMPT_MAX: int     = 1_000_000 # max attempts to place a block
+const BOARD_BLOCK_CENTER: int          = floori(BOARD_BLOCK_SIZE * 0.5)
+const BOARD_BLOCK_COUNT_MAX: int       = floori(BOARD_GRID_COUNT_MAX * BOARD_BLOCK_COUNT_RATIO)
+const BOARD_BLOCK_COUNT_RATIO: float   = 0.3 # ratio of the grid that is filled with blocks
+const BOARD_BLOCK_SIZE: int            = 32
+const BOARD_GRID_COLS: int             = 24
+const BOARD_GRID_COLS_MARGIN: int      = 4
+const BOARD_GRID_COUNT_MAX: int        = BOARD_GRID_COLS * BOARD_GRID_ROWS
+const BOARD_GRID_MESH_THRESHOLD: float = 0.62
+const BOARD_GRID_ROWS: int             = 14
+const BOARD_GRID_ROWS_MARGIN: int      = 2
+const BOARD_GOAL_CLEARANCE_RADIUS: int = 130
+const BOARD_SEED_MAX: int              = 1_000_000_000
+const BOARD_SEED_F1: int               = 18_285_756
+const BOARD_SEED_F2: int               = 89_074_356
+const BOARD_SEED_F3: int               = 973_523_665
+const BOARD_SEED_F4: int               = 167_653_873
+const BOARD_SEED_F5: int               = 423_587_300
+const BOARD_SEED_F6: int               = 798_647_400
+#
+# Slow motion when banner is shown #207
+const TIME_SLOW_SCALE: float =  0.25
+const TIME_TWEEN_SLOW_DURATION: float =  0.1
+const TIME_TWEEN_NORM_DURATION: float =  0.4
 #
 # Banners
-const BANNER_TEXT_GOAL    := "GOOOAAAAL!"
-const BANNER_TEXT_VICTORY := "VICTORY!"
-const BANNER_TEXT_DRAW    := "DRAW"
-const BANNER_TEXT_READY   := "READY..."
-const BANNER_TEXT_SET     := "SET..."
+const BANNER_SHOW_SEC: float        =  3.0
+const BANNER_TEXT_GOAL              := "GOOOAAAAL!"
+const BANNER_TEXT_VICTORY           := "VICTORY!"
+const BANNER_TEXT_DRAW              := "DRAW"
+const BANNER_TEXT_READY             := "READY..."
+const BANNER_TEXT_SET               := "SET..."
