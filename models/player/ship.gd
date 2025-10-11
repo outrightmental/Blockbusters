@@ -1,21 +1,8 @@
 class_name Ship
 extends Heatable
 
-enum ShipMovementState {
-	ACCELERATE,
-	DRIFT,
-	NONE,
-}
-# keep track of the time when the input direction was pressed
-var input_direction_start_ticks_msec: float = 0.0
-# whether the input direction is pressed
-var input_direction_pressed: bool = false
-# keep track of ship movement state and associated sounds
-var movement_state: ShipMovementState = ShipMovementState.NONE
-var movement_dir: Vector2             = Vector2.ZERO
-
-@onready var movement_audio_key: String = "movement_%d" % player_num
-
+# Keep track of the movement direction
+var movement_dir: Vector2 = Vector2.ZERO
 # fixed actual angle moves towards target angle -- used for strafe/accelerate mechanic
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
@@ -150,21 +137,14 @@ func _physics_process(delta: float) -> void:
 	actual_rotation += angle_diff * Constant.PLAYER_SHIP_TARGET_ROTATION_FACTOR * delta
 	rotation = actual_rotation
 
-	# If the ship is not disabled, apply a force in the direction of the input
-	if movement_dir.length() > 0 and not is_disabled:
-		apply_impulse(movement_dir * Constant.PLAYER_SHIP_FORCE_AMOUNT * delta)
-
 	# Update movement based on input
-	_update_movement()
+	_update_movement(delta)
 
 	# Update the laser charge
 	_update_laser(delta)
 
 	# Apply forcefield forces
 	_update_forcefield(delta)
-
-	# Update the movement state audio
-	_update_movement_audio_position()
 
 	# Update the ship heated effect
 	_update_heated_effect()
@@ -193,30 +173,20 @@ func _on_input_action_released(player: int, action: String) -> void:
 		_do_deactivate_laser()
 
 
-func _update_movement() -> void:
+func _update_movement(delta: float) -> void:
 	if is_disabled:
 		return # Ignore input if the ship is disabled
 
-	# Reset input pressed state if no keys are pressed		
-	if InputManager.movement[player_num] == Vector2.ZERO:
-		input_direction_pressed = false
-		_update_movement_state(ShipMovementState.NONE)
-	else:
-		# If the input vector is not zero, set the pressed state and start time
-		if not input_direction_pressed:
-			input_direction_pressed = true
-			input_direction_start_ticks_msec = Time.get_ticks_msec()
-
-		if Time.get_ticks_msec() - input_direction_start_ticks_msec < Constant.PLAYER_SHIP_STRAFE_THRESHOLD_MSEC:
-			# The time elapsed is less than the strafe threshold, so we turn without applying force
-			target_rotation = InputManager.movement[player_num].angle()
-			_update_movement_state(ShipMovementState.DRIFT)
-		else:
-			target_rotation = linear_velocity.angle()
-			_update_movement_state(ShipMovementState.ACCELERATE)
+	# Always aim towards the input direction if above threshold
+	if InputManager.movement[player_num].length() >= Constant.PLAYER_SHIP_AIM_INPUT_THRESHOLD:
+		target_rotation = InputManager.movement[player_num].angle()
 
 	# Apply force in the direction of the input vector
 	movement_dir = InputManager.movement[player_num]
+
+	# If the ship is not disabled, apply a force in the direction of the input
+	if movement_dir.length() > 0 and not is_disabled:
+		apply_impulse(movement_dir * Constant.PLAYER_SHIP_FORCE_AMOUNT * delta)
 
 
 # Called on game outcome
@@ -364,28 +334,6 @@ func _update_heated_effect() -> void:
 		heated_effect.set_visible(false)
 
 
-func _update_movement_state(_state: ShipMovementState) -> void:
-	#	if movement_state == state:
-	#		return
-	#	movement_state = state
-	#	AudioManager.stop_2d_audio(movement_audio_key)
-	#	if state == ShipMovementState.ACCELERATE:
-	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_ACCELERATES_2, movement_audio_key)
-	#	elif state == ShipMovementState.DRIFT:
-	#		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_1 if player_num == 1 else SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_DRIFTS_2, movement_audio_key)
-	#	else:
-	#		return
-	#	_update_movement_audio_position()
-	pass
-
-
-func _update_movement_audio_position() -> void:
-	#	if movement_sound == null:
-	#		return
-	#	movement_sound.set_global_position(global_position)
-	pass
-
-
 # Called when the ship collides with another body
 func _on_collision(body: Node2D) -> void:
 	if body is Block:
@@ -401,10 +349,6 @@ func _on_collision(body: Node2D) -> void:
 			# FUTURE: AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_COLLIDES_WITH_PICKUP)
 			Game.player_did_collect_item.emit(player_num, body.type)
 			body.do_pickup()
-
-
-# FUTURE else:
-# 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PICKUP_FAIL)
 
 
 # Called when another body enters the forcefield area
