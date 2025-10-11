@@ -21,7 +21,7 @@ func _ready() -> void:
 	$AnimationPlayer.speed_scale = 1.0 / Constant.TIME_SLOW_SCALE
 	$AnimationPlayer.play("fly")
 	if message_2.length() > 0:
-		await Util.delay(2)
+		await Util.delay(Constant.TIME_SLOW_SCALE * $AnimationPlayer.current_animation_length / 2)
 		$Text.set_text(message_2)
 
 
