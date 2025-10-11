@@ -117,6 +117,9 @@ func _ready() -> void:
 	# Laser should stop if in use when banner is shown #198
 	Game.show_banner.connect(func(_p: int, _m1: String, _m2: String): _do_deactivate_laser())
 
+	# Victory jumbotron is palpably victorious #193
+	Game.outcome.connect(_on_game_outcome)
+
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_enabled:
 		$PointLight2D.enabled = false
@@ -214,6 +217,33 @@ func _on_input_move(player: int, dir: Vector2) -> void:
 
 	# Apply force in the direction of the input vector
 	movement_dir = dir
+
+
+# Called on game outcome
+func _on_game_outcome(result: Game.Result) -> void:
+	match result:
+		Game.Result.PLAYER_1_WINS:
+			if player_num == 1:
+				_do_victory()
+			else:
+				_do_defeat()
+		Game.Result.PLAYER_2_WINS:
+			if player_num == 2:
+				_do_victory()
+			else:
+				_do_defeat()
+		_:
+			_do_defeat()
+
+
+# Victory jumbotron is palpably victorious #193
+func _do_victory() -> void:
+	pass
+
+
+# Defeat (anti-Victory) jumbotron is palpably victorious #193
+func _do_defeat() -> void:
+	do_disable()
 
 
 # Called when the player wants to activate the primary tool

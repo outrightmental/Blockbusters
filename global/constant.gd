@@ -14,7 +14,7 @@ const PLAYER_INVENTORY_MAX_ITEMS: int                   = 2
 const PLAYER_SCORE_GOAL_VALUE: int                      = 1
 const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
 const PLAYER_SCORE_INITIAL: int                         = 0
-const PLAYER_SCORE_VICTORY: int                         = 5
+const PLAYER_SCORE_VICTORY: int                         = 1 # todo 5
 const PLAYER_SHIP_DISABLED_SEC: float                   = 3
 const PLAYER_SHIP_DISABLED_S_RATIO: float               = 0.2
 const PLAYER_SHIP_DISABLED_V_RATIO: float               = 0.38
@@ -102,14 +102,15 @@ const BOARD_SEED_F5: int               = 423_587_300
 const BOARD_SEED_F6: int               = 798_647_400
 #
 # Slow motion when banner is shown #207
-const TIME_SLOW_SCALE: float =  0.25
-const TIME_TWEEN_SLOW_DURATION: float =  0.1
-const TIME_TWEEN_NORM_DURATION: float =  0.4
+const TIME_SLOW_SCALE: float          = 0.25
+const TIME_TWEEN_SLOW_DURATION: float = 0.1
+const TIME_TWEEN_NORM_DURATION: float = 0.4
 #
 # Banners
-const BANNER_SHOW_SEC: float        =  2.0
-const BANNER_TEXT_GOAL              := "GOOOAAAAL!"
-const BANNER_TEXT_VICTORY           := "VICTORY!"
-const BANNER_TEXT_DRAW              := "DRAW"
-const BANNER_TEXT_READY             := "READY..."
-const BANNER_TEXT_SET               := "SET..."
+const BANNER_SHOW_SEC: float       =  2.0
+const BANNER_SHOW_FINAL_SEC: float =  2.5
+const BANNER_TEXT_GOAL             := "GOOOAAAAL!"
+const BANNER_TEXT_VICTORY          := "VICTORY!"
+const BANNER_TEXT_DRAW             := "DRAW"
+const BANNER_TEXT_READY            := "READY..."
+const BANNER_TEXT_SET              := "SET..."
