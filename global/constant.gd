@@ -3,10 +3,10 @@ extends Node
 #
 # This is a dictionary of player colors, where the key is the player ID and the value is an array of two colors.
 const PLAYER_COLORS: Dictionary = {
-									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.6117647, 0.0, 0.54901963)], # Pink
-									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)],   # Blue
-									  3: [Color(0.0, 1.0, 0.0, 1.0), Color(0.0, 0.529, 0.0, 1.0)], # Green
-									  4: [Color(1.0, 0.843, 0.0, 1.0), Color(0.733, 0.6117647, 0.0, 1.0)], # Yellow
+#									  1: [Color(1.0, 0.0, 0.894, 1.0), Color(0.6117647, 0.0, 0.54901963)], # Pink
+#									  2: [Color(0.0, 0.722, 1.0, 1.0), Color(0.0, 0.529, 0.733, 1.0)],   # Blue
+									  1: [Color(0.0, 1.0, 0.0, 1.0), Color(0.0, 0.529, 0.0, 1.0)], # Green
+									  2: [Color(1.0, 0.843, 0.0, 1.0), Color(0.733, 0.6117647, 0.0, 1.0)], # Yellow
 								  }
 #
 # player ship threshold that's rotation only (strafe) before applying force
