@@ -16,7 +16,7 @@ func _ready() -> void:
 	await Util.delay(2.0)
 	await _spawn_random_explosions(5, 1)
 	await _spawn_random_explosions(25, 0.1)
-	_goto_scene("res://scenes/explosion_test.tscn")
+	_goto_scene("res://scenes/tests/explosion_test.tscn")
 	pass
 
 
