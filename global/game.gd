@@ -104,6 +104,11 @@ func unpause_input() -> void:
 	is_input_tools_paused = false
 
 
+# Whether the game is in table mode
+func is_table_mode() -> bool:
+	return mode == Mode.TABLE
+
+
 # Get the command line arguments on init
 func _init() -> void:
 	for arg in OS.get_cmdline_args():
