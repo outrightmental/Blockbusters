@@ -1,0 +1,62 @@
+[gd_scene load_steps=6 format=3 uid="uid://bncgid4asdcug"]
+
+[ext_resource type="Script" path="res://scenes/main_table.gd" id="1_wkfob"]
+[ext_resource type="Texture2D" uid="uid://cunv03sc3o40h" path="res://assets/MainScreenTitle.png" id="2_mqwop"]
+[ext_resource type="PackedScene" uid="uid://dvo0oiws54t1m" path="res://models/player/ready.tscn" id="3_kicvg"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tefeu"]
+
+[sub_resource type="VideoStreamTheora" id="VideoStreamTheora_tbgi4"]
+file = "assets/MainScreen1.ogv"
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_wkfob")
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+material = SubResource("CanvasItemMaterial_tefeu")
+offset_right = 1024.0
+offset_bottom = 576.0
+color = Color(0, 0, 0, 1)
+
+[node name="AttractVideo" type="VideoStreamPlayer" parent="."]
+offset_right = 1024.0
+offset_bottom = 576.0
+stream = SubResource("VideoStreamTheora_tbgi4")
+autoplay = true
+loop = true
+
+[node name="StartBG_P1" type="ColorRect" parent="."]
+offset_right = 140.0
+offset_bottom = 576.0
+color = Color(0, 0, 0, 0.862745)
+
+[node name="StartBG_P2" type="ColorRect" parent="."]
+offset_left = 1024.0
+offset_top = 576.0
+offset_right = 1174.0
+offset_bottom = 1152.0
+rotation = 3.14159
+color = Color(0, 0, 0, 0.862745)
+
+[node name="BLOCKBUSTERS_P1" type="Sprite2D" parent="."]
+position = Vector2(335, 269)
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_mqwop")
+
+[node name="BLOCKBUSTERS_P2" type="Sprite2D" parent="."]
+position = Vector2(735, 268)
+rotation = -1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_mqwop")
+
+[node name="ReadyP1" parent="." instance=ExtResource("3_kicvg")]
+position = Vector2(122, 291)
+rotation = 1.5708
+player_num = 1
+
+[node name="ReadyP2" parent="." instance=ExtResource("3_kicvg")]
+position = Vector2(906, 288)
+rotation = -1.5708
+player_num = 2
