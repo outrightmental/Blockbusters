@@ -7,10 +7,10 @@ var movement_dir: Vector2 = Vector2.ZERO
 var target_rotation: float = 0.0
 var actual_rotation: float = 0.0
 # keep track of the time when the projectile explosive was last launched
-var projectile_explosive_start_ticks_msec: float = 0.0
+var projectile_explosive_cooldown_sec: float = 0.0
 # keep track of whether the ship is disabled, and when
-var is_disabled: bool                = false
-var disabled_until_ticks_msec: float = 0.0
+var is_disabled: bool       = false
+var disabled_for_sec: float = 0.0
 # variables for laser tool
 var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
@@ -43,7 +43,7 @@ func do_disable() -> void:
 	is_disabled = true
 	heatable = false
 	heat = 0.0
-	disabled_until_ticks_msec = Time.get_ticks_msec() + Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0
+	disabled_for_sec = Constant.PLAYER_SHIP_DISABLED_SEC
 	_set_colors(Constant.PLAYER_SHIP_DISABLED_S_RATIO, Constant.PLAYER_SHIP_DISABLED_V_RATIO)
 	_do_deactivate_laser()
 	Game.player_enabled.emit(player_num, false)
@@ -58,7 +58,7 @@ func do_enable() -> void:
 	is_disabled = false
 	heatable = true
 	laser_charge_sec = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
-	disabled_until_ticks_msec = 0.0
+	disabled_for_sec = 0.0
 	_set_colors(1.0)
 	Game.player_enabled.emit(player_num, true)
 	# Play sound effect
@@ -124,8 +124,13 @@ func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
+	
+	if projectile_explosive_cooldown_sec > 0:	
+		projectile_explosive_cooldown_sec -= delta
+
 	if is_disabled:
-		if Time.get_ticks_msec() > disabled_until_ticks_msec:
+		disabled_for_sec -= delta
+		if disabled_for_sec <= 0:
 			do_enable()
 
 	# Adjust the rotation towards the target angle by a factor and delta time
@@ -239,12 +244,12 @@ func _do_deactivate_laser() -> void:
 
 # Called when the player wants to activate the secondary tool
 func _do_launch_projectile_explosive() -> void:
-	if Time.get_ticks_msec() - projectile_explosive_start_ticks_msec < Constant.PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC:
+	if projectile_explosive_cooldown_sec > 0:
 		return
 	if not Game.player_can_launch_projectile(player_num):
 		AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_FAIL)
 		return
-	projectile_explosive_start_ticks_msec = Time.get_ticks_msec()
+	projectile_explosive_cooldown_sec = Constant.PROJECTILE_EXPLOSIVE_COOLDOWN_SEC
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
 	var projectile: Node         = projectile_explosive_scene.instantiate()
 	projectile.add_collision_exception_with(self)
@@ -278,7 +283,7 @@ func _update_laser(delta: float) -> void:
 func _update_hud_energy() -> void:
 	match is_disabled:
 		true:
-			var energy := 1 - (disabled_until_ticks_msec - Time.get_ticks_msec()) / (Constant.PLAYER_SHIP_DISABLED_SEC * 1000.0)
+			var energy := 1 - disabled_for_sec / Constant.PLAYER_SHIP_DISABLED_SEC
 			Game.player_energy_updated.emit(player_num, energy, energy >= 1.0)
 		false:
 			Game.player_energy_updated.emit(player_num, laser_charge_sec / Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC, laser_charge_sec >= Constant.PLAYER_SHIP_LASER_AVAILABLE_MIN_CHARGE_SEC)

@@ -8,16 +8,15 @@ extends Node2D
 @export var player_num: int = 0
 
 # Variables
-var instantiated_at_ticks_msec: int = 0
-var explosive_radius: float         = 0.0
-var heat_radius: float              = 0.0
-var exploded: bool                  = false
-var affected_bodies: Dictionary[int, Array] = {}
+var alive_sec: float      = 0.0
+var explosive_radius: float = 0.0
+var heat_radius: float      = 0.0
+var exploded: bool          = false
+var affected_bodies: Dictionary[float, Array] = {}
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	instantiated_at_ticks_msec = Time.get_ticks_msec()
 	explosive_radius = collision_shape.shape.radius
 	heat_radius = explosive_radius * Constant.EXPLOSION_HEAT_RADIUS_RATIO
 
@@ -41,17 +40,17 @@ func _ready() -> void:
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if affected_bodies.size() > 0:
-		var now_at_msec: int = Time.get_ticks_msec() - instantiated_at_ticks_msec
-		for at_msec in affected_bodies.keys():
+		alive_sec += delta
+		for at_sec in affected_bodies.keys():
 			# If the time has come to apply effects to the bodies
-			if now_at_msec >= at_msec:
-				for item in affected_bodies[at_msec]:
+			if alive_sec >= at_sec:
+				for item in affected_bodies[at_sec]:
 					_apply_to_body(item)
-				affected_bodies.erase(at_msec)
+				affected_bodies.erase(at_sec)
 
-	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Constant.EXPLOSION_LIFETIME_MSEC:
+	if alive_sec > Constant.EXPLOSION_LIFETIME_SEC:
 		queue_free()
 		return
 
@@ -65,14 +64,14 @@ func _physics_process(_delta: float) -> void:
 		var diff: Vector2   = (body.position - position)
 		var distance: float = diff.length()
 		var dir: Vector2    = diff.normalized()
-		var at_msec: int    = floori(pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_MSEC)
-		if not at_msec in affected_bodies:
-			affected_bodies.set(at_msec, [])
+		var at_sec: float    = floorf(pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_SEC)
+		if not at_sec in affected_bodies:
+			affected_bodies.set(at_sec, [])
 		var item: Dictionary = {}
 		item.body     = body
 		item.dir      = dir
 		item.distance = distance
-		affected_bodies[at_msec].append(item)
+		affected_bodies[at_sec].append(item)
 
 
 # Apply explosion effects to the body based on distance

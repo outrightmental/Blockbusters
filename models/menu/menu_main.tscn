@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbusqnjntcqtd"]
+
+[ext_resource type="Script" path="res://models/menu/menu_main.gd" id="1_1xsof"]
+[ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_1xsof"]
+
+[node name="MenuMain" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1xsof")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -712.0
+offset_top = -293.0
+offset_right = -312.0
+offset_bottom = 107.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Title" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_1xsof")
+theme_override_font_sizes/normal_font_size = 45
+text = "BLOCKBUSTERS"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Underline" type="ColorRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="Spacer" type="ColorRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+color = Color(1, 1, 1, 0)
+
+[node name="ItemStart" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_1xsof")
+theme_override_font_sizes/normal_font_size = 45
+text = "START"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ItemOptions" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_1xsof")
+theme_override_font_sizes/normal_font_size = 42
+text = "OPTIONS"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="ItemExit" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_1xsof")
+theme_override_font_sizes/normal_font_size = 42
+text = "EXIT
+"
+fit_content = true
+horizontal_alignment = 1
