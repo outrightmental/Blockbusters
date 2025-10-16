@@ -115,7 +115,7 @@ func _input(event: InputEvent) -> void:
 func _get_dir_for_player(player: int) -> Vector2:
 	var dir: Vector2 =  Vector2.ZERO
 	var keys         := P1_KEYS if player == 1 else P2_KEYS
-	var kbd          :=  Vector2(
+	var kbd          := Vector2(
 							Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT]),
 							Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
 						).normalized()
@@ -135,9 +135,9 @@ func _get_dir_for_player(player: int) -> Vector2:
 			if dev != -1:
 				var joy_x := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
 				var joy_y := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
-				if abs(joy_x) > Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
+				if abs(joy_x) > Constant.INPUT_STICK_DEADZONE:
 					dir.x += joy_x
-				if abs(joy_y) > Constant.PLAYER_INPUT_JOYSTICK_DEADZONE:
+				if abs(joy_y) > Constant.INPUT_STICK_DEADZONE:
 					dir.y += joy_y
 	return dir
 
