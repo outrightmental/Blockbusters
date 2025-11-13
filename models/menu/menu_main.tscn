@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://8bf8ts7t8fii"]
+[gd_scene load_steps=3 format=3 uid="uid://cbusqnjntcqtd"]
 
-[ext_resource type="Script" uid="uid://dti3184fj8y54" path="res://models/menu/menu_main.gd" id="1_1xsof"]
+[ext_resource type="Script" path="res://models/menu/menu_main.gd" id="1_1xsof"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_1xsof"]
 
 [node name="MenuMain" type="Control"]
