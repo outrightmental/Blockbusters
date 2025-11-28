@@ -27,7 +27,10 @@ func _ready() -> void:
 func _run_test_scene(test_scene: PackedScene) -> Signal:
 	var test_instance: Node = test_scene.instantiate()
 	add_child(test_instance)
-	assert(test_instance.has_method("run_all_tests"))
+	if not test_instance.has_method("run_all_tests"):
+		failures.append("Test scene " + str(test_scene) + " does not have a run_all_tests() method.")
+		test_instance.queue_free()
+		return Util.delay(0.1)
 	await test_instance.run_all_tests()
 	if test_instance.failures.size() > 0:
 		for failure in test_instance.failures:

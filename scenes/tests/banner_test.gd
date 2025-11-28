@@ -34,9 +34,4 @@ func _spawn_banner(player_num: int, x: float, y: float, _rot_deg: float, message
 	banner.message_2 = message_2
 	self.add_child(banner)
 	return Util.delay(0.1)
-
-
-# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().change_scene_to_file(path)
+	

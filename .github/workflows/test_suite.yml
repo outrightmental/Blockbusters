@@ -20,7 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Godot test scene
+      - name: Run Godot test suite
         run: |
-          # Run the test suite script; the job will fail if godot exits non-zero
-          godot --headless --path . -s res://scenes/tests/test_suite.gd
+          godot res://scenes/tests/test_suite.gd --headless
