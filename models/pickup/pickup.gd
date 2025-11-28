@@ -2,7 +2,6 @@ class_name Pickup
 extends Collidable
 
 # Preloaded scene for the splash effect
-const splash_scene: PackedScene = preload("res://models/explosive/splash.tscn")
 @export var type: Game.InventoryItemType = Game.InventoryItemType.EMPTY
 
 
@@ -14,7 +13,7 @@ func _ready() -> void:
 
 # Pickup item
 func do_pickup() -> void:
-	var splash: Node = splash_scene.instantiate()
+	var splash: Node = ScenePreloader.explosive_splash_scene.instantiate()
 	splash.position = position
 	self.get_parent().call_deferred("add_child", splash)
 	self.call_deferred("queue_free")

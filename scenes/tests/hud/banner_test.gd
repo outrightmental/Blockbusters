@@ -1,13 +1,10 @@
 extends Test
 
-const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
-
-
 # [FOR DEVELOPMENT ONLY] run this test immediately and loop
 func _ready() -> void:
 	#	 await run_all_tests()
 	#	 await Util.delay(2.0)
-	#	 _goto_scene("res://scenes/banner_test.tscn")
+	#	 _goto_scene("res://scenes/tests/hud/banner_test.tscn")
 	pass
 
 
@@ -26,7 +23,7 @@ func run_all_tests() -> Signal:
 
 # Spawn a banner at the given position
 func _spawn_banner(player_num: int, x: float, y: float, _rot_deg: float, message: String, message_2: String = "") -> Signal:
-	var banner: Node = banner_scene.instantiate()
+	var banner: Node = ScenePreloader.banner_scene.instantiate()
 	banner.position = Vector2(x, y)
 	banner.rotation_degrees = _rot_deg
 	banner.player_num = player_num

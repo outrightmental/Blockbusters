@@ -4,9 +4,6 @@ extends Node2D
 const ITEM_SPACING_X = 30
 # Player number to identify the inventory
 @export var player_num: int = 0
-# Preloaded scenes for the items
-const item_projectile_scene: PackedScene = preload("res://models/hud/hud_inventory_item_projectile.tscn")
-const item_empty_scene: PackedScene      = preload("res://models/hud/hud_inventory_item_empty.tscn")
 # Current items displayed
 var displayed_items: Array[HudInventoryItem] = []
 
@@ -41,9 +38,9 @@ func _instantiate_item(type: Game.InventoryItemType) -> HudInventoryItem:
 	var item: HudInventoryItem
 	match type:
 		Game.InventoryItemType.PROJECTILE:
-			item = item_projectile_scene.instantiate()
+			item = ScenePreloader.item_projectile_scene.instantiate()
 		Game.InventoryItemType.EMPTY:
-			item =  item_empty_scene.instantiate()
+			item =  ScenePreloader.item_empty_scene.instantiate()
 	item.player_num = player_num
 	return item
 	

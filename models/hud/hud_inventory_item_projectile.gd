@@ -2,7 +2,6 @@ class_name  HudInventoryItemProjectile
 extends HudInventoryItem
 
 # Preloaded scene for the splash effect
-const splash_scene: PackedScene = preload("res://models/explosive/splash.tscn")
 
 
 # Initialize the type of inventory item
@@ -18,6 +17,6 @@ func _ready() -> void:
 		$TriangleDark.color = Constant.PLAYER_COLORS[player_num][1]
 	else:
 		push_error("No color found for player ", player_num)
-	var splash: Node = splash_scene.instantiate()
+	var splash: Node = ScenePreloader.explosive_splash_scene.instantiate()
 	splash.position = position
 	self.get_parent().call_deferred("add_child", splash)

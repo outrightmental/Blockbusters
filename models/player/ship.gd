@@ -16,10 +16,6 @@ var laser: LaserBeamCluster = null
 var laser_charge_sec: float = Constant.PLAYER_SHIP_LASER_CHARGE_MAX_SEC
 
 @onready var laser_audio_key: String = "laser_%d" % player_num
-# Preload the projectile explosive scene
-const projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
-# Preload the laser beam scene
-const laser_scene: PackedScene = preload("res://models/laser/laser_beam_cluster.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -124,8 +120,8 @@ func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
-	
-	if projectile_explosive_cooldown_sec > 0:	
+
+	if projectile_explosive_cooldown_sec > 0:
 		projectile_explosive_cooldown_sec -= delta
 
 	if is_disabled:
@@ -227,7 +223,7 @@ func _do_activate_laser() -> void:
 		return
 	if laser:
 		return
-	laser         = laser_scene.instantiate()
+	laser         = ScenePreloader.laser_scene.instantiate()
 	laser.player_num = player_num
 	laser.source_ship = self
 	laser.z_index = -100  # Ensure laser is behind the ship
@@ -251,7 +247,7 @@ func _do_launch_projectile_explosive() -> void:
 		return
 	projectile_explosive_cooldown_sec = Constant.PROJECTILE_EXPLOSIVE_COOLDOWN_SEC
 	var rotation_vector: Vector2 = Vector2(cos(actual_rotation), sin(actual_rotation))
-	var projectile: Node         = projectile_explosive_scene.instantiate()
+	var projectile: Node         = ScenePreloader.projectile_explosive_scene.instantiate()
 	projectile.add_collision_exception_with(self)
 	projectile.position = position
 	projectile.rotation = actual_rotation
