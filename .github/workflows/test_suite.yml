@@ -1,4 +1,5 @@
-﻿name: test_suite
+﻿# yaml
+name: test_suite
 
 on:
   pull_request:
@@ -13,13 +14,22 @@ env:
 
 jobs:
   test_suite:
-    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
+    runs-on: ubuntu-24.04
     container:
       image: barichello/godot-ci:4.4.1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Godot test suite
+      - name: Import assets (first run to generate .godot cache)
         run: |
-          godot res://scenes/tests/test_suite.tscn --headless --path .
+          godot --headless --path . --import --quit || true
+
+      - name: Verify base test scripts are present
+        run: |
+          test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
+
+      - name: Run test suite scene
+        run: |
+          # Use proper ordering: options first, then scene
+          godot --headless --path . res://scenes/tests/test_suite.tscn
