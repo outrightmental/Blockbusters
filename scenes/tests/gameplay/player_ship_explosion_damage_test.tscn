@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bgbq36y5x4fgh"]
 
-[ext_resource type="Script" uid="uid://bdwqdwiohjvcx" path="res://scenes/tests/gameplay/player_ship_explosion_damage_test.gd" id="1_6e3mo"]
+[ext_resource type="Script" path="res://scenes/tests/gameplay/player_ship_explosion_damage_test.gd" id="1_6e3mo"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6e3mo"]
 size = Vector2(1224, 200)

@@ -18,6 +18,8 @@ signal spawn_pickup(type: Game.InventoryItemType)
 signal start_new_game()
 # Group names
 const BLOCK_GROUP: StringName  = "BlockGroup"
+const BLOCK_HALF_GROUP: StringName  = "BlockHalfGroup"
+const BLOCK_QUART_GROUP: StringName  = "BlockQuartGroup"
 const GEM_GROUP: StringName    = "GemGroup"
 const PICKUP_GROUP: StringName = "PickupGroup"
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
