@@ -1,6 +1,10 @@
 ﻿class_name Test
 extends Node
 
+# Store any failures that occur during testing
+var failures: Array[String] = []
+
+
 # Run all tests in this test scene
 # Return a signal that completes when all tests are done.
 func run_all_tests() -> Signal:
