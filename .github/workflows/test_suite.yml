@@ -23,6 +23,15 @@ jobs:
         with:
           lfs: true
 
+      - name: Import assets (first run to generate .godot cache)
+        run: |
+          godot --headless --path ${PROJECT_PATH} --import --quit || true
+
+      - name: Verify base test scripts are present
+        run: |
+          test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
+
       - name: Run test suite scene
         run: |
+          # Use proper ordering: options first, then scene
           godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
