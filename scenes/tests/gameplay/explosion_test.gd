@@ -29,23 +29,13 @@ func run_all_tests() -> Signal:
 # Assert that at least the given number of block halves exist in the scene
 func assert_block_halves_at_least(expected_num: int) -> void:
 	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_HALF_GROUP).size()
-	print("DEBUG: Found %d BlockHalves, expected at least %d" % [actual_num, expected_num])
-	if actual_num < expected_num:
-		failures.append("Expected at least %d BlockHalves, but found %d" % [
-		expected_num,
-		actual_num
-		])
+	assert_ge(actual_num, expected_num, "BlockHalves")
 
 
 # Assert that at least the given number of block quarters exist in the scene
 func assert_block_quarts_at_least(expected_num: int) -> void:
 	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_QUART_GROUP).size()
-	print("DEBUG: Found %d BlockQuarts, expected at least %d" % [actual_num, expected_num])
-	if actual_num < expected_num:
-		failures.append("Expected at least %d BlockQuarts, but found %d" % [
-		expected_num,
-		actual_num
-		])
+	assert_ge(actual_num, expected_num, "BlockQuarts")
 
 
 # Create the test board

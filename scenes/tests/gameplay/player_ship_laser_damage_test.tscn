@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bgbq36y5x4fgh"]
+[gd_scene load_steps=4 format=3 uid="uid://dkxxefrttmwkk"]
 
-[ext_resource type="Script" uid="uid://bdwqdwiohjvcx" path="res://scenes/tests/gameplay/player_ship_explosion_damage_test.gd" id="1_6e3mo"]
+[ext_resource type="Script" uid="uid://dy3urfpfob18i" path="res://scenes/tests/gameplay/player_ship_laser_damage_test.gd" id="1_rwu20"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6e3mo"]
 size = Vector2(1224, 200)
@@ -8,8 +8,8 @@ size = Vector2(1224, 200)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sgtes"]
 size = Vector2(200, 576)
 
-[node name="PlayerShipExplosionDamageTest" type="Node2D"]
-script = ExtResource("1_6e3mo")
+[node name="PlayerShipLaserDamageTest" type="Node2D"]
+script = ExtResource("1_rwu20")
 
 [node name="Outer Fence" type="RigidBody2D" parent="."]
 gravity_scale = 0.0

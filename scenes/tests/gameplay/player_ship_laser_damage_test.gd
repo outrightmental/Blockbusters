@@ -14,11 +14,11 @@ func run_all_tests() -> Signal:
 	_spawn_player_ship(1, Vector2(viewport_size.x * 0.3, viewport_size.y / 2), 0)
 	var p2: Ship = _spawn_player_ship(2, Vector2(viewport_size.x * 0.7, viewport_size.y / 2), PI)
 	await Util.delay(0.1)
-	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
-	await Util.delay(0.1)
-	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
-	await Util.delay(2.0)
-	assert_true(p2.is_disabled, "Player 2 ship should be disabled after a direct hit from Player 1 projectile.")
+	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_A)
+	await Util.delay(3.0)
+	InputManager.action_released.emit(1, InputManager.INPUT_ACTION_A)
+	assert_true(p2.is_disabled, "Player 2 ship should be disabled after being fully cooked by Player 1 laser.")
+	await Util.delay(Constant.PLAYER_SHIP_DISABLED_SEC + 0.1)
 	return Util.delay(0)
 
 
