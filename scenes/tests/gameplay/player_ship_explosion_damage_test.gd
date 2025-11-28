@@ -1,9 +1,5 @@
 extends Test
 
-# Preloaded Scenes
-const ship_scene: PackedScene = preload('res://models/player/ship.tscn')
-
-
 # [FOR DEVELOPMENT ONLY] run this test immediately and loop
 func _ready() -> void:
 	# await run_all_tests()
@@ -29,7 +25,7 @@ func run_all_tests() -> Signal:
 
 # Spawn a player ship at the given position and rotation
 func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float) -> Ship:
-	var ship: Ship = ship_scene.instantiate()
+	var ship: Ship = ScenePreloader.ship_scene.instantiate()
 	ship.position = start_position
 	ship.player_num = num
 	ship.rotation = start_rotation
