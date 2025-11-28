@@ -18,12 +18,14 @@ jobs:
     container:
       image: barichello/godot-ci:4.4.1
     steps:
-      - name: Checkout repository
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Import assets (first run to generate .godot cache)
         run: |
-          godot --headless --path . --import --quit || true
+          godot --headless --path ${PROJECT_PATH} --import --quit || true
 
       - name: Verify base test scripts are present
         run: |
@@ -32,4 +34,4 @@ jobs:
       - name: Run test suite scene
         run: |
           # Use proper ordering: options first, then scene
-          godot --headless --path . res://scenes/tests/test_suite.tscn
+          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
