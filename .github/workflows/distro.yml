@@ -13,9 +13,6 @@ env:
 jobs:
   nothing_left_todo:
     name: Nothing Left TODO
-    env:
-      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-      REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (with LFS)

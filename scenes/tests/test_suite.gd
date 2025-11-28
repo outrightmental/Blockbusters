@@ -3,6 +3,7 @@ extends Node
 
 # Store preloaded test scenes
 const tests: Array[PackedScene] = [
+								  preload('res://scenes/tests/gameplay/player_ship_explosion_damage_test.tscn'),
 								  preload('res://scenes/tests/hud/banner_test.tscn'),
 								  preload('res://scenes/tests/gameplay/explosion_test.tscn'),
 								  ]

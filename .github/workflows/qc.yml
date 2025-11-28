@@ -12,8 +12,20 @@ env:
   PROJECT_PATH: .
 
 jobs:
+  nothing_left_todo:
+    name: Nothing Left TODO
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with LFS)
+        uses: actions/checkout@v2
+
+      - name: Nothing left TODO
+        run: .github/nothing_left_todo.sh
+
   run_all_tests:
     name: Run All Tests
+    needs:
+      - nothing_left_todo
     runs-on: ubuntu-24.04
     container:
       image: barichello/godot-ci:4.4.1
