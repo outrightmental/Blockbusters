@@ -22,4 +22,4 @@ jobs:
 
       - name: Run Godot test suite
         run: |
-          godot res://scenes/tests/test_suite.gd --headless --path .
+          godot res://scenes/tests/test_suite.tscn --headless --path .
