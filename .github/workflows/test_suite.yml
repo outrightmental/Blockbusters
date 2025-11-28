@@ -6,22 +6,19 @@ on:
     branches:
       - main
 
+env:
+  GODOT_VERSION: 4.4.1
+  EXPORT_NAME: blockbusters
+  PROJECT_PATH: .
+
 jobs:
   test_suite:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
-      # Adjust this image to the same Godot-ready container your build pipeline uses
-      image: ghcr.io/godotengine/godot:4.1.2
+      image: barichello/godot-ci:4.4.1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Verify Godot binary exists
-        run: |
-          if ! command -v godot >/dev/null 2>&1; then
-            echo "godot binary not found in container image. Update the container image to one that provides Godot."
-            exit 1
-          fi
 
       - name: Run Godot test scene
         run: |
