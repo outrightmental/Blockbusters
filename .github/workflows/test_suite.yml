@@ -12,7 +12,8 @@ env:
   PROJECT_PATH: .
 
 jobs:
-  test_suite:
+  run_all_tests:
+    name: Run All Tests
     runs-on: ubuntu-24.04
     container:
       image: barichello/godot-ci:4.4.1
