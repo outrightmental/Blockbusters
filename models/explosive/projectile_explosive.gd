@@ -1,8 +1,6 @@
 class_name ProjectileExplosive
 extends Collidable
 
-# Preloaded scene for the explosion effect
-const explosion_scene: PackedScene = preload("res://models/explosive/explosion.tscn")
 # Player number to identify the projectile
 @export var player_num: int = 0
 
@@ -27,7 +25,7 @@ func _ready() -> void:
 
 # Called when another body enters the collission area
 func _on_body_entered(_other: Node) -> void:
-	var explosion: Node = explosion_scene.instantiate()
+	var explosion: Node = ScenePreloader.explosion_scene.instantiate()
 	explosion.position = position
 	explosion.player_num = player_num
 	self.get_parent().call_deferred("add_child", explosion)

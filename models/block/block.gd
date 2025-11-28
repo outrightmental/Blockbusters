@@ -3,11 +3,7 @@ extends Heatable
 
 # Variables
 var item: Node = null
-# Preloaded scenes
-const half1_scene: PackedScene             = preload("res://models/block/block_half_1.tscn")
-const half2_scene: PackedScene             = preload("res://models/block/block_half_2.tscn")
-const gem_scene: PackedScene               = preload("res://models/gem/gem.tscn")
-const pickup_projectile_scene: PackedScene = preload("res://models/pickup/pickup_projectile.tscn")
+
 # Whether this block has a gem
 @export var has_gem: bool = false
 
@@ -15,8 +11,6 @@ const pickup_projectile_scene: PackedScene = preload("res://models/pickup/pickup
 @onready var heated_effect: Node2D = $HeatedEffect
 # Cache reference to Shapes
 @onready var shapes: Node2D = $Shapes
-# Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -52,7 +46,7 @@ func is_empty() -> bool:
 func add_gem() -> void:
 	$ParticleEmitter.emitting = true
 	$LightOccluder2D.visible = false
-	item = gem_scene.instantiate()
+	item = ScenePreloader.gem_scene.instantiate()
 	item.position = Vector2(0, 0)
 	item.add_collision_exception_with(self)
 	item.freeze = true
@@ -67,7 +61,7 @@ func add_pickup(type: Game.InventoryItemType) -> void:
 	$LightOccluder2D.visible = false
 	match type:
 		Game.InventoryItemType.PROJECTILE:
-			item = pickup_projectile_scene.instantiate()
+			item = ScenePreloader.pickup_projectile_scene.instantiate()
 			item.position = Vector2(0, 0)
 			item.add_collision_exception_with(self)
 			item.freeze = true
@@ -83,12 +77,12 @@ func add_pickup(type: Game.InventoryItemType) -> void:
 # Break the block apart into two halves
 func do_break() -> void:
 	# Half 1
-	var half1: Node = half1_scene.instantiate()
+	var half1: Node = ScenePreloader.block_half_1_scene.instantiate()
 	half1.position = position
 	half1.linear_velocity = linear_velocity + Vector2(-Constant.BLOCK_BREAK_APART_VELOCITY, -Constant.BLOCK_BREAK_APART_VELOCITY)
 	half1.half_num = 1
 	# Half 2
-	var half2: Node = half2_scene.instantiate()
+	var half2: Node = ScenePreloader.block_half_2_scene.instantiate()
 	half2.position = position
 	half2.linear_velocity = linear_velocity + Vector2(Constant.BLOCK_BREAK_APART_VELOCITY, Constant.BLOCK_BREAK_APART_VELOCITY)
 	half2.half_num = 2

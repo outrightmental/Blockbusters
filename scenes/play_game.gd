@@ -1,11 +1,5 @@
 extends Node2D
 
-# Preloaded Scenes
-const ship_scene: PackedScene   = preload('res://models/player/ship.tscn')
-const goal_scene: PackedScene   = preload('res://models/player/goal.tscn')
-const score_scene: PackedScene  = preload('res://models/hud/hud_score.tscn')
-const block_scene: PackedScene  = preload('res://models/block/block.tscn')
-const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player goals
 @onready var player_goal_1 = $GoalPlayer1
 @onready var player_goal_2 = $GoalPlayer2
@@ -76,7 +70,7 @@ func _on_show_banner(player_num: int, message: String, message_2) -> void:
 
 # Spawn a banner at the given position
 func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
-	var banner: Node = banner_scene.instantiate()
+	var banner: Node = ScenePreloader.banner_scene.instantiate()
 	banner.scale = Vector2(_scale, _scale)
 	banner.position = Vector2(x, y)
 	banner.rotation_degrees = _rotation_degrees
@@ -156,7 +150,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 # Spawn a player ship at the given position and rotation
 func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float) -> Ship:
-	var ship: Ship = ship_scene.instantiate()
+	var ship: Ship = ScenePreloader.ship_scene.instantiate()
 	ship.position = start_position
 	ship.player_num = num
 	ship.rotation = start_rotation
@@ -165,7 +159,7 @@ func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float
 
 
 func _spawn_block(start_position: Vector2) -> Node:
-	var block: Block = block_scene.instantiate()
+	var block: Block = ScenePreloader.block_scene.instantiate()
 	block.position = start_position
 	self.add_child(block)
 	return block

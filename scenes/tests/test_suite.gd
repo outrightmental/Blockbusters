@@ -1,17 +1,20 @@
-﻿class_name TestSuite
+class_name TestSuite
 extends Node
 
 # Store preloaded test scenes
-const banner_test: PackedScene    = preload('res://scenes/tests/banner_test.tscn')
-const explosion_test: PackedScene = preload('res://scenes/tests/explosion_test.tscn')
+const tests: Array[PackedScene] = [
+								  preload('res://scenes/tests/hud/banner_test.tscn'),
+								  preload('res://scenes/tests/gameplay/explosion_test.tscn'),
+								  ]
 # Store any failures that occur during testing
 var failures: Array[String] = []
 
 
 # Run all tests in this test suite
 func _ready() -> void:
-	await _run_test_scene(banner_test)
-	await _run_test_scene(explosion_test)
+	for test_scene in tests:
+		print("\n\nRUNNING TEST: " + str(test_scene))
+		await _run_test_scene(test_scene)
 	if failures.size() > 0:
 		print("TEST SUITE HAD FAILURES:")
 		for failure in failures:

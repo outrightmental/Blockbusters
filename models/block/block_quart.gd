@@ -1,8 +1,6 @@
 class_name BlockQuart
 extends Heatable
 
-# Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -17,7 +15,7 @@ func _ready() -> void:
 
 # Shatter into dust
 func do_shatter() -> void:
-	var shatter: Node = shatter_scene.instantiate()
+	var shatter: Node = ScenePreloader.explosive_shatter_scene.instantiate()
 	shatter.position = position
 	self.get_parent().call_deferred("add_child", shatter)
 	self.call_deferred("queue_free")

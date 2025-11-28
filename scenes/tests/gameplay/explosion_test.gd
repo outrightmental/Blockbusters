@@ -1,15 +1,10 @@
 extends Test
 
-# Preloaded Scenes
-const block_scene: PackedScene     = preload('res://models/block/block.tscn')
-const explosion_scene: PackedScene = preload('res://models/explosive/explosion.tscn')
-
-
 # [FOR DEVELOPMENT ONLY] run this test immediately and loop
 func _ready() -> void:
 	#	 await run_all_tests()
 	#	 await Util.delay(2.0)
-	#	 _goto_scene("res://scenes/explosion_test.tscn")
+	#	 _goto_scene("res://scenes/tests/gameplay/explosion_test.tscn")
 	pass
 
 
@@ -47,7 +42,7 @@ func _spawn_random_explosions(num: int, delay: float) -> Signal:
 
 # Spawn an explosion at the given position
 func _spawn_explosion(x: float, y: float) -> Signal:
-	var explosion: Node = explosion_scene.instantiate()
+	var explosion: Node = ScenePreloader.explosion_scene.instantiate()
 	explosion.position = Vector2(x, y)
 	explosion.player_num = 1
 	self.add_child(explosion)
@@ -60,7 +55,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 
 func _spawn_block(start_position: Vector2) -> Node:
-	var block: Block = block_scene.instantiate()
+	var block: Block = ScenePreloader.block_scene.instantiate()
 	block.position = start_position
 	self.add_child(block)
 	return block
