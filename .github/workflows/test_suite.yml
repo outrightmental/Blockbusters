@@ -1,5 +1,4 @@
-﻿# yaml
-name: test_suite
+﻿name: Run All Tests
 
 on:
   pull_request:
