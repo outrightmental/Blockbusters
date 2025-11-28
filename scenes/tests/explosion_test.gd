@@ -1,12 +1,20 @@
-extends Node2D
+extends Test
 
 # Preloaded Scenes
 const block_scene: PackedScene     = preload('res://models/block/block.tscn')
 const explosion_scene: PackedScene = preload('res://models/explosive/explosion.tscn')
 
 
-# Called when the node enters the scene tree for the first time.
+# [FOR DEVELOPMENT ONLY] run this test immediately and loop
 func _ready() -> void:
+	#	 await run_all_tests()
+	#	 await Util.delay(2.0)
+	#	 _goto_scene("res://scenes/explosion_test.tscn")
+	pass
+
+
+# Run all tests in this test scene
+func run_all_tests() -> Signal:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_create_board()
 	await Util.delay(1.0)
@@ -16,8 +24,7 @@ func _ready() -> void:
 	await Util.delay(2.0)
 	await _spawn_random_explosions(5, 1)
 	await _spawn_random_explosions(25, 0.1)
-	_goto_scene("res://scenes/tests/explosion_test.tscn")
-	pass
+	return Util.delay(0)
 
 
 # Create the test board
