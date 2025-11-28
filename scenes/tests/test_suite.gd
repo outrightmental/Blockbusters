@@ -14,7 +14,7 @@ var failures: Array[String] = []
 # Run all tests in this test suite
 func _ready() -> void:
 	for test_scene in tests:
-		print("\n\nRUNNING TEST: " + str(test_scene))
+		print("\n\nRUNNING TEST: " + test_scene.get_name())
 		await _run_test_scene(test_scene)
 	if failures.size() > 0:
 		print("TEST SUITE HAD FAILURES:")
