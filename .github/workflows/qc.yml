@@ -1,4 +1,4 @@
-﻿name: "Run All Tests"
+﻿name: "QC"
 
 on:
   pull_request:
