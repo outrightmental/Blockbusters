@@ -1,0 +1,37 @@
+﻿name: "Run All Tests"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  GODOT_VERSION: 4.4.1
+  EXPORT_NAME: blockbusters
+  PROJECT_PATH: .
+
+jobs:
+  run_all_tests:
+    name: Run All Tests
+    runs-on: ubuntu-24.04
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+      - name: Checkout (with LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Import assets (first run to generate .godot cache)
+        run: |
+          godot --headless --path ${PROJECT_PATH} --import --quit || true
+
+      - name: Verify base test scripts are present
+        run: |
+          test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
+
+      - name: Run test suite scene
+        run: |
+          # Use proper ordering: options first, then scene
+          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn

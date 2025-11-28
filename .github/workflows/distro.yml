@@ -18,7 +18,7 @@ jobs:
       REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v2
 
       - name: Nothing left TODO
@@ -34,7 +34,7 @@ jobs:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -82,7 +82,7 @@ jobs:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -130,7 +130,7 @@ jobs:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -171,7 +171,7 @@ jobs:
       image: barichello/godot-ci:4.4.1
     steps:
       
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -209,7 +209,7 @@ jobs:
 #    container:
 #      image: barichello/godot-ci:4.4.1
 #    steps:
-#      - name: Checkout
+#      - name: Checkout (with LFS)
 #        uses: actions/checkout@v4
 #        with:
 #          lfs: true
