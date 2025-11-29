@@ -1,13 +1,21 @@
 class_name TestSuite
 extends Node
 
+# ---------------------------
 # Store preloaded test scenes
+#
+# ----------------------------------------------------------------
+# FOR TEST-DRIVEN DEVELOPMENT, disable tests that are not being worked on currently
+# and make sure add a "to do" (remove the space between those two words) comment to bring them back later.
+# ----------------------------------------------------------------
+#
 const tests: Array[PackedScene] = [
-								  preload('res://scenes/tests/hud/banner_test.tscn'),
-								  preload('res://scenes/tests/gameplay/explosion_test.tscn'),
-								  preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
+								  # todo bring back preload('res://scenes/tests/hud/banner_test.tscn'),
+								  # todo bring back preload('res://scenes/tests/gameplay/explosion_test.tscn'),
+								  # todo bring back preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
 								  preload('res://scenes/tests/gameplay/player_ship_explosion_damage_test.tscn'),
 								  ]
+#
 # Store any failures that occur during testing
 var had_failures: bool = false
 

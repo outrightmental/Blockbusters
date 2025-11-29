@@ -59,6 +59,11 @@ func do_enable() -> void:
 	Game.player_enabled.emit(player_num, true)
 	# Play sound effect
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_REENABLED)
+	
+	
+# Get the heated ratio (0.0 to 1.0)
+func get_heated_ratio() -> float:
+	return clamp(heat / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
 
 
 # Called when the node enters the scene tree for the first time.

@@ -1,24 +1,65 @@
 extends Test
 
-# [FOR DEVELOPMENT ONLY] run this test immediately and loop
-func _ready() -> void:
-	# await run_all_tests()
-	# await Util.delay(3.0)
-	# _goto_scene("res://scenes/tests/gameplay/player_ship_explosion_damage_test.tscn")
-	pass
+# Padding time to ensure state changes have taken effect
+const pad_seconds: float = 0.1
+# of actual laser beams (in the laser_beam_cluster) raycast from p1 to p2 simultaneously doing damage
+const number_of_laser_beams: int = Constant.PLAYER_SHIP_LASER_CLUSTER_COUNT
+# Time required to fully disable a ship by laser heating
+const disable_ship_seconds: float = Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC / number_of_laser_beams + pad_seconds
+# Time required to fully re-enable a disabled ship (double the disable time, it turns out) plus padding
+const reenable_ship_seconds: float = Constant.PLAYER_SHIP_DISABLED_SEC * 2 + pad_seconds
 
 
-# Run all tests in this test scene
+# Functional test to validate laser behaviors
 func run_all_tests() -> Signal:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	_spawn_player_ship(1, Vector2(viewport_size.x * 0.3, viewport_size.y / 2), 0)
-	var p2: Ship = _spawn_player_ship(2, Vector2(viewport_size.x * 0.7, viewport_size.y / 2), PI)
+	var p1: Ship               = _spawn_player_ship(1, Vector2(viewport_size.x * 0.3, viewport_size.y / 2), 0)
+	var p2: Ship               = _spawn_player_ship(2, Vector2(viewport_size.x * 0.7, viewport_size.y / 2), PI)
 	await Util.delay(0.1)
+	await _test_fully_cooked(p1, p2)
+	await _test_half_baked(p1, p2)
+	await _test_grazed(p1, p2)
+	return Util.delay(0)
+
+
+# Player 1 fires the entire laser charge directly at Player 2 -- heated & disabled
+func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
 	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_A)
-	await Util.delay(3.0)
+	await Util.delay(disable_ship_seconds)
 	InputManager.action_released.emit(1, InputManager.INPUT_ACTION_A)
-	assert_true(p2.is_disabled, "Player 2 ship should be disabled after being fully cooked by Player 1 laser.")
-	await Util.delay(Constant.PLAYER_SHIP_DISABLED_SEC + 0.1)
+	assert_true(p2.is_disabled, "Player 2 ship should be disabled after being fully cooked by Player 1 laser")
+	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 has no heat after being disabled")
+	await Util.delay(reenable_ship_seconds)
+	assert_false(p2.is_disabled, "Player 2 ship should be re-enabled after disabled duration has passed")
+	return Util.delay(0)
+
+
+# Player 2 fires a partial laser charge directly at Player 1 -- heated more than 50% but not disabled
+func _test_half_baked(p1: Ship, _p2: Ship) -> Signal:
+	InputManager.action_pressed.emit(2, InputManager.INPUT_ACTION_A)
+	await Util.delay(disable_ship_seconds / 2)
+	InputManager.action_released.emit(2, InputManager.INPUT_ACTION_A)
+	assert_ge(p1.get_heated_ratio(), 0.5, "Player 1 heated ratio after a 50% laser hit from Player 2")
+	assert_false(p1.is_disabled, "Player 1 ship should not be disabled")
+	var passed_seconds: float = 0.0
+	while p1.get_heated_ratio() > 0.0:
+		print ("Player 2 cooldown, current heat ratio %f after %f seconds" % [p1.get_heated_ratio(), passed_seconds])
+		await Util.delay(0.1)
+		passed_seconds += 0.1
+	# todo await Util.delay(reenable_ship_seconds / 2)
+	assert_eq(p1.get_heated_ratio(), 0.0, "Player 1 heated ratio after re-enabling from disabled state")
+	return Util.delay(0)
+
+
+# Player 1 fires a small laser charge directly at Player 2 followed by a pause -- no heat
+func _test_grazed(p1: Ship, _p2: Ship) -> Signal:
+	InputManager.action_pressed.emit(2, InputManager.INPUT_ACTION_A)
+	await Util.delay(disable_ship_seconds / 5)
+	InputManager.action_released.emit(2, InputManager.INPUT_ACTION_A)
+	assert_ge(p1.get_heated_ratio(), 0.2, "Player 1 heated ratio after a 50% laser hit from Player 2")
+	assert_false(p1.is_disabled, "Player 1 ship should not be disabled")
+	await Util.delay(reenable_ship_seconds / 5)
+	assert_eq(p1.get_heated_ratio(), 0.0, "Player 1 heated ratio after re-enabling from disabled state")
 	return Util.delay(0)
 
 
