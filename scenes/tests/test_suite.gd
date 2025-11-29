@@ -10,10 +10,10 @@ extends Node
 # ----------------------------------------------------------------
 #
 const tests: Array[PackedScene] = [
-								  # todo bring back preload('res://scenes/tests/hud/banner_test.tscn'),
-								  # todo bring back preload('res://scenes/tests/gameplay/explosion_test.tscn'),
-								  # todo bring back preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
+								  preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
 								  preload('res://scenes/tests/gameplay/player_ship_explosion_damage_test.tscn'),
+								  preload('res://scenes/tests/gameplay/explosion_test.tscn'),
+								  preload('res://scenes/tests/hud/banner_test.tscn'),
 								  ]
 #
 # Store any failures that occur during testing
@@ -24,11 +24,12 @@ var had_failures: bool = false
 func _ready() -> void:
 	for test_scene in tests:
 		await _run_test_scene(test_scene)
+	await Util.delay(0.5) # Wait a moment to ensure all output is printed
 	if had_failures:
-		print("TEST SUITE HAD FAILURES")
+		print("FAILURE")
 		get_tree().quit(1) # Exit with failure code
 	else:
-		print("ALL TESTS COMPLETED OK")
+		print("ALL TESTS PASSED")
 		get_tree().quit(0) # Exit with success code
 	pass
 
@@ -47,7 +48,7 @@ func _run_test_scene(test_scene: PackedScene) -> Signal:
 			for failure in test_instance.failures:
 				print("[%s] FAILED: %s" % [scene_name, failure])
 			had_failures = true
-			print("[%s] HAD %d FAILURES" % [scene_name, test_instance.failures.size()])
+			print("[%s] HAD %d FAILURE%s" % [scene_name, test_instance.failures.size(), "S" if test_instance.failures.size() > 1 else ""])
 		else:
 			print("[%s] COMPLETED OK" % scene_name)
 	else:

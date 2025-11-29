@@ -8,10 +8,9 @@ extends Node2D
 @export var player_num: int = 0
 
 # Variables
-var alive_sec: float        = 0.0
-var explosive_radius: float = 0.0
-var heat_radius: float      = 0.0
-var exploded: bool          = false
+var alive_sec: float   = 0.0
+var heat_radius: float = 0.0
+var exploded: bool     = false
 var affected_bodies_waves: Dictionary[int, Array] = {}
 
 # Constants
@@ -20,8 +19,8 @@ const WAVE_SEC = Constant.EXPLOSION_LIFETIME_SEC / Constant.EXPLOSION_WAVE_COUNT
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	explosive_radius = collision_shape.shape.radius
-	heat_radius = explosive_radius * Constant.EXPLOSION_HEAT_RADIUS_RATIO
+	collision_shape.shape.radius = Constant.EXPLOSION_RADIUS
+	heat_radius = Constant.EXPLOSION_RADIUS_HEATED
 
 	# Set the explosion color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
@@ -68,7 +67,7 @@ func _physics_process(delta: float) -> void:
 		var diff: Vector2   = (body.position - position)
 		var distance: float = diff.length()
 		var dir: Vector2    = diff.normalized()
-		var wave_num: int   = floori(Constant.EXPLOSION_WAVE_COUNT * pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_SEC)
+		var wave_num: int   = floori(Constant.EXPLOSION_WAVE_COUNT * pow(distance/Constant.EXPLOSION_RADIUS, 2) * Constant.EXPLOSION_LIFETIME_SEC)
 		if not wave_num in affected_bodies_waves:
 			affected_bodies_waves.set(wave_num, [])
 		var item: Dictionary = {}
@@ -85,7 +84,7 @@ func _apply_to_body(delta: float, item: Dictionary) -> void:
 	var distance = item.distance
 	if not body:
 		return  # Ensure body is valid before proceeding
-	body.apply_central_force(delta * dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius, 2)))
+	body.apply_central_force(delta * dir * Constant.EXPLOSION_FORCE * (1-pow(distance / Constant.EXPLOSION_RADIUS, 2)))
 	if body is Heatable:
 		var heat = Constant.EXPLOSION_HEAT_MAX * Constant.EXPLOSION_SHIP_EFFECT_MULTIPLIER if body is Ship else Constant.EXPLOSION_HEAT_MAX
 		if distance <= heat_radius:
