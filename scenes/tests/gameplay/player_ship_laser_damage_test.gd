@@ -1,7 +1,7 @@
 extends Test
 
 # Padding time to ensure state changes have taken effect
-const pad_seconds: float = 0.2
+const pad_seconds: float = 0.3
 # of actual laser beams (in the laser_beam_cluster) raycast from p1 to p2 simultaneously doing damage
 const number_of_laser_beams: int = Constant.PLAYER_SHIP_LASER_CLUSTER_COUNT
 # Time required to fully disable a ship by laser heating

@@ -16,8 +16,8 @@ const tests: Array[PackedScene] = [
 								  preload('res://scenes/tests/hud/banner_test.tscn'),
 								  ]
 #
-# Store any failures that occur during testing
-var had_failures: bool = false
+# Count the failures that occur during testing
+var total_failures: int = false
 
 
 # Run all tests in this test suite
@@ -25,8 +25,8 @@ func _ready() -> void:
 	for test_scene in tests:
 		await _run_test_scene(test_scene)
 	await Util.delay(0.5) # Wait a moment to ensure all output is printed
-	if had_failures:
-		print("FAILURE")
+	if total_failures > 0:
+		print("%d TEST%s FAILED", [total_failures, "S" if total_failures > 1 else ""])
 		get_tree().quit(1) # Exit with failure code
 	else:
 		print("ALL TESTS PASSED")
@@ -38,22 +38,20 @@ func _ready() -> void:
 func _run_test_scene(test_scene: PackedScene) -> Signal:
 	var name_parts: PackedStringArray = test_scene.get_path().split("/")
 	var scene_name: String            = name_parts[name_parts.size() - 1].replace(".tscn", "")
-	print("\n\n---[%s]--- will run all tests" % scene_name)
-	var test_instance: Node = test_scene.instantiate()
+	var test_instance: Node           = test_scene.instantiate()
 	add_child(test_instance)
 	#
 	if test_instance.has_method("run_all_tests"):
+		print("\n\n---[%s]--- will run all tests" % scene_name)
 		await test_instance.run_all_tests()
-		if test_instance.failures.size() > 0:
-			for failure in test_instance.failures:
-				print("---[%s]--- FAILED: %s" % [scene_name, failure])
-			had_failures = true
-			print("---[%s]--- HAD %d FAILURE%s" % [scene_name, test_instance.failures.size(), "S" if test_instance.failures.size() > 1 else ""])
+		if test_instance.failures > 0:
+			total_failures += test_instance.failures
+			print("---[%s]--- HAD %d FAILURE%s" % [scene_name, test_instance.failures, "S" if test_instance.failures > 1 else ""])
 		else:
 			print("---[%s]--- completed OK" % scene_name)
 	else:
 		print("---[%s]--- ERROR: %s" % [str(test_scene), "does not have a run_all_tests() method."])
-		had_failures = true
+		total_failures += 1
 		test_instance.queue_free()
 	#
 	test_instance.queue_free()

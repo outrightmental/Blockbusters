@@ -2,7 +2,7 @@
 extends Node
 
 # Store any failures that occur during testing
-var failures: Array[String] = []
+var failures: int = 0
 
 
 # Run all tests in this test scene
@@ -60,5 +60,5 @@ func assert_le(actual: float, expected: float, message: String) -> void:
 
 # Record a failure message
 func _fail(message: String) -> void:
-	print(message)
-	failures.append(message)
+	print("FAILED!" + message)
+	failures += 1
