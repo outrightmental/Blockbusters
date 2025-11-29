@@ -10,10 +10,10 @@ extends Node
 # ----------------------------------------------------------------
 #
 const tests: Array[PackedScene] = [
-								  # todo:   preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
+								  preload('res://scenes/tests/gameplay/player_ship_laser_damage_test.tscn'),
 								  preload('res://scenes/tests/gameplay/player_ship_explosion_damage_test.tscn'),
-								  # todo:   preload('res://scenes/tests/gameplay/explosion_test.tscn'),
-								  # todo:   preload('res://scenes/tests/hud/banner_test.tscn'),
+								  preload('res://scenes/tests/gameplay/explosion_test.tscn'),
+								  preload('res://scenes/tests/hud/banner_test.tscn'),
 								  ]
 #
 # Count the failures that occur during testing
