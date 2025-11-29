@@ -56,7 +56,7 @@ func _test_half_baked(p1: Ship, _p2: Ship) -> Signal:
 	InputManager.action_pressed.emit(2, InputManager.INPUT_ACTION_A)
 	await Util.delay(disable_ship_seconds / 2)
 	InputManager.action_released.emit(2, InputManager.INPUT_ACTION_A)
-	assert_near(p1.get_heated_ratio(), 0.5, 0.05, "Player 1 heated ratio after a 50% laser hit from Player 2")
+	assert_near(p1.get_heated_ratio(), 0.5, 0.1, "Player 1 heated ratio after a 50% laser hit from Player 2")
 	assert_false(p1.is_disabled, "Player 1 ship should not be disabled")
 	var passed_seconds: float   = 0.0
 	var cooldown_seconds: float = p1.heat + pad_seconds

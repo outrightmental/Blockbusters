@@ -60,5 +60,5 @@ func assert_le(actual: float, expected: float, message: String) -> void:
 
 # Record a failure message
 func _fail(message: String) -> void:
-	print("FAILED!" + message)
+	print("  FAILED! " + message)
 	failures += 1

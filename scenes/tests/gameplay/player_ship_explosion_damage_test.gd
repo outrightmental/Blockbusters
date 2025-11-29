@@ -11,7 +11,7 @@ const reenable_ship_seconds: float = Constant.PLAYER_SHIP_DISABLED_SEC * 2 + pad
 # Offset for a "danger close" near miss
 const danger_close_offset: Vector2 = Vector2(0, -Constant.EXPLOSION_RADIUS_HEATED * 0.3)
 # Offset for a "half baked" miss
-const half_baked_offset: Vector2 = Vector2(0, Constant.EXPLOSION_RADIUS_HEATED * 0.5)
+const half_baked_offset: Vector2 = Vector2(0, Constant.EXPLOSION_RADIUS_HEATED * 0.7)
 
 
 # Explosion fails to heat/damage ship #226
@@ -19,19 +19,20 @@ func run_all_tests() -> Signal:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var p1: Ship               = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y / 2), 0)
 	var p2: Ship               = _spawn_player_ship(2, Vector2(viewport_size.x * 0.5, viewport_size.y / 2), PI)
-	await Util.delay(0.1)
+	await Util.delay(pad_seconds)
 	await _test_fully_cooked(p1, p2)
 	await _test_danger_close(p1, p2)
 	await _test_half_baked(p1, p2)
 	await _test_backfire_fully_cooked(p1, p2)
 	await _test_backfire_half_baked(p1, p2)
-	return Util.delay(0)
+	return Util.delay(pad_seconds)
 
 
 #
-func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
+func _test_fully_cooked(p1: Ship, p2: Ship) -> Signal:
 	_begin("Player 1 fires an explosive projectile directly at Player 2 -- disabled (no heat)")
-	await Util.delay(pad_seconds)
+	p1.set_linear_velocity(Vector2.ZERO)
+	p2.set_linear_velocity(Vector2.ZERO)
 	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
 	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
@@ -48,10 +49,11 @@ func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
 #
 func _test_danger_close(p1: Ship, p2: Ship) -> Signal:
 	_begin("Player 2 fires an explosive projectile near Player 1 -- disabled (no heat)")
-	await Util.delay(pad_seconds)
+	p1.set_linear_velocity(Vector2.ZERO)
+	p2.set_linear_velocity(Vector2.ZERO)
 	Game.player_did_collect_item.emit(2, Game.InventoryItemType.PROJECTILE)
-	await Util.delay(pad_seconds)
 	var target: Vector2 = p1.position + danger_close_offset # aim slightly to the side for a near miss
+	p2.set_position(target + Vector2(Constant.EXPLOSION_RADIUS_HEATED, 0)) # place p1 close to p2
 	p2.aim_at_position(target)
 	await Util.delay(pad_seconds)
 	InputManager.action_pressed.emit(2, InputManager.INPUT_ACTION_B)
@@ -68,10 +70,11 @@ func _test_danger_close(p1: Ship, p2: Ship) -> Signal:
 #
 func _test_half_baked(p1: Ship, p2: Ship) -> Signal:
 	_begin("Player 2 fires an explosive projectile farther from Player 1 -- heated about 50%, not disabled")
-	await Util.delay(pad_seconds)
+	p1.set_linear_velocity(Vector2.ZERO)
+	p2.set_linear_velocity(Vector2.ZERO)
 	Game.player_did_collect_item.emit(2, Game.InventoryItemType.PROJECTILE)
-	await Util.delay(pad_seconds)
-	var target: Vector2 = p1.position + Vector2(0, 150) # aim for a half-distance miss
+	var target: Vector2 = p1.position + half_baked_offset # aim for a half-distance miss
+	p2.set_position(target + Vector2(Constant.EXPLOSION_RADIUS_HEATED, 0)) # place p1 close to p2
 	p2.aim_at_position(target)
 	await Util.delay(pad_seconds)
 	InputManager.action_pressed.emit(2, InputManager.INPUT_ACTION_B)
@@ -93,8 +96,9 @@ func _test_half_baked(p1: Ship, p2: Ship) -> Signal:
 #
 func _test_backfire_fully_cooked(p1: Ship, p2: Ship) -> Signal:
 	_begin("Player 1 fires an explosive projectile from close up directly at Player 2 -- Player 2 disabled (no heat), Player 1 disabled (no heat)")
+	p1.set_linear_velocity(Vector2.ZERO)
+	p2.set_linear_velocity(Vector2.ZERO)
 	p1.set_position(p2.position + Vector2(-Constant.EXPLOSION_RADIUS_HEATED * 0.5, 0)) # place p1 close to p2
-	await Util.delay(pad_seconds)
 	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
 	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
@@ -114,8 +118,9 @@ func _test_backfire_fully_cooked(p1: Ship, p2: Ship) -> Signal:
 #
 func _test_backfire_half_baked(p1: Ship, p2: Ship) -> Signal:
 	_begin("Player 1 fires an explosive projectile from medium distance directly at Player 2 -- Player 2 disabled (no heat), Player 1 heated about 50%, not disabled")
+	p1.set_linear_velocity(Vector2.ZERO)
+	p2.set_linear_velocity(Vector2.ZERO)
 	p1.set_position(p2.position + Vector2(-Constant.EXPLOSION_RADIUS_HEATED * 0.8, 0)) # place p1 close to p2
-	await Util.delay(pad_seconds)
 	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
 	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
