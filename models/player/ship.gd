@@ -70,6 +70,10 @@ func get_heated_ratio() -> float:
 func aim_at_position(target_position: Vector2) -> void:
 	var direction: Vector2 = (target_position - global_position).normalized()
 	target_rotation = direction.angle()
+	
+# Whether the laser is currently active
+func is_laser_active() -> bool:
+	return laser != null
 
 
 # Called when the node enters the scene tree for the first time.

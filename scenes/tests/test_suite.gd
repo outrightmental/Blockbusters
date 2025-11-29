@@ -38,7 +38,7 @@ func _ready() -> void:
 func _run_test_scene(test_scene: PackedScene) -> Signal:
 	var name_parts: PackedStringArray = test_scene.get_path().split("/")
 	var scene_name: String            = name_parts[name_parts.size() - 1].replace(".tscn", "")
-	print("\n\n[%s] WILL RUN" % scene_name)
+	print("\n\n---[%s]--- will run all tests" % scene_name)
 	var test_instance: Node = test_scene.instantiate()
 	add_child(test_instance)
 	#
@@ -46,13 +46,13 @@ func _run_test_scene(test_scene: PackedScene) -> Signal:
 		await test_instance.run_all_tests()
 		if test_instance.failures.size() > 0:
 			for failure in test_instance.failures:
-				print("[%s] FAILED: %s" % [scene_name, failure])
+				print("---[%s]--- FAILED: %s" % [scene_name, failure])
 			had_failures = true
-			print("[%s] HAD %d FAILURE%s" % [scene_name, test_instance.failures.size(), "S" if test_instance.failures.size() > 1 else ""])
+			print("---[%s]--- HAD %d FAILURE%s" % [scene_name, test_instance.failures.size(), "S" if test_instance.failures.size() > 1 else ""])
 		else:
-			print("[%s] COMPLETED OK" % scene_name)
+			print("---[%s]--- completed OK" % scene_name)
 	else:
-		print("[%s] ERROR: %s" % [str(test_scene), "does not have a run_all_tests() method."])
+		print("---[%s]--- ERROR: %s" % [str(test_scene), "does not have a run_all_tests() method."])
 		had_failures = true
 		test_instance.queue_free()
 	#

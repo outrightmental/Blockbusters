@@ -1,17 +1,17 @@
 extends Test
 
-# [FOR DEVELOPMENT ONLY] run this test immediately and loop
-func _ready() -> void:
-	#	 await run_all_tests()
-	#	 await Util.delay(2.0)
-	#	 _goto_scene("res://scenes/tests/gameplay/explosion_test.tscn")
-	pass
-
-
 # Run all tests in this test scene
 func run_all_tests() -> Signal:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_create_board()
+	_test_explosion()
+	# _test_multiple_explosions()
+	return Util.delay(0)
+
+
+# Test explosion behavior
+func _test_explosion() -> void:
+	_begin("Explosion causes blocks to break into halves and quarters")
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	await Util.delay(1.0)
 	await _spawn_explosion(viewport_size.x / 2, viewport_size.y / 2)
 	await Util.delay(2.0)
@@ -20,10 +20,13 @@ func run_all_tests() -> Signal:
 	await _spawn_explosion(viewport_size.x / 2, viewport_size.y / 2)
 	await Util.delay(2.0)
 	assert_block_quarts_at_least(100)
-	#	await Util.delay(2.0)
-	#	await _spawn_random_explosions(5, 1)
-	#	await _spawn_random_explosions(25, 0.1)
-	return Util.delay(0)
+
+
+# Test multiple random explosions
+#func _test_multiple_explosions() -> void:
+#	await Util.delay(2.0)
+#	await _spawn_random_explosions(5, 1)
+#	await _spawn_random_explosions(25, 0.1)
 
 
 # Assert that at least the given number of block halves exist in the scene

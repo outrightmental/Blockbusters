@@ -14,7 +14,7 @@ const danger_close_offset: Vector2 = Vector2(0, -Constant.EXPLOSION_RADIUS_HEATE
 const half_baked_offset: Vector2 = Vector2(0, Constant.EXPLOSION_RADIUS_HEATED * 0.5)
 
 
-# Run all tests in this test scene
+# Explosion fails to heat/damage ship #226
 func run_all_tests() -> Signal:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var p1: Ship               = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y / 2), 0)
@@ -23,11 +23,14 @@ func run_all_tests() -> Signal:
 	await _test_fully_cooked(p1, p2)
 	await _test_danger_close(p1, p2)
 	await _test_half_baked(p1, p2)
+	await _test_backfire_fully_cooked(p1, p2)
+	await _test_backfire_half_baked(p1, p2)
 	return Util.delay(0)
 
 
-# Player 1 fires an explosive projectile directly at Player 2 -- disabled (no heat)
+#
 func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
+	_begin("Player 1 fires an explosive projectile directly at Player 2 -- disabled (no heat)")
 	await Util.delay(pad_seconds)
 	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
@@ -42,8 +45,9 @@ func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
 	return Util.delay(0)
 
 
-# Player 2 fires an explosive projectile near Player 1 -- disabled (no heat)
+#
 func _test_danger_close(p1: Ship, p2: Ship) -> Signal:
+	_begin("Player 2 fires an explosive projectile near Player 1 -- disabled (no heat)")
 	await Util.delay(pad_seconds)
 	Game.player_did_collect_item.emit(2, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
@@ -61,8 +65,9 @@ func _test_danger_close(p1: Ship, p2: Ship) -> Signal:
 	return Util.delay(0)
 
 
-# Player 2 fires an explosive projectile farther from Player 1 -- heated about 50%, not disabled
+#
 func _test_half_baked(p1: Ship, p2: Ship) -> Signal:
+	_begin("Player 2 fires an explosive projectile farther from Player 1 -- heated about 50%, not disabled")
 	await Util.delay(pad_seconds)
 	Game.player_did_collect_item.emit(2, Game.InventoryItemType.PROJECTILE)
 	await Util.delay(pad_seconds)
@@ -82,6 +87,47 @@ func _test_half_baked(p1: Ship, p2: Ship) -> Signal:
 		await Util.delay(pad_seconds / 2)
 		passed_seconds += pad_seconds / 2
 	assert_le(passed_seconds, cooldown_seconds, "Player 1 should have fully cooled down within the re-enable duration")
+	return Util.delay(0)
+
+
+#
+func _test_backfire_fully_cooked(p1: Ship, p2: Ship) -> Signal:
+	_begin("Player 1 fires an explosive projectile from close up directly at Player 2 -- Player 2 disabled (no heat), Player 1 disabled (no heat)")
+	p1.set_position(p2.position + Vector2(-Constant.EXPLOSION_RADIUS_HEATED * 0.5, 0)) # place p1 close to p2
+	await Util.delay(pad_seconds)
+	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
+	await Util.delay(pad_seconds)
+	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
+	await Util.delay(pad_seconds)
+	InputManager.action_released.emit(1, InputManager.INPUT_ACTION_B)
+	await Util.delay(2.0)
+	assert_true(p1.is_disabled, "Player 1 ship should be disabled after a direct hit from Player 1 projectile.")
+	assert_eq(p1.get_heated_ratio(), 0.0, "Player 1 has no heat after being disabled")
+	assert_true(p2.is_disabled, "Player 2 ship should be disabled after a direct hit from Player 1 projectile.")
+	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 has no heat after being disabled")
+	await Util.delay(p2.disabled_for_sec + pad_seconds)
+	assert_false(p1.is_disabled, "Player 1 ship should be re-enabled after disabled duration has passed")
+	assert_false(p2.is_disabled, "Player 2 ship should be re-enabled after disabled duration has passed")
+	return Util.delay(0)
+
+
+#
+func _test_backfire_half_baked(p1: Ship, p2: Ship) -> Signal:
+	_begin("Player 1 fires an explosive projectile from medium distance directly at Player 2 -- Player 2 disabled (no heat), Player 1 heated about 50%, not disabled")
+	p1.set_position(p2.position + Vector2(-Constant.EXPLOSION_RADIUS_HEATED * 0.8, 0)) # place p1 close to p2
+	await Util.delay(pad_seconds)
+	Game.player_did_collect_item.emit(1, Game.InventoryItemType.PROJECTILE)
+	await Util.delay(pad_seconds)
+	InputManager.action_pressed.emit(1, InputManager.INPUT_ACTION_B)
+	await Util.delay(pad_seconds)
+	InputManager.action_released.emit(1, InputManager.INPUT_ACTION_B)
+	await Util.delay(2.0)
+	assert_true(p2.is_disabled, "Player 2 ship should be disabled after a direct hit from Player 1 projectile.")
+	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 has no heat after being disabled")
+	assert_near(p1.get_heated_ratio(), 0.5, 0.1, "Player 1 heated ratio after a 50% explosion hit from Player 2")
+	assert_false(p1.is_disabled, "Player 1 ship should not be disabled")
+	await Util.delay(p2.disabled_for_sec + pad_seconds)
+	assert_false(p2.is_disabled, "Player 2 ship should be re-enabled after disabled duration has passed")
 	return Util.delay(0)
 
 

@@ -11,6 +11,11 @@ func run_all_tests() -> Signal:
 	return Util.delay(0)
 
 
+# Mark the beginning of a test with a message
+func _begin(message: String) -> void:
+	print("Begin test: %s" % message)
+
+
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func _goto_scene(path: String) -> void:
 	if get_tree():
@@ -55,5 +60,5 @@ func assert_le(actual: float, expected: float, message: String) -> void:
 
 # Record a failure message
 func _fail(message: String) -> void:
-	print_debug(message)
+	print(message)
 	failures.append(message)
