@@ -1,25 +1,44 @@
 extends Test
 
-# [FOR DEVELOPMENT ONLY] run this test immediately and loop
-func _ready() -> void:
-	#	 await run_all_tests()
-	#	 await Util.delay(2.0)
-	#	 _goto_scene("res://scenes/tests/gameplay/explosion_test.tscn")
-	pass
-
-
 # Run all tests in this test scene
 func run_all_tests() -> Signal:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	_create_board()
+	_test_explosion()
+	# _test_multiple_explosions()
+	return Util.delay(0)
+
+
+# Test explosion behavior
+func _test_explosion() -> void:
+	_begin("Explosion causes blocks to break into halves and quarters")
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	await Util.delay(1.0)
 	await _spawn_explosion(viewport_size.x / 2, viewport_size.y / 2)
 	await Util.delay(2.0)
+	assert_block_halves_at_least(50)
+	assert_block_quarts_at_least(50)
 	await _spawn_explosion(viewport_size.x / 2, viewport_size.y / 2)
 	await Util.delay(2.0)
-	await _spawn_random_explosions(5, 1)
-	await _spawn_random_explosions(25, 0.1)
-	return Util.delay(0)
+	assert_block_quarts_at_least(100)
+
+
+# Test multiple random explosions
+#func _test_multiple_explosions() -> void:
+#	await Util.delay(2.0)
+#	await _spawn_random_explosions(5, 1)
+#	await _spawn_random_explosions(25, 0.1)
+
+
+# Assert that at least the given number of block halves exist in the scene
+func assert_block_halves_at_least(expected_num: int) -> void:
+	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_HALF_GROUP).size()
+	assert_ge(actual_num, expected_num, "BlockHalves")
+
+
+# Assert that at least the given number of block quarters exist in the scene
+func assert_block_quarts_at_least(expected_num: int) -> void:
+	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_QUART_GROUP).size()
+	assert_ge(actual_num, expected_num, "BlockQuarts")
 
 
 # Create the test board
@@ -30,14 +49,14 @@ func _create_board() -> void:
 
 
 # Spawn a random number of explosions at random positions on the board		
-func _spawn_random_explosions(num: int, delay: float) -> Signal:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	for i in range(num):
-		var x: float = randf() * viewport_size.x
-		var y: float = randf() * viewport_size.y
-		await _spawn_explosion(x, y)
-		await Util.delay(delay)  # Delay between explosions to avoid too many at once
-	return Util.delay(0)
+#func _spawn_random_explosions(num: int, delay: float) -> Signal:
+#	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+#	for i in range(num):
+#		var x: float = randf() * viewport_size.x
+#		var y: float = randf() * viewport_size.y
+#		await _spawn_explosion(x, y)
+#		await Util.delay(delay)  # Delay between explosions to avoid too many at once
+#	return Util.delay(0)
 
 
 # Spawn an explosion at the given position

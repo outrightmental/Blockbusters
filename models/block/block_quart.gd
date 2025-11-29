@@ -8,6 +8,7 @@ extends Heatable
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
+	add_to_group(Game.BLOCK_QUART_GROUP)
 
 	# Update the heated effect visibility
 	_update_heated_effect()

@@ -18,6 +18,8 @@ signal spawn_pickup(type: Game.InventoryItemType)
 signal start_new_game()
 # Group names
 const BLOCK_GROUP: StringName  = "BlockGroup"
+const BLOCK_HALF_GROUP: StringName  = "BlockHalfGroup"
+const BLOCK_QUART_GROUP: StringName  = "BlockQuartGroup"
 const GEM_GROUP: StringName    = "GemGroup"
 const PICKUP_GROUP: StringName = "PickupGroup"
 # Enum for whether Player 1 wins, Player 2 wins, or a draw
@@ -102,6 +104,16 @@ func pause_input_tools() -> void:
 func unpause_input() -> void:
 	is_input_movement_paused = false
 	is_input_tools_paused = false
+
+
+# Get the name of an inventory item
+func get_inventory_item_name(item: InventoryItemType) -> String:
+	match item:
+		InventoryItemType.PROJECTILE:
+			return "Projectile"
+		InventoryItemType.EMPTY:
+			return "Empty"
+	return "Unknown"
 
 
 # Get the command line arguments on init
@@ -265,7 +277,7 @@ func _on_show_banner(_p: int, _m1: String, _m2: String) -> void:
 
 
 func _on_player_did_collect_item(player_num: int, type: InventoryItemType) -> void:
-	print("[GAME] Player %d collected pickup: %s" % [player_num, type])
+	print("[GAME] Player %d collected pickup: %s" % [player_num, Game.get_inventory_item_name(type)])
 	player_inventory[player_num].append(type)
 	player_inventory_updated.emit()
 	pass

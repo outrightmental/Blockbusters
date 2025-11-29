@@ -1,21 +1,27 @@
 extends Test
 
-# [FOR DEVELOPMENT ONLY] run this test immediately and loop
-func _ready() -> void:
-	#	 await run_all_tests()
-	#	 await Util.delay(2.0)
-	#	 _goto_scene("res://scenes/tests/hud/banner_test.tscn")
-	pass
-
-
 # Run all tests in this test scene
 func run_all_tests() -> Signal:
+	await _test_couch()
+	await _test_table()
+	return Util.delay(1.0)
+
+
+#
+func _test_couch() -> Signal:
+	_begin("Spawn several banners in sequence at center screen in couch mode")
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	await Util.delay(1.0)
 	await _spawn_banner(0, viewport_size.x / 2, viewport_size.y / 2, 0, "READY", "SET")
 	await Util.delay(2.0)
 	await _spawn_banner(1, viewport_size.x / 2, viewport_size.y / 2, 0, "VICTORY!")
-	await Util.delay(2.0)
+	return Util.delay(2.0)
+
+
+#
+func _test_table() -> Signal:
+	_begin("Spawn several dual-banners in sequence at sides of screen in table mode")
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	await _spawn_banner(2, viewport_size.x * 0.25, viewport_size.y / 2, -90, "VICTORY!")
 	await _spawn_banner(2, viewport_size.x * 0.75, viewport_size.y / 2, 90, "VICTORY!")
 	return Util.delay(2.0)

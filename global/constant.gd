@@ -71,11 +71,13 @@ const PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 #
 # pertaining to explosive
+const EXPLOSION_RADIUS: float                 = 300
 const EXPLOSION_FORCE: float                  = 100000 # distributed over the EXPLOSIVE_AFFECT_SEC
 const EXPLOSION_HEAT_MAX: float               = 10 # max heat applied to blocks at center of explosion, distributed over the EXPLOSIVE_AFFECT_SEC
-const EXPLOSION_HEAT_RADIUS_RATIO: float      = 0.6
+const EXPLOSION_RADIUS_HEATED: float          = EXPLOSION_RADIUS * EXPLOSION_RADIUS_HEATED_RATIO
+const EXPLOSION_RADIUS_HEATED_RATIO: float    = 0.6
 const EXPLOSION_LIFETIME_SEC: float           = 1.0
-const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 0.8 # ratio multiplied by ship overheating threshold
+const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 6.0 # ratio multiplied by ship overheating threshold
 const EXPLOSION_WAVE_COUNT: int               = 10 # number of waves into which to divide affected bodies of explosion
 const EXPLOSIVE_AFFECT_SEC: float             = 0.2 # time over which the explosion force is applied
 #

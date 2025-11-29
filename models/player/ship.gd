@@ -61,6 +61,21 @@ func do_enable() -> void:
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.SHIP_REENABLED)
 
 
+# Get the heated ratio (0.0 to 1.0)
+func get_heated_ratio() -> float:
+	return clamp(heat / Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC, 0.0, 1.0)
+
+
+# Aim the ship at a specific position
+func aim_at_position(target_position: Vector2) -> void:
+	var direction: Vector2 = (target_position - global_position).normalized()
+	target_rotation = direction.angle()
+	
+# Whether the laser is currently active
+func is_laser_active() -> bool:
+	return laser != null
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
