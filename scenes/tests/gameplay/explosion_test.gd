@@ -3,13 +3,13 @@ extends Test
 # Run all tests in this test scene
 func run_all_tests() -> Signal:
 	_create_board()
-	_test_explosion()
+	await _test_explosion()
 	# _test_multiple_explosions()
-	return Util.delay(0)
+	return Util.callback()
 
 
 # Test explosion behavior
-func _test_explosion() -> void:
+func _test_explosion() -> Signal:
 	_begin("Explosion causes blocks to break into halves and quarters")
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	await Util.delay(1.0)
@@ -20,6 +20,7 @@ func _test_explosion() -> void:
 	await _spawn_explosion(viewport_size.x / 2, viewport_size.y / 2)
 	await Util.delay(2.0)
 	assert_block_quarts_at_least(100)
+	return Util.delay(0.1)
 
 
 # Test multiple random explosions
@@ -56,7 +57,7 @@ func _create_board() -> void:
 #		var y: float = randf() * viewport_size.y
 #		await _spawn_explosion(x, y)
 #		await Util.delay(delay)  # Delay between explosions to avoid too many at once
-#	return Util.delay(0)
+#	return Util.callback()
 
 
 # Spawn an explosion at the given position
@@ -65,7 +66,7 @@ func _spawn_explosion(x: float, y: float) -> Signal:
 	explosion.position = Vector2(x, y)
 	explosion.player_num = 1
 	self.add_child(explosion)
-	return Util.delay(0)
+	return Util.callback()
 
 
 func _grid_position(x: int, y: int) -> Vector2:

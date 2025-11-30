@@ -20,7 +20,7 @@ func run_all_tests() -> Signal:
 	await _test_cannot_overcook(p1, p2)
 	await _test_half_baked(p1, p2)
 	await _test_grazed(p1, p2)
-	return Util.delay(0)
+	return Util.callback()
 
 
 #
@@ -33,7 +33,7 @@ func _test_fully_cooked(_p1: Ship, p2: Ship) -> Signal:
 	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 has no heat after being disabled")
 	await Util.delay(p2.disabled_for_sec + pad_seconds)
 	assert_false(p2.is_disabled, "Player 2 ship should be re-enabled after disabled duration has passed")
-	return Util.delay(0)
+	return Util.callback()
 
 
 #
@@ -47,7 +47,7 @@ func _test_cannot_overcook(p1: Ship, p2: Ship) -> Signal:
 	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 has no heat after being disabled")
 	await Util.delay(p2.disabled_for_sec + pad_seconds)
 	assert_false(p2.is_disabled, "Player 2 ship should be re-enabled after disabled duration has passed")
-	return Util.delay(0)
+	return Util.callback()
 
 
 # 
@@ -65,7 +65,7 @@ func _test_half_baked(p1: Ship, _p2: Ship) -> Signal:
 		await Util.delay(pad_seconds / 2)
 		passed_seconds += pad_seconds / 2
 	assert_le(passed_seconds, cooldown_seconds, "Player 1 should have fully cooled down within the re-enable duration")
-	return Util.delay(0)
+	return Util.callback()
 
 
 #
@@ -79,7 +79,7 @@ func _test_grazed(_p1: Ship, p2: Ship) -> Signal:
 	var cooldown_seconds: float = p2.heat + pad_seconds
 	await Util.delay(cooldown_seconds)
 	assert_eq(p2.get_heated_ratio(), 0.0, "Player 2 heated ratio after re-enabling from disabled state")
-	return Util.delay(0)
+	return Util.callback()
 
 
 # Spawn a player ship at the given position and rotation

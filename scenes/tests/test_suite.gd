@@ -24,12 +24,14 @@ var total_failures: int = false
 func _ready() -> void:
 	for test_scene in tests:
 		await _run_test_scene(test_scene)
-	await Util.delay(0.5) # Wait a moment to ensure all output is printed
+		await Util.delay(0.5) # Wait a moment to ensure all output is printed
 	if total_failures > 0:
 		print("%d TEST%s FAILED" % [total_failures, "S" if total_failures > 1 else ""])
+		await Util.delay(0.1)
 		get_tree().quit(1) # Exit with failure code
 	else:
 		print("ALL TESTS PASSED")
+		await Util.delay(0.1)
 		get_tree().quit(0) # Exit with success code
 	pass
 
