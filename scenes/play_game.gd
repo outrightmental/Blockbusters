@@ -21,7 +21,6 @@ func _ready() -> void:
 	Game.finished.connect(_on_finished)
 	Game.spawn_gem.connect(_on_spawn_gem)
 	Game.spawn_pickup.connect(_on_spawn_pickup)
-	Game.show_banner.connect(_on_show_banner)
 	# Show debug text in editor only
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
@@ -55,30 +54,6 @@ func _setup() -> void:
 func _on_finished() -> void:
 	_goto_scene('res://scenes/main.tscn')
 	pass
-
-
-# Spawn a banner at the given position
-func _on_show_banner(player_num: int, message: String, message_2) -> void:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	match Game.mode:
-		Game.Mode.COUCH:
-			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
-		Game.Mode.TABLE:
-			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
-			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
-
-
-# Spawn a banner at the given position
-func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
-	var banner: Node = ScenePreloader.banner_scene.instantiate()
-	banner.scale = Vector2(_scale, _scale)
-	banner.position = Vector2(x, y)
-	banner.rotation_degrees = _rotation_degrees
-	banner.player_num = player_num
-	banner.message = message
-	banner.message_2 = message_2
-	banner.z_index = 1000
-	self.add_child(banner)
 
 
 # When ship is disabled, player HUD also appears disabled #155

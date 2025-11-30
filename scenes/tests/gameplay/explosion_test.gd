@@ -5,7 +5,7 @@ func run_all_tests() -> Signal:
 	_create_board()
 	await _test_explosion()
 	# _test_multiple_explosions()
-	return Util.delay(0)
+	return Util.callback()
 
 
 # Test explosion behavior
@@ -57,7 +57,7 @@ func _create_board() -> void:
 #		var y: float = randf() * viewport_size.y
 #		await _spawn_explosion(x, y)
 #		await Util.delay(delay)  # Delay between explosions to avoid too many at once
-#	return Util.delay(0)
+#	return Util.callback()
 
 
 # Spawn an explosion at the given position
@@ -66,7 +66,7 @@ func _spawn_explosion(x: float, y: float) -> Signal:
 	explosion.position = Vector2(x, y)
 	explosion.player_num = 1
 	self.add_child(explosion)
-	return Util.delay(0)
+	return Util.callback()
 
 
 func _grid_position(x: int, y: int) -> Vector2:

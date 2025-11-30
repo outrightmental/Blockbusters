@@ -21,6 +21,10 @@ func delay(seconds: float) -> Signal:
 	else:
 		return never
 
+# An immediate callback signal
+func callback() -> Signal:
+	return delay(0)
+
 
 # Format an angle in radians to a string in degrees with one decimal place
 func fmt_angle(radians: float) -> String:
