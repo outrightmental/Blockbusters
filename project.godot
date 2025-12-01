@@ -33,6 +33,10 @@ window/size/mode=3
 window/size/borderless=true
 window/stretch/mode="viewport"
 
+[editor]
+
+movie_writer/fps=30
+
 [input]
 
 p1_left={

@@ -31,12 +31,10 @@ jobs:
         run: |
           test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
 
-      - name: Run test suite scene
+      - name: Run test suite
         run: |
-          # Use proper ordering: options first, then scene
-          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
-
-
+          godot --headless --path ${PROJECT_PATH} --fixed-fps 30 res://scenes/tests/test_suite.tscn
+          
   nothing_left_todo:
     name: Nothing Left TODO
     needs: run_all_tests
