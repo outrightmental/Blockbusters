@@ -31,12 +31,22 @@ jobs:
         run: |
           test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
 
-      - name: Run test suite scene
+      - name: Prepare artifact directory
         run: |
-          # Use proper ordering: options first, then scene
-          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
+          mkdir -p artifacts
 
+      - name: Run test suite scene and record movie
+        run: |
+          # Record the run to a WebM file at a fixed FPS
+          godot --headless --path ${PROJECT_PATH} --fixed-fps 60 --write-movie ./artifacts/test_suite.webm res://scenes/tests/test_suite.tscn
 
+      - name: Upload recorded movie artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-test-suite-movie
+          path: artifacts/test_suite.webm
+          if-no-files-found: error
+          
   nothing_left_todo:
     name: Nothing Left TODO
     needs: run_all_tests
