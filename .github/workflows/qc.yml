@@ -38,7 +38,7 @@ jobs:
       - name: Run test suite scene and record movie
         run: |
           # Record the run to a WebM file at a fixed FPS
-          godot --headless --path ${PROJECT_PATH} --fixed-fps 60 --write-movie ./artifacts/test_suite.webm res://scenes/tests/test_suite.tscn
+          godot --headless --path ${PROJECT_PATH} --fixed-fps 30 --write-movie ./artifacts/test_suite.webm res://scenes/tests/test_suite.tscn
 
       - name: Upload recorded movie artifact
         uses: actions/upload-artifact@v4
