@@ -1,11 +1,5 @@
 extends Node2D
 
-# Preloaded Scenes
-const ship_scene: PackedScene   = preload('res://models/player/ship.tscn')
-const goal_scene: PackedScene   = preload('res://models/player/goal.tscn')
-const score_scene: PackedScene  = preload('res://models/hud/hud_score.tscn')
-const block_scene: PackedScene  = preload('res://models/block/block.tscn')
-const banner_scene: PackedScene = preload('res://models/hud/hud_banner.tscn')
 # References to player goals
 @onready var player_goal_1 = $GoalPlayer1
 @onready var player_goal_2 = $GoalPlayer2
@@ -27,7 +21,6 @@ func _ready() -> void:
 	Game.finished.connect(_on_finished)
 	Game.spawn_gem.connect(_on_spawn_gem)
 	Game.spawn_pickup.connect(_on_spawn_pickup)
-	Game.show_banner.connect(_on_show_banner)
 	# Show debug text in editor only
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
@@ -61,30 +54,6 @@ func _setup() -> void:
 func _on_finished() -> void:
 	_goto_scene('res://scenes/main.tscn')
 	pass
-
-
-# Spawn a banner at the given position
-func _on_show_banner(player_num: int, message: String, message_2) -> void:
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	match Game.mode:
-		Game.Mode.COUCH:
-			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
-		Game.Mode.TABLE:
-			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
-			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
-
-
-# Spawn a banner at the given position
-func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
-	var banner: Node = banner_scene.instantiate()
-	banner.scale = Vector2(_scale, _scale)
-	banner.position = Vector2(x, y)
-	banner.rotation_degrees = _rotation_degrees
-	banner.player_num = player_num
-	banner.message = message
-	banner.message_2 = message_2
-	banner.z_index = 1000
-	self.add_child(banner)
 
 
 # When ship is disabled, player HUD also appears disabled #155
@@ -156,7 +125,7 @@ func _grid_position(x: int, y: int) -> Vector2:
 
 # Spawn a player ship at the given position and rotation
 func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float) -> Ship:
-	var ship: Ship = ship_scene.instantiate()
+	var ship: Ship = ScenePreloader.ship_scene.instantiate()
 	ship.position = start_position
 	ship.player_num = num
 	ship.rotation = start_rotation
@@ -165,7 +134,7 @@ func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float
 
 
 func _spawn_block(start_position: Vector2) -> Node:
-	var block: Block = block_scene.instantiate()
+	var block: Block = ScenePreloader.block_scene.instantiate()
 	block.position = start_position
 	self.add_child(block)
 	return block

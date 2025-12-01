@@ -43,7 +43,6 @@ const PLAYER_SHIP_LASER_FLICKER_RATE: float             = 5
 const PLAYER_SHIP_LASER_MAX_DISTANCE: float             = 2000
 const PLAYER_SHIP_LASER_RECHARGE_RATE: float            = 0.5
 const PLAYER_SHIP_LINEAR_DAMP: float                    = 0.9
-const PLAYER_SHIP_STRAFE_THRESHOLD_MSEC: float          = 500
 const PLAYER_SHIP_TARGET_ROTATION_FACTOR: float         = 10
 #
 # blocks
@@ -61,10 +60,9 @@ const BLOCK_LINEAR_DAMP: float                     = 0.1
 const BLOCK_QUART_HEATED_BREAK_SEC: float          = BLOCK_HEATED_BREAK_SEC / 4
 #
 # gem behavior
-const GEM_MAX_COUNT: int                      = 1
-const GEM_SPAWN_AFTER_SCORING_DELAY_MSEC: int = 1500 # delay after scoring before spawning a new gem
-const GEM_SPAWN_EVERY_SEC: float              = 0.1 # delay between spawning gems
-const PICKUP_MAX_COUNT: int                   = 1
+const GEM_MAX_COUNT: int         = 1
+const GEM_SPAWN_EVERY_SEC: float = 0.1 # delay between spawning gems
+const PICKUP_MAX_COUNT: int      = 1
 #
 # pickup spawn behavior
 const PICKUP_SPAWN_EVERY_SEC: float   = 5.0 # delay between spawning pickups
@@ -72,18 +70,23 @@ const PICKUP_SPAWN_INITIAL_SEC: float = 3.0 # delay before spawning the first pi
 #
 # projectile explosive behavior
 const PROJECTILE_EXPLOSIVE_ACCELERATION: float     = 500.0
-const PROJECTILE_EXPLOSIVE_COOLDOWN_MSEC: float    = 500
+const PROJECTILE_EXPLOSIVE_COOLDOWN_SEC: float     = 0.5
 const PROJECTILE_EXPLOSIVE_INITIAL_VELOCITY: float = 200.0
 const PROJECTILE_EXPLOSIVE_MAX_VELOCITY: float     = 2000.0
 #
 # pertaining to explosive
-const EXPLOSION_FORCE: int                    = 8000
-const EXPLOSION_HEAT_RADIUS_RATIO: float      = 0.6
-const EXPLOSION_LIFETIME_MSEC: int            = 1000
-const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 0.8 # ratio multiplied by ship overheating threshold
+const EXPLOSION_RADIUS: float                 = 300
+const EXPLOSION_FORCE: float                  = 100000 # distributed over the EXPLOSIVE_AFFECT_SEC
+const EXPLOSION_HEAT_MAX: float               = 10 # max heat applied to blocks at center of explosion, distributed over the EXPLOSIVE_AFFECT_SEC
+const EXPLOSION_RADIUS_HEATED: float          = EXPLOSION_RADIUS * EXPLOSION_RADIUS_HEATED_RATIO
+const EXPLOSION_RADIUS_HEATED_RATIO: float    = 0.6
+const EXPLOSION_LIFETIME_SEC: float           = 1.0
+const EXPLOSION_SHIP_EFFECT_MULTIPLIER: float = 6.0 # ratio multiplied by ship overheating threshold
+const EXPLOSION_WAVE_COUNT: int               = 10 # number of waves into which to divide affected bodies of explosion
+const EXPLOSIVE_AFFECT_SEC: float             = 0.2 # time over which the explosion force is applied
 #
 # pertaining to heat
-const HEATING_TIMEOUT_MSEC: int = 250 # timeout after heat not applied when we consider the block no longer heating up
+const HEATING_TIMEOUT_SEC: float = 0.25 # timeout after heat not applied when we consider the block no longer heating up
 #
 # Board
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart

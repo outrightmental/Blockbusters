@@ -3,13 +3,6 @@ extends Heatable
 
 # Whether this block has a gem
 @export var half_num: int
-# Preload the quarter scenes
-const quart_scene_1a: PackedScene = preload("res://models/block/block_quart_1a.tscn")
-const quart_scene_1b: PackedScene = preload("res://models/block/block_quart_1b.tscn")
-const quart_scene_2a: PackedScene = preload("res://models/block/block_quart_2a.tscn")
-const quart_scene_2b: PackedScene = preload("res://models/block/block_quart_2b.tscn")
-# Preloaded scene for the block quarter shattering
-const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn")
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -17,6 +10,7 @@ const shatter_scene: PackedScene = preload("res://models/explosive/shatter.tscn"
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
+	add_to_group(Game.BLOCK_HALF_GROUP)
 
 	# Update the heated effect visibility
 	_update_heated_effect()
@@ -25,11 +19,11 @@ func _ready() -> void:
 # Break the block half apart into two quarters
 func do_break() -> void:
 	# Quarter A
-	var quartA: Node = (quart_scene_1a if half_num == 1 else quart_scene_2a).instantiate()
+	var quartA: Node = (ScenePreloader.block_quart_scene_1a if half_num == 1 else ScenePreloader.block_quart_scene_2a).instantiate()
 	quartA.position = position
 	quartA.linear_velocity = linear_velocity + (Vector2(-Constant.BLOCK_HALF_BREAK_APART_VELOCITY, 0) if half_num == 1 else Vector2(Constant.BLOCK_HALF_BREAK_APART_VELOCITY, 0))
 	# Quarter B
-	var quartB: Node = (quart_scene_1b if half_num == 1 else quart_scene_2b).instantiate()
+	var quartB: Node = (ScenePreloader.block_quart_scene_1b if half_num == 1 else ScenePreloader.block_quart_scene_2b).instantiate()
 	quartB.position = position
 	quartB.linear_velocity = linear_velocity + (Vector2(0, -Constant.BLOCK_HALF_BREAK_APART_VELOCITY) if half_num == 1 else Vector2(0, Constant.BLOCK_HALF_BREAK_APART_VELOCITY))
 	# Add the quarters to the scene

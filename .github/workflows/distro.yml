@@ -1,7 +1,7 @@
 ﻿name: "Distribution"
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 # NOTE: If your `project.godot` is at the repository root, set `PROJECT_PATH` below to ".".
 
@@ -13,28 +13,51 @@ env:
 jobs:
   nothing_left_todo:
     name: Nothing Left TODO
-    env:
-      REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-      REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v2
 
       - name: Nothing left TODO
         run: .github/nothing_left_todo.sh
 
-  export-windows-noisebridge:
-    needs: nothing_left_todo
-    name: Noisebridge Export
+  run_all_tests:
+    name: Run All Tests
+    runs-on: ubuntu-24.04
+    container:
+      image: barichello/godot-ci:4.4.1
+    steps:
+      - name: Checkout (with LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Import assets (first run to generate .godot cache)
+        run: |
+          godot --headless --path ${PROJECT_PATH} --import --quit || true
+
+      - name: Verify base test scripts are present
+        run: |
+          test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
+
+      - name: Run test suite scene
+        run: |
+          # Use proper ordering: options first, then scene
+          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
+
+  export-windows-table:
+    needs:
+      - nothing_left_todo
+      - run_all_tests
+    name: Export Windows Table
     env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Noisebridge.zip
+      ARTIFACT_NAME: blockbusters-${{ github.ref_name }}-windows-table.zip
     runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -50,15 +73,15 @@ jobs:
           mkdir -v -p ~/.config/
           mv /root/.config/godot ~/.config/godot
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          
-      - name: Windows Build
+
+      - name: Build
         run: |
           mkdir -v -p build/windows
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Noisebridge" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
+          godot --headless --verbose --export-release "Windows Table" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
 
-      - name: Compress Windows Build to Zip
+      - name: Compress to Artifact
         run: |
           cd build/windows
           zip -r ../$ARTIFACT_NAME . 
@@ -73,16 +96,18 @@ jobs:
           overwrite: true
 
   export-windows:
-    needs: nothing_left_todo
-    name: Windows Export
+    needs:
+      - nothing_left_todo
+      - run_all_tests
+    name: Export Windows Couch
     env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Windows.zip
+      ARTIFACT_NAME: blockbusters-${{ github.ref_name }}-windows-couch.zip
     runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -99,14 +124,14 @@ jobs:
           mv /root/.config/godot ~/.config/godot
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
-      - name: Windows Build
+      - name: Build
         run: |
           mkdir -v -p build/windows
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Windows" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
+          godot --headless --verbose --export-release "Windows Couch" "$EXPORT_DIR/windows/$EXPORT_NAME.exe"
 
-      - name: Compress Windows Build to Zip
+      - name: Compress to Artifact
         run: |
           cd build/windows
           zip -r ../$ARTIFACT_NAME . 
@@ -121,16 +146,18 @@ jobs:
           overwrite: true
 
   export-macos:
-    needs: nothing_left_todo
-    name: macOS Export
+    needs:
+      - nothing_left_todo
+      - run_all_tests
+    name: macOS Couch Export
     env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-macOS.zip
+      ARTIFACT_NAME: blockbusters-${{ github.ref_name }}-macOS-couch.zip
     runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
 
-      - name: Checkout
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -140,14 +167,14 @@ jobs:
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
-      - name: Mac Build
+      - name: Build
         run: |
           mkdir -v -p build/macos
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "macOS" "$EXPORT_DIR/macos/$EXPORT_NAME.zip"
+          godot --headless --verbose --export-release "macOS Couch" "$EXPORT_DIR/macos/$EXPORT_NAME.zip"
 
-      - name: Compress Windows Build to Zip
+      - name: Compress to Artifact
         run: |
           cd build/macos
           zip -r ../$ARTIFACT_NAME . 
@@ -162,33 +189,35 @@ jobs:
           overwrite: true
 
   export-linux:
-    needs: nothing_left_todo
-    name: Linux Export
+    needs:
+      - nothing_left_todo
+      - run_all_tests
+    name: Linux Couch Export
     env:
-      ARTIFACT_NAME: Blockbusters-${{ github.ref_name }}-Linux.zip
+      ARTIFACT_NAME: blockbusters-${{ github.ref_name }}-linux-couch.zip
     runs-on: ubuntu-24.04  # Use 24.04 with godot 4
     container:
       image: barichello/godot-ci:4.4.1
     steps:
-      
-      - name: Checkout
+
+      - name: Checkout (with LFS)
         uses: actions/checkout@v4
         with:
           lfs: true
-          
+
       - name: Setup
         run: |
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
-          
-      - name: Linux Build
+
+      - name: Build
         run: |
           mkdir -v -p build/linux
           EXPORT_DIR="$(readlink -f build)"
           cd $PROJECT_PATH
-          godot --headless --verbose --export-release "Linux" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
-          
-      - name: Compress Linux Build to Zip
+          godot --headless --verbose --export-release "Linux Couch" "$EXPORT_DIR/linux/$EXPORT_NAME.x86_64"
+
+      - name: Compress to Artifact
         run: |
           cd build/linux
           zip -r ../$ARTIFACT_NAME . 
@@ -209,7 +238,7 @@ jobs:
 #    container:
 #      image: barichello/godot-ci:4.4.1
 #    steps:
-#      - name: Checkout
+#      - name: Checkout (with LFS)
 #        uses: actions/checkout@v4
 #        with:
 #          lfs: true

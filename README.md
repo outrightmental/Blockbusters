@@ -1,11 +1,13 @@
+[![qc](https://github.com/outrightmental/Blockbusters/actions/workflows/qc.yml/badge.svg)](https://github.com/outrightmental/Blockbusters/actions/workflows/qc.yml)
 [![Distro](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml/badge.svg)](https://github.com/outrightmental/Blockbusters/actions/workflows/distro.yml)
 <a href="https://godotengine.org/">![Godot](https://img.shields.io/badge/Godot-4.4.1%2B-478cbf)</a>
 <a href="https://discord.com/channels/720514857094348840/740983213756907561">![Discord](https://img.shields.io/badge/Comms-Discord-5865f2)</a>
 
 # Blockbusters
 
-Fast-paced unfair arena sport where contestants sabotage each other to mine & capture gems.
-Built for the [Noisebridge 1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table)
+**Contestants sabotage each other to mine & capture gems in this unfair arena sport.**
+
+Prototyped at [Noisebridge](https://noisebridge.net) specifically for the [1v1 Coffee Table](https://www.noisebridge.net/wiki/Coffee_Table), playtesting & iterating in the weekly [Gamebridge](https://noisebridge.net/wiki/Gamebridge) meetup.
 
 by [outrightmental](https://discord.com/users/outrightmental)
 

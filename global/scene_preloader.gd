@@ -1,0 +1,23 @@
+﻿extends Node
+
+# Preload scenes in this singleton to avoid redundant loading errors
+@onready var banner_scene: PackedScene               = preload('res://models/hud/hud_banner.tscn')
+@onready var block_half_1_scene: PackedScene         = preload("res://models/block/block_half_1.tscn")
+@onready var block_half_2_scene: PackedScene         = preload("res://models/block/block_half_2.tscn")
+@onready var block_quart_scene_1a: PackedScene       = preload("res://models/block/block_quart_1a.tscn")
+@onready var block_quart_scene_1b: PackedScene       = preload("res://models/block/block_quart_1b.tscn")
+@onready var block_quart_scene_2a: PackedScene       = preload("res://models/block/block_quart_2a.tscn")
+@onready var block_quart_scene_2b: PackedScene       = preload("res://models/block/block_quart_2b.tscn")
+@onready var block_scene: PackedScene                = preload('res://models/block/block.tscn')
+@onready var explosion_scene: PackedScene            = preload("res://models/explosive/explosion.tscn")
+@onready var explosive_shatter_scene: PackedScene    = preload("res://models/explosive/shatter.tscn")
+@onready var explosive_splash_scene: PackedScene     = preload("res://models/explosive/splash.tscn")
+@onready var gem_scene: PackedScene                  = preload("res://models/gem/gem.tscn")
+@onready var goal_scene: PackedScene                 = preload('res://models/player/goal.tscn')
+@onready var item_empty_scene: PackedScene           = preload("res://models/hud/hud_inventory_item_empty.tscn")
+@onready var item_projectile_scene: PackedScene      = preload("res://models/hud/hud_inventory_item_projectile.tscn")
+@onready var laser_scene: PackedScene                = preload("res://models/laser/laser_beam_cluster.tscn")
+@onready var pickup_projectile_scene: PackedScene    = preload("res://models/pickup/pickup_projectile.tscn")
+@onready var projectile_explosive_scene: PackedScene = preload("res://models/explosive/projectile_explosive.tscn")
+@onready var score_scene: PackedScene                = preload('res://models/hud/hud_score.tscn')
+@onready var ship_scene: PackedScene                 = preload('res://models/player/ship.tscn')

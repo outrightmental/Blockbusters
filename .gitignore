@@ -10,3 +10,6 @@
 
 # MacOS files
 .DS_Store
+
+# Output artifacts
+/artifacts/

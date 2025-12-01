@@ -23,6 +23,7 @@ Game="*res://global/game.gd"
 Util="*res://global/util.gd"
 AudioManager="*res://global/audio_manager.tscn"
 InputManager="*res://global/input_manager.gd"
+ScenePreloader="*res://global/scene_preloader.gd"
 
 [display]
 
@@ -31,6 +32,10 @@ window/size/viewport_height=576
 window/size/mode=3
 window/size/borderless=true
 window/stretch/mode="viewport"
+
+[editor]
+
+movie_writer/fps=30
 
 [input]
 

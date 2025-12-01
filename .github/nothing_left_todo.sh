@@ -14,3 +14,4 @@ check() {
 # Check the specified directories
 check global
 check models
+check scenes

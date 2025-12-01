@@ -8,18 +8,19 @@ extends Node2D
 @export var player_num: int = 0
 
 # Variables
-var instantiated_at_ticks_msec: int = 0
-var explosive_radius: float         = 0.0
-var heat_radius: float              = 0.0
-var exploded: bool                  = false
-var affected_bodies: Dictionary[int, Array] = {}
+var alive_sec: float   = 0.0
+var heat_radius: float = 0.0
+var exploded: bool     = false
+var affected_bodies_waves: Dictionary[int, Array] = {}
+
+# Constants
+const WAVE_SEC = Constant.EXPLOSION_LIFETIME_SEC / Constant.EXPLOSION_WAVE_COUNT
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	instantiated_at_ticks_msec = Time.get_ticks_msec()
-	explosive_radius = collision_shape.shape.radius
-	heat_radius = explosive_radius * Constant.EXPLOSION_HEAT_RADIUS_RATIO
+	collision_shape.shape.radius = Constant.EXPLOSION_RADIUS
+	heat_radius = Constant.EXPLOSION_RADIUS_HEATED
 
 	# Set the explosion color based on player_num
 	if player_num in Constant.PLAYER_COLORS:
@@ -41,17 +42,18 @@ func _ready() -> void:
 
 
 # Called at a fixed rate. 'delta' is the elapsed time since the previous frame.
-func _physics_process(_delta: float) -> void:
-	if affected_bodies.size() > 0:
-		var now_at_msec: int = Time.get_ticks_msec() - instantiated_at_ticks_msec
-		for at_msec in affected_bodies.keys():
+func _physics_process(delta: float) -> void:
+	if affected_bodies_waves.size() > 0:
+		alive_sec += delta
+		for wave_num in affected_bodies_waves.keys():
 			# If the time has come to apply effects to the bodies
-			if now_at_msec >= at_msec:
-				for item in affected_bodies[at_msec]:
-					_apply_to_body(item)
-				affected_bodies.erase(at_msec)
+			if alive_sec >= wave_num * WAVE_SEC:
+				for item in affected_bodies_waves[wave_num]:
+					_apply_to_body(delta, item)
+				if alive_sec >= wave_num * WAVE_SEC + Constant.EXPLOSIVE_AFFECT_SEC:
+					affected_bodies_waves.erase(wave_num)
 
-	if Time.get_ticks_msec() - instantiated_at_ticks_msec > Constant.EXPLOSION_LIFETIME_MSEC:
+	if alive_sec > Constant.EXPLOSION_LIFETIME_SEC:
 		queue_free()
 		return
 
@@ -65,28 +67,27 @@ func _physics_process(_delta: float) -> void:
 		var diff: Vector2   = (body.position - position)
 		var distance: float = diff.length()
 		var dir: Vector2    = diff.normalized()
-		var at_msec: int    = floori(pow(distance/explosive_radius, 2) * Constant.EXPLOSION_LIFETIME_MSEC)
-		if not at_msec in affected_bodies:
-			affected_bodies.set(at_msec, [])
+		var wave_num: int   = floori(Constant.EXPLOSION_WAVE_COUNT * pow(distance/Constant.EXPLOSION_RADIUS, 2) * Constant.EXPLOSION_LIFETIME_SEC)
+		if not wave_num in affected_bodies_waves:
+			affected_bodies_waves.set(wave_num, [])
 		var item: Dictionary = {}
 		item.body     = body
 		item.dir      = dir
 		item.distance = distance
-		affected_bodies[at_msec].append(item)
+		affected_bodies_waves[wave_num].append(item)
 
 
 # Apply explosion effects to the body based on distance
-func _apply_to_body(item: Dictionary) -> void:
+func _apply_to_body(delta: float, item: Dictionary) -> void:
 	var body     = item.body
 	var dir      = item.dir
 	var distance = item.distance
 	if not body:
 		return  # Ensure body is valid before proceeding
-	body.apply_central_force(dir * Constant.EXPLOSION_FORCE * (1-pow(distance / explosive_radius, 2)))
-	const max_heat = Constant.BLOCK_HEATED_BREAK_SEC * Constant.BLOCK_EXPLOSION_OVERHEAT_RATIO
+	body.apply_central_force(delta * dir * Constant.EXPLOSION_FORCE * (1-pow(distance / Constant.EXPLOSION_RADIUS, 2)))
 	if body is Heatable:
-		var heat = max_heat * Constant.PLAYER_SHIP_HEATED_DISABLED_THRESHOLD_SEC * Constant.EXPLOSION_SHIP_EFFECT_MULTIPLIER if body is Ship else max_heat
+		var heat = Constant.EXPLOSION_HEAT_MAX * Constant.EXPLOSION_SHIP_EFFECT_MULTIPLIER if body is Ship else Constant.EXPLOSION_HEAT_MAX
 		if distance <= heat_radius:
-			body.apply_heat(heat * (1-pow(-distance / heat_radius, 2)))
+			body.apply_heat(delta * heat * (1-pow(-distance / heat_radius, 2)))
 
 			
