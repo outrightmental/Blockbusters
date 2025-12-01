@@ -31,10 +31,6 @@ jobs:
         run: |
           test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
 
-      - name: Prepare artifact directory
-        run: |
-          mkdir -p artifacts
-
       - name: Run test suite
         run: |
           godot --headless --path ${PROJECT_PATH} --fixed-fps 30 res://scenes/tests/test_suite.tscn
