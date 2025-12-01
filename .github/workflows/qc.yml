@@ -35,17 +35,9 @@ jobs:
         run: |
           mkdir -p artifacts
 
-      - name: Run test suite scene and record movie
+      - name: Run test suite
         run: |
-          # Record the run to a WebM file at a fixed FPS
-          godot --headless --path ${PROJECT_PATH} --fixed-fps 30 --write-movie ./artifacts/test_suite.avi res://scenes/tests/test_suite.tscn
-
-      - name: Upload recorded movie artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: godot-test-suite-movie
-          path: artifacts/test_suite.webm
-          if-no-files-found: error
+          godot --headless --path ${PROJECT_PATH} --fixed-fps 30 res://scenes/tests/test_suite.tscn
           
   nothing_left_todo:
     name: Nothing Left TODO

@@ -35,7 +35,6 @@ window/stretch/mode="viewport"
 
 [editor]
 
-movie_writer/movie_file="X:/GAMEDEV/Blockbusters/artifacts/blockbusters.avi"
 movie_writer/fps=30
 
 [input]
