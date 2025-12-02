@@ -111,14 +111,32 @@ func _input(event: InputEvent) -> void:
 				return
 
 
-# If player has a gamepad, read stick; otherwise, read keyboard axes.
+# If player has a gamepad, read stick
+# If player has a d-pad, read that too.
+# Also, read keyboard axes.
 func _get_dir_for_player(player: int) -> Vector2:
-	var dir: Vector2 =  Vector2.ZERO
-	var keys         := P1_KEYS if player == 1 else P2_KEYS
-	var kbd          := Vector2(
-							Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT]),
-							Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
-						).normalized()
+	var dev := p1_device_id if player == 1 else p2_device_id
+	# prepare direction vector for return
+	var dir: Vector2 = Vector2.ZERO
+	# get the keyboard input
+	var keys := P1_KEYS if player == 1 else P2_KEYS
+	var kbd  := Vector2(
+					Input.get_action_strength(keys[INPUT_RIGHT]) - Input.get_action_strength(keys[INPUT_LEFT]),
+					Input.get_action_strength(keys[INPUT_DOWN]) - Input.get_action_strength(keys[INPUT_UP])
+				).normalized()
+	# get the d-pad input
+	var dpad := Vector2.ZERO
+	if dev != -1:
+		if Input.is_joy_button_pressed(dev, JoyButton.JOY_BUTTON_DPAD_RIGHT):
+			dpad.x += 1
+		if Input.is_joy_button_pressed(dev, JoyButton.JOY_BUTTON_DPAD_LEFT):
+			dpad.x -= 1
+		if Input.is_joy_button_pressed(dev, JoyButton.JOY_BUTTON_DPAD_DOWN):
+			dpad.y += 1
+		if Input.is_joy_button_pressed(dev, JoyButton.JOY_BUTTON_DPAD_UP):
+			dpad.y -= 1
+	# for table mode, parse only keyboard, and rotate each player out 90 degrees to each side
+	# for couch mode, parse everything 
 	match Game.mode:
 		Game.Mode.TABLE:
 			match player:
@@ -131,7 +149,7 @@ func _get_dir_for_player(player: int) -> Vector2:
 		Game.Mode.COUCH:
 			dir.x += kbd.x
 			dir.y += kbd.y
-			var dev := p1_device_id if player == 1 else p2_device_id
+			dir += dpad
 			if dev != -1:
 				var joy_x := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_X)
 				var joy_y := Input.get_joy_axis(dev, JoyAxis.JOY_AXIS_LEFT_Y)
