@@ -13,6 +13,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1xsof")
+selected_font_size = 60
 inactive_color = Color(0.339095, 0.339095, 0.339095, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

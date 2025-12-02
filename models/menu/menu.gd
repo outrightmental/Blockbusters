@@ -16,7 +16,7 @@ var menu_items: Array[MenuItem] = []
 # Font size for unselected items
 @export var unselected_font_size: int = 40
 # Active item color
-@export var active_color: Color = Color(0.0, 0.0, 0.0, 1)
+@export var active_color: Color = Constant.PLAYER_COLORS[1][0]
 # Inactive item color
 @export var inactive_color: Color = Color(0.2, 0.2, 0.2, 1.0)
 
