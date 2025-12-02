@@ -11,13 +11,13 @@ var menu_items: Array[MenuItem] = []
 # Currently selected menu index
 var selected_index: int = 0
 # Font size for selected item
-var selected_font_size: int = 64
+var selected_font_size: int = 50
 # Font size for unselected items
-var unselected_font_size: int = 45
+var unselected_font_size: int = 40
 # Keep track of whether input movement is active, to prevent multiple navigation
 var is_navigation_active: bool = false
 # Inactive item value modulation
-var inactive_modulation_value: float = 0.62
+var inactive_modulation_value: float = 0.2
 
 
 # Called when the node enters the scene tree for the first time.
