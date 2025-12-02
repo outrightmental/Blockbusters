@@ -106,6 +106,11 @@ func unpause_input() -> void:
 	is_input_tools_paused = false
 
 
+# Whether the game is in table mode
+func is_table_mode() -> bool:
+	return mode == Mode.TABLE
+
+
 # Get the name of an inventory item
 func get_inventory_item_name(item: InventoryItemType) -> String:
 	match item:

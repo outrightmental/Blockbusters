@@ -9,9 +9,13 @@ const PLAYER_COLORS: Dictionary = {
 									  4: [Color(1.0, 0.843, 0.0, 1.0), Color(0.733, 0.6117647, 0.0, 1.0)], # Yellow
 								  }
 #
+# Input
+const INPUT_STICK_DEADZONE: float        = 0.05
+const INPUT_MENU_NAV_STICK_ACTIVE_THRESHOLD: float = 0.5
+const INPUT_MENU_NAV_STICK_RESET_THRESHOLD: float  = 0.3
+#
 # player ship threshold that's rotation only (strafe) before applying force
 const PLAYER_HUD_DISABLED_ALPHA: float                  = 0.2
-const PLAYER_INPUT_JOYSTICK_DEADZONE: float             = 0.05
 const PLAYER_INVENTORY_MAX_ITEMS: int                   = 2
 const PLAYER_SCORE_DISABLE_SHIP_VALUE: int              = 0
 const PLAYER_SCORE_GOAL_VALUE: int                      = 1
