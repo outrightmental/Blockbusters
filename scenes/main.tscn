@@ -22,16 +22,8 @@ texture = ExtResource("2_0wfyh")
 expand_mode = 5
 stretch_mode = 5
 
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
-offset_left = 522.0
-offset_top = 114.0
-offset_right = 962.0
-offset_bottom = 473.0
-color = Color(0, 0, 0, 0.670588)
-
 [node name="MenuMain" parent="." instance=ExtResource("3_sugp2")]
-offset_left = 652.0
-offset_top = 502.0
-offset_right = 652.0
-offset_bottom = 502.0
+offset_left = 788.0
+offset_top = 269.0
+offset_right = 788.0
+offset_bottom = 269.0

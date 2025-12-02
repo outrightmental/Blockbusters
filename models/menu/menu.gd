@@ -8,16 +8,20 @@ class MenuItem:
 
 # List of menu items
 var menu_items: Array[MenuItem] = []
+
 # Currently selected menu index
-var selected_index: int = 0
+@export var selected_index: int = 0
 # Font size for selected item
-var selected_font_size: int = 50
+@export var selected_font_size: int = 50
 # Font size for unselected items
-var unselected_font_size: int = 40
+@export var unselected_font_size: int = 40
+# Active item color
+@export var active_color: Color = Color(0.0, 0.0, 0.0, 1)
+# Inactive item color
+@export var inactive_color: Color = Color(0.2, 0.2, 0.2, 1.0)
+
 # Keep track of whether input movement is active, to prevent multiple navigation
 var is_navigation_active: bool = false
-# Inactive item value modulation
-var inactive_modulation_value: float = 0.2
 
 
 # Called when the node enters the scene tree for the first time.
@@ -40,10 +44,10 @@ func _update_menu_display() -> void:
 		var item: MenuItem = menu_items[i]
 		if i == selected_index:
 			_set_font_size(item, selected_font_size)
-			_set_mod_value(item, 1.0)
+			_set_font_color(item, active_color)
 		else:
 			_set_font_size(item, unselected_font_size)
-			_set_mod_value(item, inactive_modulation_value)
+			_set_font_color(item, inactive_color)
 
 
 # Set the font size of a menu item
@@ -51,9 +55,9 @@ func _set_font_size(item: MenuItem, font_size: int) -> void:
 	item.label_node.add_theme_font_size_override("normal_font_size", font_size)
 
 
-# Set the modulation value of a menu item
-func _set_mod_value(item: MenuItem, value: float) -> void:
-	item.label_node.modulate.v = value
+# Set the color of the text
+func _set_font_color(item: MenuItem, text_color: Color) -> void:
+	item.label_node.add_theme_color_override("default_color", text_color)
 
 
 # Check for input to navigate the menu
