@@ -9,11 +9,11 @@ func _ready() -> void:
 	Game.player_ready_updated.connect(_on_player_ready_updated)
 	if Game.is_table_mode():
 		_goto_scene("res://scenes/main_table.tscn")
-	$MenuMain.configure([
-	$MenuMain.create_entry("START", Callable(self, "on_start")),
-	$MenuMain.create_entry("OPTIONS", Callable(self, "on_options")),
-	$MenuMain.create_entry("EXIT", Callable(self, "on_exit")),
-	])
+	var menu_items: Array[Dictionary] = []
+	menu_items.append({"label": "START", "action": Callable(self, "on_start")})
+	menu_items.append({"label": "OPTIONS", "action": Callable(self, "on_options")})
+	menu_items.append({"label": "EXIT", "action": Callable(self, "on_exit")})
+	$MenuMain.configure(menu_items)
 
 
 # If both players are ready, start the game

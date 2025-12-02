@@ -24,47 +24,26 @@ var menu_items: Array[MenuItem] = []
 var is_navigation_active: bool = false
 
 
-# Simple data holder for configuring menu via an Array[MenuEntry]
-class Entry:
-	var label: String
-	var action: Callable
-
-
 # Configure the menu from an array of dictionaries with `label` and `action`
-func configure(items: Array[Entry]) -> void:
+func configure(items: Array[Dictionary]) -> void:
 	for child in $VBoxContainer.get_children():
 		$VBoxContainer.remove_child(child)
 		child.queue_free()
 	menu_items.clear()
 	selected_index = 0
 	for d in items:
-		_register_menu_item(d.label, d.action)
+		var label_node: RichTextLabel = RichTextLabel.new()
+		label_node.text = d["label"]
+		$VBoxContainer.add_child(label_node)
+		var item = MenuItem.new()
+		item.action = d["action"]
+		item.label_node = label_node
+		menu_items.append(item)
 	_update_menu_display()
-
-
-# Helper to create a menu entry
-func create_entry(label: String, action: Callable) -> Entry:
-	var entry := Entry.new()
-	entry.label = label
-	entry.action = action
-	return entry
-
-
-func _register_menu_item(text: String, action: Callable) -> void:
-	var label_node: RichTextLabel = RichTextLabel.new()
-	label_node.text = text
-	$VBoxContainer.add_child(label_node)
-	var item = MenuItem.new()
-	item.action = action
-	item.label_node = label_node
-	menu_items.append(item)
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	for item in $VBoxContainer.get_children():
-		$VBoxContainer.remove_child(item)
-	_update_menu_display()
 	InputManager.action_pressed.connect(_on_action_pressed)
 
 
