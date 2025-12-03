@@ -33,21 +33,63 @@ func _ready() -> void:
 
 # Setup the UI based on the current input mode		
 func _setup() -> void:
+	# Setup background scaling
+	_setup_background()
+	
+	# Setup outer fences to match viewport size
+	_setup_outer_fences()
+	
+	# Setup HUD positions with dynamic scaling
+	var viewport_width: float = ResolutionManager.BASE_WIDTH
+	var viewport_height: float = ResolutionManager.BASE_HEIGHT
+	var center_y: float = viewport_height * 0.5
+	
 	match Game.mode:
 		Game.Mode.TABLE:
-			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
-			$HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
-			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
-			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
-			$HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, center_y))
+			$HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, center_y + 100))
+			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, center_y - 200))
+			$HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y))
+			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y - 100))
+			$HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y + 200))
 		Game.Mode.COUCH:
-			$HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
-			$HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, center_y))
+			$HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, viewport_height - 88))
 			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
-			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
-			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
+			$HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(viewport_width - 31, center_y))
+			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, viewport_height - 88))
+			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(viewport_width - 31, 88))
+
+
+# Setup background to scale to fit screen
+func _setup_background() -> void:
+	if has_node("Background"):
+		var bg = $Background
+		var viewport_width: float = ResolutionManager.BASE_WIDTH
+		var viewport_height: float = ResolutionManager.BASE_HEIGHT
+		
+		# Center the background
+		bg.position = Vector2(viewport_width * 0.5, viewport_height * 0.5)
+		
+
+# Setup outer fences to match viewport boundaries
+func _setup_outer_fences() -> void:
+	var viewport_width: float = ResolutionManager.BASE_WIDTH
+	var viewport_height: float = ResolutionManager.BASE_HEIGHT
+	var center_x: float = viewport_width * 0.5
+	var center_y: float = viewport_height * 0.5
+	
+	# Update fence collision shapes
+	if has_node("Outer Fence"):
+		var fence = $"Outer Fence"
+		if fence.has_node("Top"):
+			fence.get_node("Top").position = Vector2(center_x, -100)
+		if fence.has_node("Bottom"):
+			fence.get_node("Bottom").position = Vector2(center_x, viewport_height + 100)
+		if fence.has_node("Left"):
+			fence.get_node("Left").position = Vector2(-36, center_y)
+		if fence.has_node("Right"):
+			fence.get_node("Right").position = Vector2(viewport_width + 36, center_y)
 
 
 # Show the game over banner for some time, then go back to main screen
@@ -78,7 +120,8 @@ func _create_board() -> void:
 	var block_count: int         = 0
 	var block_attempt_count: int = 0
 	_generate_mesh(floor(randf() * Constant.BOARD_SEED_MAX))
-	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
+	# Use base resolution for logical coordinates
+	var viewport_size: Vector2         = Vector2(ResolutionManager.BASE_WIDTH, ResolutionManager.BASE_HEIGHT)
 	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 	var goal_positions: Array[Vector2] = [player_goal_1.position, player_goal_2.position, player_ship_1.position, player_ship_2.position]

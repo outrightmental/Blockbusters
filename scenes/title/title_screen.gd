@@ -88,6 +88,33 @@ func _ready() -> void:
 	main_menu.configure(MAIN_MENU_ITEMS)
 	options_menu.configure(OPTIONS_MENU_ITEMS, OPTIONS_MENU_TITLE)
 	do_close_options_menu()
+	
+	# Setup dynamic scaling
+	_setup_dynamic_scaling()
+	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
+
+
+# Setup dynamic scaling for background and menu elements
+func _setup_dynamic_scaling() -> void:
+	# Scale background to fit screen
+	var bg = $TextureRect
+	if bg:
+		bg.size = ResolutionManager.get_effective_size()
+		bg.position = ResolutionManager.get_offset()
+	
+	# Position menu at right side of screen
+	var viewport_size = ResolutionManager.get_effective_size()
+	if main_menu:
+		main_menu.position = Vector2(viewport_size.x * 0.77, viewport_size.y * 0.47) + ResolutionManager.get_offset()
+	
+	# Position options menu container
+	if options_menu_container:
+		options_menu_container.size = viewport_size
+		options_menu_container.position = ResolutionManager.get_offset()
+		
+	# Position options menu
+	if options_menu:
+		options_menu.position = Vector2(viewport_size.x * 0.49, viewport_size.y * 0.48)
 
 
 # If both players are ready, start the game
