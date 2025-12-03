@@ -16,147 +16,159 @@ size = Vector2(200, 576)
 [node name="PlayGame" type="Node2D"]
 script = ExtResource("1_s826b")
 
-[node name="Outer Fence" type="RigidBody2D" parent="."]
+[node name="Board" type="Node2D" parent="."]
+
+[node name="Outer Fence" type="RigidBody2D" parent="Board"]
 gravity_scale = 0.0
 freeze = true
 
-[node name="Top" type="CollisionShape2D" parent="Outer Fence"]
+[node name="Top" type="CollisionShape2D" parent="Board/Outer Fence"]
 position = Vector2(512, -100)
 shape = SubResource("RectangleShape2D_4dcan")
 
-[node name="Bottom" type="CollisionShape2D" parent="Outer Fence"]
+[node name="Bottom" type="CollisionShape2D" parent="Board/Outer Fence"]
 position = Vector2(512, 676)
 shape = SubResource("RectangleShape2D_4dcan")
 
-[node name="Left" type="CollisionShape2D" parent="Outer Fence"]
+[node name="Left" type="CollisionShape2D" parent="Board/Outer Fence"]
 position = Vector2(-36, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
-[node name="Right" type="CollisionShape2D" parent="Outer Fence"]
+[node name="Right" type="CollisionShape2D" parent="Board/Outer Fence"]
 position = Vector2(1060, 288)
 shape = SubResource("RectangleShape2D_xet8o")
 
-[node name="RoundTopLeft" type="CollisionPolygon2D" parent="Outer Fence"]
+[node name="RoundTopLeft" type="CollisionPolygon2D" parent="Board/Outer Fence"]
 position = Vector2(64, 0)
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="RoundTopRight" type="CollisionPolygon2D" parent="Outer Fence"]
+[node name="RoundTopRight" type="CollisionPolygon2D" parent="Board/Outer Fence"]
 position = Vector2(960, 0)
 rotation = 1.57079
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="RoundBottomRight" type="CollisionPolygon2D" parent="Outer Fence"]
+[node name="RoundBottomRight" type="CollisionPolygon2D" parent="Board/Outer Fence"]
 position = Vector2(960, 576)
 rotation = 3.14159
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="RoundBottomLeft" type="CollisionPolygon2D" parent="Outer Fence"]
+[node name="RoundBottomLeft" type="CollisionPolygon2D" parent="Board/Outer Fence"]
 position = Vector2(64, 576)
 rotation = 4.71238
 polygon = PackedVector2Array(0, 53, 2, 40, 7, 27, 15, 16, 27, 7, 39, 2, 53, 0, 0, 0)
 
-[node name="GoalPlayer1" parent="." instance=ExtResource("3_466yg")]
+[node name="GoalPlayer1" parent="Board" instance=ExtResource("3_466yg")]
 z_index = -1
 position = Vector2(512, -30)
 player_num = 1
 
-[node name="GoalPlayer2" parent="." instance=ExtResource("3_466yg")]
+[node name="GoalPlayer2" parent="Board" instance=ExtResource("3_466yg")]
 z_index = -1
 position = Vector2(512, 606)
 player_num = 2
 
-[node name="HudPlayer1" type="Node2D" parent="."]
+[node name="HudPlayer1" type="Node2D" parent="Board"]
 light_mask = 2
 z_index = 1
 
-[node name="ScoreP1" parent="HudPlayer1" instance=ExtResource("3_bgg7l")]
+[node name="ScoreP1" parent="Board/HudPlayer1" instance=ExtResource("3_bgg7l")]
 light_mask = 2
 position = Vector2(31, 288)
 rotation = 1.5708
 player_num = 1
 
-[node name="EnergyP1" parent="HudPlayer1" instance=ExtResource("4_sbpvv")]
+[node name="EnergyP1" parent="Board/HudPlayer1" instance=ExtResource("4_sbpvv")]
 light_mask = 2
 position = Vector2(31, 388)
 rotation = 1.5708
 player_num = 1
 
-[node name="InventoryP1" parent="HudPlayer1" instance=ExtResource("6_xugar")]
+[node name="InventoryP1" parent="Board/HudPlayer1" instance=ExtResource("6_xugar")]
 position = Vector2(31, 88)
 rotation = 1.5708
 player_num = 1
 
-[node name="HudPlayer2" type="Node2D" parent="."]
+[node name="HudPlayer2" type="Node2D" parent="Board"]
 light_mask = 2
 z_index = 1
 
-[node name="ScoreP2" parent="HudPlayer2" instance=ExtResource("3_bgg7l")]
+[node name="ScoreP2" parent="Board/HudPlayer2" instance=ExtResource("3_bgg7l")]
 light_mask = 2
 position = Vector2(993, 288)
 rotation = -1.5708
 player_num = 2
 
-[node name="EnergyP2" parent="HudPlayer2" instance=ExtResource("4_sbpvv")]
+[node name="EnergyP2" parent="Board/HudPlayer2" instance=ExtResource("4_sbpvv")]
 light_mask = 2
 position = Vector2(993, 188)
 rotation = -1.5708
 player_num = 2
 
-[node name="InventoryP2" parent="HudPlayer2" instance=ExtResource("6_xugar")]
+[node name="InventoryP2" parent="Board/HudPlayer2" instance=ExtResource("6_xugar")]
 position = Vector2(993, 488)
 rotation = -1.5708
 player_num = 2
 
-[node name="ShowBoardEdges" type="Node2D" parent="."]
+[node name="ShowBoardEdges" type="Node2D" parent="Board"]
 light_mask = 2
 
-[node name="RoundTopLeft" type="Polygon2D" parent="ShowBoardEdges"]
+[node name="RoundTopLeft" type="Polygon2D" parent="Board/ShowBoardEdges"]
 light_mask = 2
 position = Vector2(64, 0)
 color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="RoundTopRight" type="Polygon2D" parent="ShowBoardEdges"]
+[node name="RoundTopRight" type="Polygon2D" parent="Board/ShowBoardEdges"]
 light_mask = 2
-position = Vector2(959.9, -1.0999)
+position = Vector2(960, 0)
 rotation = 1.57079
 color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="RoundBottomRight" type="Polygon2D" parent="ShowBoardEdges"]
+[node name="RoundBottomRight" type="Polygon2D" parent="Board/ShowBoardEdges"]
 light_mask = 2
-position = Vector2(959.9, 574.9)
+position = Vector2(960, 576)
 rotation = -3.14159
 color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="RoundBottomLeft" type="Polygon2D" parent="ShowBoardEdges"]
+[node name="RoundBottomLeft" type="Polygon2D" parent="Board/ShowBoardEdges"]
 light_mask = 2
 position = Vector2(64, 576)
 rotation = -1.57079
 color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(53, 0, 39, 2, 27, 7, 15, 16, 7, 27, 2, 40, 0, 53, 0, 0)
 
-[node name="Left" type="ColorRect" parent="ShowBoardEdges"]
+[node name="Top" type="ColorRect" parent="Board/ShowBoardEdges"]
 light_mask = 2
+offset_left = -174.0
+offset_top = -268.0
+offset_right = 1184.0
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Bottom" type="ColorRect" parent="Board/ShowBoardEdges"]
+light_mask = 2
+offset_left = -155.0
+offset_top = 576.0
+offset_right = 1203.0
+offset_bottom = 844.0
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Left" type="ColorRect" parent="Board/ShowBoardEdges"]
+light_mask = 2
+offset_left = -160.0
 offset_right = 64.0
 offset_bottom = 576.0
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="Right" type="ColorRect" parent="ShowBoardEdges"]
+[node name="Right" type="ColorRect" parent="Board/ShowBoardEdges"]
 light_mask = 2
 offset_left = 960.0
-offset_right = 1024.0
+offset_right = 1183.0
 offset_bottom = 576.0
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="Background" type="ColorRect" parent="."]
-z_index = -100
-offset_right = 1024.0
-offset_bottom = 576.0
-color = Color(0.05, 0.05, 0.05, 1)
-
-[node name="DebugText" type="RichTextLabel" parent="."]
+[node name="DebugText" type="RichTextLabel" parent="Board"]
 visible = false
 z_index = 1000
 offset_right = 1025.0
@@ -165,3 +177,9 @@ theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = ExtResource("6_8rcy1")
 theme_override_font_sizes/normal_font_size = 15
 text = "DEBUG TEXT"
+
+[node name="Background" type="ColorRect" parent="Board"]
+z_index = -100
+offset_right = 1024.0
+offset_bottom = 576.0
+color = Color(0.05, 0.05, 0.05, 1)

@@ -2,27 +2,27 @@ extends Node
 
 # Resolution Manager - handles dynamic display resolution adaptation
 # Provides scaling and positioning utilities for adapting game content to any display size
-
+signal viewport_size_changed
 # Base design resolution (logical coordinates)
-const BASE_WIDTH: float = 1024.0
-const BASE_HEIGHT: float = 576.0
+const BASE_WIDTH: float        = 1024.0
+const BASE_HEIGHT: float       = 576.0
 const BASE_ASPECT_RATIO: float = BASE_WIDTH / BASE_HEIGHT  # 16:9 = 1.778
-
 # Bleed margin percentage (10% on all sides)
 const BLEED_MARGIN: float = 0.1
-
 # Cached values
-var _viewport_size: Vector2 = Vector2.ZERO
+var _viewport_size: Vector2  = Vector2.ZERO
 var _effective_size: Vector2 = Vector2.ZERO
-var _scale_factor: float = 1.0
-var _offset: Vector2 = Vector2.ZERO
-var _center: Vector2 = Vector2.ZERO
+var _scale_factor: float     = 1.0
+var _offset: Vector2         = Vector2.ZERO
+var _center: Vector2         = Vector2.ZERO
 
 
 # Called when the node enters the scene tree
 func _ready() -> void:
 	# Connect to window size changes
-	get_tree().root.size_changed.connect(_on_viewport_size_changed)
+	# instead of the following, write an inline function that emits viewport_size_changed: get_tree().root.size_changed.connect(on_tree_root_size_changed)
+	get_tree().root.size_changed.connect(func() -> void: viewport_size_changed.emit())
+	viewport_size_changed.connect(_calculate_scaling)
 	# Initial calculation
 	_calculate_scaling()
 
@@ -30,29 +30,35 @@ func _ready() -> void:
 # Calculate scaling factors and effective viewport size
 func _calculate_scaling() -> void:
 	_viewport_size = get_viewport().get_visible_rect().size
-	
+
 	# Calculate scale factor to fit base resolution in viewport
 	var scale_x: float = _viewport_size.x / BASE_WIDTH
 	var scale_y: float = _viewport_size.y / BASE_HEIGHT
-	
+
 	# Use the smaller scale to maintain aspect ratio (letterbox/pillarbox)
 	_scale_factor = min(scale_x, scale_y)
-	
+
 	# Calculate effective size (scaled base resolution)
 	_effective_size = Vector2(BASE_WIDTH, BASE_HEIGHT) * _scale_factor
-	
+
 	# Calculate offset to center the content
-	_offset = (_viewport_size - _effective_size) * 0.5
-	
+	# Offset the board (which is 16x9) to be centered in the viewport, depending on whether the viewport has extra width or extra height, the board will either have y=0 or x=0
+	var viewport_width: float  = _viewport_size.x
+	var viewport_height: float = _viewport_size.y
+	var board_offset_x: float  = 0.0
+	var board_offset_y: float  = 0.0
+	if viewport_width / viewport_height >= BASE_ASPECT_RATIO:
+		# Viewport is wider than 16:9, so center horizontally
+		board_offset_x = (viewport_width - (viewport_height * BASE_ASPECT_RATIO)) * 0.5
+	else:
+		# Viewport is taller than 16:9, so center vertically
+		board_offset_y = (viewport_height - (viewport_width / BASE_ASPECT_RATIO)) * 0.5
+	_offset = Vector2(board_offset_x, board_offset_y)
+
 	# Calculate center point
 	_center = _offset + (_effective_size * 0.5)
-	
+
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
-
-
-# Called when viewport size changes
-func _on_viewport_size_changed() -> void:
-	_calculate_scaling()
 
 
 # Get the current viewport size (physical display size)
@@ -125,12 +131,13 @@ func get_table_mode_half_size() -> Vector2:
 func get_table_mode_effective_size() -> Vector2:
 	# Each player gets half the physical display width
 	var half_width: float = _viewport_size.x * 0.5
-	
+
 	# Calculate scale for half-width
 	var scale_x: float = half_width / BASE_WIDTH
 	var scale_y: float = _viewport_size.y / BASE_HEIGHT
-	
+
 	# Use smaller scale to maintain aspect ratio
 	var table_scale: float = min(scale_x, scale_y)
-	
+
 	return Vector2(BASE_WIDTH, BASE_HEIGHT) * table_scale
+	

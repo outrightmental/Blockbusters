@@ -126,7 +126,7 @@ func get_inventory_item_name(item: InventoryItemType) -> String:
 # Public for testing purposes
 func do_show_banner(player_num: int, message: String, message_2) -> Signal:
 	# Spawn the banner(s) based on mode, using base resolution for logical coordinates
-	var viewport_width: float = ResolutionManager.BASE_WIDTH
+	var viewport_width: float  = ResolutionManager.BASE_WIDTH
 	var viewport_height: float = ResolutionManager.BASE_HEIGHT
 	match Game.mode:
 		Game.Mode.COUCH:
@@ -160,7 +160,7 @@ func toggle_shadow_fx() -> bool:
 func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
 	var banner: Node = ScenePreloader.banner_scene.instantiate()
 	banner.scale = Vector2(_scale, _scale)
-	banner.position = Vector2(x, y)
+	banner.position = ResolutionManager.get_offset() + Vector2(x, y)
 	banner.rotation_degrees = _rotation_degrees
 	banner.player_num = player_num
 	banner.message = message
