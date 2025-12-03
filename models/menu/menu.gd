@@ -148,9 +148,4 @@ func _nav_down() -> void:
 func _nav_up() -> void:
 	selected_index = wrap(selected_index - 1, 0, menu_items.size())
 	_update_menu_display()
-
-
-# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().change_scene_to_file(path)
+	

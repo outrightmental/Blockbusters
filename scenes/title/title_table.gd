@@ -14,10 +14,5 @@ func _on_player_ready_updated() -> void:
 	if $ReadyP1.is_ready and $ReadyP2.is_ready:
 		await Util.delay(GAME_START_DELAY_SECONDS)
 		if $ReadyP1.is_ready and $ReadyP2.is_ready:
-			_goto_scene("res://scenes/play_game.tscn")
-
-
-# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().change_scene_to_file(path)
+			Util.goto_scene("res://scenes/game/play_game.tscn")
+		

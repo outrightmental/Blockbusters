@@ -16,12 +16,6 @@ func _begin(message: String) -> void:
 	print("Begin test: %s" % message)
 
 
-# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().change_scene_to_file(path)
-
-
 # Assert that a condition is true, otherwise record a failure message
 func assert_true(condition: bool, message: String) -> void:
 	if not condition:
