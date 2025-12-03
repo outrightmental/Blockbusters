@@ -19,6 +19,15 @@ by [outrightmental](https://discord.com/users/outrightmental)
 
 [Google Drive Folder](https://drive.google.com/drive/folders/1zN-aMi7VjPdOoOUz3s_HHYSwMC-8Zp1V?usp=sharing)
 
+## Game Startup Arguments
+
+The game supports the following command line arguments:
+
+```
+  --no-lighting-fx         Disable all lighting effects (including shadows)
+  --no-shadow-fx           Disable all shadow effects
+```
+
 ## Continuous Integration
 
 Leverages the GitHub marketplace action [godot-ci](https://github.com/marketplace/actions/godot-ci)

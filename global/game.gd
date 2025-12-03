@@ -171,8 +171,10 @@ func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float
 # Get the command line arguments on init
 func _init() -> void:
 	for arg in OS.get_cmdline_args():
-		if arg == "--no_lighting":
+		if arg == "--no-lighting-fx":
 			is_lighting_fx_enabled = false
+		if arg == "--no-shadow-fx":
+			is_shadow_fx_enabled = false
 
 
 func _ready() -> void:

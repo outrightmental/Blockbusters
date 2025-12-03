@@ -120,7 +120,11 @@ func _ready() -> void:
 	# Disable lighting if not enabled in settings
 	if not Game.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
-
+		$LightOccluder2D.visible = false
+		
+	# Disable shadow if not enabled in settings
+	if not (Game.is_shadow_fx_enabled and Game.is_lighting_fx_enabled):
+		$LightOccluder2D.visible = false
 
 # Set the colors of the ship based on player_num
 func _set_colors(s_ratio: float, v_ratio: float = 0) -> void:
