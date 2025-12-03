@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cbusqnjntcqtd"]
 
-[ext_resource type="Script" uid="uid://dti3184fj8y54" path="res://models/menu/menu_main.gd" id="1_1xsof"]
+[ext_resource type="Script" uid="uid://clcnh5exrcm4v" path="res://models/menu/menu.gd" id="1_wqm71"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_1xsof"]
 
 [node name="MenuMain" type="Control"]
@@ -12,9 +12,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_1xsof")
-selected_font_size = 60
-inactive_color = Color(0.339095, 0.339095, 0.339095, 1)
+script = ExtResource("1_wqm71")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -31,30 +29,29 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="ItemStart" type="RichTextLabel" parent="VBoxContainer"]
+[node name="ItemOne" type="RichTextLabel" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_1xsof")
 theme_override_font_sizes/normal_font_size = 45
-text = "START"
+text = "ONE"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="ItemOptions" type="RichTextLabel" parent="VBoxContainer"]
+[node name="ItemTwo" type="RichTextLabel" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_1xsof")
 theme_override_font_sizes/normal_font_size = 42
-text = "OPTIONS"
+text = "TWO"
 fit_content = true
 horizontal_alignment = 1
 
-[node name="ItemExit" type="RichTextLabel" parent="VBoxContainer"]
+[node name="ItemThree" type="RichTextLabel" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 theme_override_fonts/normal_font = ExtResource("2_1xsof")
 theme_override_font_sizes/normal_font_size = 42
-text = "EXIT
-"
+text = "THREE"
 fit_content = true
 horizontal_alignment = 1

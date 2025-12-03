@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
 [ext_resource type="Texture2D" uid="uid://dux4ikbl2687g" path="res://assets/title/TitleScreenBackground.jpg" id="2_0wfyh"]
-[ext_resource type="PackedScene" uid="uid://cbusqnjntcqtd" path="res://models/menu/menu_main.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://cbusqnjntcqtd" path="res://models/menu/menu.tscn" id="3_sugp2"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sugp2"]
 
