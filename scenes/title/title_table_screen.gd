@@ -14,5 +14,5 @@ func _on_player_ready_updated() -> void:
 	if $ReadyP1.is_ready and $ReadyP2.is_ready:
 		await Util.delay(GAME_START_DELAY_SECONDS)
 		if $ReadyP1.is_ready and $ReadyP2.is_ready:
-			Util.goto_scene("res://scenes/game/play_game.tscn")
+			Util.goto_scene("res://scenes/game/game_board_screen.tscn")
 		

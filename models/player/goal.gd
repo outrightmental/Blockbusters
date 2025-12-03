@@ -22,7 +22,7 @@ func _ready() -> void:
 	$AnimationPlayer.speed_scale = 1.0 / Constant.TIME_SLOW_SCALE
 
 	# Disable lighting if not enabled in settings
-	if not Game.is_lighting_enabled:
+	if not Game.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 
 

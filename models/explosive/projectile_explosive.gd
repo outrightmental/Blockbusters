@@ -19,7 +19,7 @@ func _ready() -> void:
 	connect("body_entered", _on_body_entered)
 
 	# Disable lighting if not enabled in settings
-	if not Game.is_lighting_enabled:
+	if not Game.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 
 

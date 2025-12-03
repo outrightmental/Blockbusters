@@ -4,6 +4,6 @@ extends Node2D
 func _ready() -> void:
 	match Game.mode:
 		Game.Mode.TABLE:
-			Util.goto_scene("res://scenes/title/title_table.tscn")
+			Util.goto_scene("res://scenes/title/title_table_screen.tscn")
 		Game.Mode.COUCH:
-			Util.goto_scene("res://scenes/title/title_couch.tscn")
+			Util.goto_scene("res://scenes/title/title_screen.tscn")

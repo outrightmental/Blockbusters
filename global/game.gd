@@ -58,7 +58,8 @@ enum Mode {
 # Whether the input is paused
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
-@export var is_lighting_enabled: bool = true
+@export var is_lighting_fx_enabled: bool = true
+@export var is_shadow_fx_enabled: bool = true
 
 # Internal variables
 var _seconds_until_next_gem: float    = 0
@@ -141,6 +142,18 @@ func do_show_banner(player_num: int, message: String, message_2) -> Signal:
 	return Util.callback()
 
 
+# Toggle the lighting FX
+func toggle_lighting_fx() -> bool:
+	is_lighting_fx_enabled = not is_lighting_fx_enabled
+	return is_lighting_fx_enabled
+
+
+# Toggle the shadow FX
+func toggle_shadow_fx() -> bool:
+	is_shadow_fx_enabled = not is_shadow_fx_enabled
+	return is_shadow_fx_enabled
+
+
 # Spawn a banner at the given position
 # Public for testing purposes
 func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
@@ -159,7 +172,7 @@ func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float
 func _init() -> void:
 	for arg in OS.get_cmdline_args():
 		if arg == "--no_lighting":
-			is_lighting_enabled = false
+			is_lighting_fx_enabled = false
 
 
 func _ready() -> void:

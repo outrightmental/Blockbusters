@@ -113,11 +113,11 @@ func _do_hit(body: Node2D, target_point: Vector2, delta: float) -> void:
 		body.apply_heat(delta)
 		sparks.set_emitting(true)
 		sparks.position =  target_point
-		if Game.is_lighting_enabled:
+		if Game.is_lighting_fx_enabled:
 			sparksLight.set_enabled(true)
 	else:
 		sparks.set_emitting(false)
-		if Game.is_lighting_enabled:
+		if Game.is_lighting_fx_enabled:
 			sparksLight.set_enabled(false)
 
 
