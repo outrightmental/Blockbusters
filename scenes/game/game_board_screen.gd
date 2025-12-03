@@ -35,15 +35,15 @@ func _ready() -> void:
 func _setup() -> void:
 	# Setup background scaling
 	_setup_background()
-	
+
 	# Setup outer fences to match viewport size
 	_setup_outer_fences()
-	
+
 	# Setup HUD positions with dynamic scaling
-	var viewport_width: float = ResolutionManager.BASE_WIDTH
+	var viewport_width: float  = ResolutionManager.BASE_WIDTH
 	var viewport_height: float = ResolutionManager.BASE_HEIGHT
-	var center_y: float = viewport_height * 0.5
-	
+	var center_y: float        = viewport_height * 0.5
+
 	match Game.mode:
 		Game.Mode.TABLE:
 			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, center_y))
@@ -64,21 +64,22 @@ func _setup() -> void:
 # Setup background to scale to fit screen
 func _setup_background() -> void:
 	if has_node("Background"):
-		var bg = $Background
-		var viewport_width: float = ResolutionManager.BASE_WIDTH
+		var bg: ColorRect          = $Background
+		var viewport_width: float  = ResolutionManager.BASE_WIDTH
 		var viewport_height: float = ResolutionManager.BASE_HEIGHT
-		
+
 		# Center the background
-		bg.position = Vector2(viewport_width * 0.5, viewport_height * 0.5)
-		
+		bg.position = Vector2.ZERO
+		bg.size = Vector2(viewport_width, viewport_height)
+
 
 # Setup outer fences to match viewport boundaries
 func _setup_outer_fences() -> void:
-	var viewport_width: float = ResolutionManager.BASE_WIDTH
+	var viewport_width: float  = ResolutionManager.BASE_WIDTH
 	var viewport_height: float = ResolutionManager.BASE_HEIGHT
-	var center_x: float = viewport_width * 0.5
-	var center_y: float = viewport_height * 0.5
-	
+	var center_x: float        = viewport_width * 0.5
+	var center_y: float        = viewport_height * 0.5
+
 	# Update fence collision shapes
 	if has_node("Outer Fence"):
 		var fence = $"Outer Fence"
