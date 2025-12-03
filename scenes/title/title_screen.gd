@@ -2,10 +2,10 @@ extends Node2D
 
 # Constants
 const GAME_START_DELAY_SECONDS: float = 1.0
-const OPTION_NA: String               = "n/a"
-const OPTION_BOOL_YES: String         = "yes"
-const OPTION_BOOL_NO: String          = "no"
-const OPTIONS_MENU_TITLE: String      = "OPTIONS"
+const OPTION_NA: String          = "n/a"
+const OPTION_BOOL_TRUE: String   = "on"
+const OPTION_BOOL_FALSE: String  = "off"
+const OPTIONS_MENU_TITLE: String = "OPTIONS"
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -67,14 +67,14 @@ func do_close_options_menu() -> void:
 
 # Get readable value for whether lighting FX is enabled
 func render_lighting_fx_value() -> String:
-	return OPTION_BOOL_YES if Game.is_lighting_fx_enabled else OPTION_BOOL_NO
+	return OPTION_BOOL_TRUE if Game.is_lighting_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Get readable value for whether shadow FX is enabled
 func render_shadow_fx_value() -> String:
 	if not Game.is_lighting_fx_enabled:
 		return OPTION_NA
-	return OPTION_BOOL_YES if Game.is_shadow_fx_enabled else OPTION_BOOL_NO
+	return OPTION_BOOL_TRUE if Game.is_shadow_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Determine if shadow FX option should be disabled
@@ -96,11 +96,22 @@ func _ready() -> void:
 
 # Setup dynamic scaling for background and menu elements
 func _setup_dynamic_scaling() -> void:
-	# Scale background to fit screen
+	# Scale background to fit screen - fill entire viewport with no letterboxing
 	var bg = $TextureRect
 	if bg:
-		bg.size = ResolutionManager.get_effective_size()
-		bg.position = ResolutionManager.get_offset()
+		# Anchor to full rect (0,0 to 1,1)
+		bg.anchor_left = 0.0
+		bg.anchor_top = 0.0
+		bg.anchor_right = 1.0
+		bg.anchor_bottom = 1.0
+		# Remove all margins to fill completely
+		bg.offset_left = 0.0
+		bg.offset_top = 0.0
+		bg.offset_right = 0.0
+		bg.offset_bottom = 0.0
+		# expand_mode and stretch_mode are set in the .tscn file
+		# expand_mode = 1 (EXPAND_FIT_WIDTH_PROPORTIONAL) 
+		# stretch_mode = 6 (STRETCH_KEEP_ASPECT_COVERED) - fills screen, crops if needed
 	
 	# Position menu at right side of screen
 	var viewport_size = ResolutionManager.get_effective_size()
