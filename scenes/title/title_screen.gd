@@ -109,8 +109,8 @@ func _setup_dynamic_scaling() -> void:
 	# Scale background to fit screen
 	var bg = $TextureRect
 	if bg:
-		bg.size = ResolutionManager.get_effective_size()
-		bg.position = ResolutionManager.get_offset()
+		bg.size = ResolutionManager.get_viewport_size()
+		bg.position = Vector2.ZERO 
 	
 	# Position menu at right side of screen
 	var viewport_size = ResolutionManager.get_effective_size()

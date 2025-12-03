@@ -1,4 +1,4 @@
-﻿extends Node
+extends Node
 
 # Resolution Manager - handles dynamic display resolution adaptation
 # Provides scaling and positioning utilities for adapting game content to any display size
@@ -16,6 +16,7 @@ var _viewport_size: Vector2 = Vector2.ZERO
 var _effective_size: Vector2 = Vector2.ZERO
 var _scale_factor: float = 1.0
 var _offset: Vector2 = Vector2.ZERO
+var _center: Vector2 = Vector2.ZERO
 
 
 # Called when the node enters the scene tree
@@ -43,6 +44,9 @@ func _calculate_scaling() -> void:
 	# Calculate offset to center the content
 	_offset = (_viewport_size - _effective_size) * 0.5
 	
+	# Calculate center point
+	_center = _offset + (_effective_size * 0.5)
+	
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
 
 
@@ -69,6 +73,11 @@ func get_scale_factor() -> float:
 # Get the offset for centering content
 func get_offset() -> Vector2:
 	return _offset
+
+
+# Get the center point of the effective area
+func get_center() -> Vector2:
+	return _center
 
 
 # Convert logical coordinates to physical screen coordinates
@@ -125,4 +134,3 @@ func get_table_mode_effective_size() -> Vector2:
 	var table_scale: float = min(scale_x, scale_y)
 	
 	return Vector2(BASE_WIDTH, BASE_HEIGHT) * table_scale
-

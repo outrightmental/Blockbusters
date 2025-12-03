@@ -22,10 +22,10 @@ var menu_items: Array[MenuItem] = []
 # Colors for title, selected, disabled, and default items
 @export var inactive_selected_color: Color = Constant.PLAYER_COLORS[1][1]
 @export var active_selected_color: Color = Constant.PLAYER_COLORS[1][0]
-@export var inactive_color: Color = default_color
-@export var active_color: Color = Constant.PLAYER_COLORS[2][0]
+@export var inactive_color: Color = Color(0.4, 0.4, 0.4, 1.0)
+@export var active_color: Color = Constant.PLAYER_COLORS[2][1]
 @export var default_color: Color = Color(0.2, 0.2, 0.2, 1.0)
-@export var disabled_color: Color = Color(0.2, 0.2, 0.2, 0.5)
+@export var disabled_color: Color = Color(0.2, 0.2, 0.2, 0.3)
 @export var selected_color: Color = Constant.PLAYER_COLORS[1][0]
 @export var title_color: Color = Color(0.2, 0.2, 0.2, 1.0)
 # Item label horizontal alignment
