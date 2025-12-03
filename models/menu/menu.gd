@@ -20,6 +20,8 @@ var menu_items: Array[MenuItem] = []
 # Inactive item color
 @export var inactive_color: Color = Color(0.2, 0.2, 0.2, 1.0)
 
+@onready var font: Font = load("res://assets/fonts/Montserrat/static/Montserrat-Black.ttf")
+
 # Keep track of whether input movement is active, to prevent multiple navigation
 var is_navigation_active: bool = false
 
@@ -32,12 +34,11 @@ func configure(items: Array[Dictionary]) -> void:
 	menu_items.clear()
 	selected_index = 0
 	for d in items:
-		var label_node: RichTextLabel = RichTextLabel.new()
-		label_node.text = d["label"]
-		$VBoxContainer.add_child(label_node)
-		var item = MenuItem.new()
+		var item  =  MenuItem.new()
 		item.action = d["action"]
-		item.label_node = label_node
+		var label := _create_label(d["label"])
+		$VBoxContainer.add_child(label)
+		item.label_node = label
 		menu_items.append(item)
 	_update_menu_display()
 
@@ -47,26 +48,46 @@ func _ready() -> void:
 	InputManager.action_pressed.connect(_on_action_pressed)
 
 
+# Create a label node for a menu item
+func _create_label(label_text: String) -> RichTextLabel:
+	var label: RichTextLabel = RichTextLabel.new()
+	label.bbcode_enabled = false
+	label.text = label_text
+	label.layout_direction = RichTextLabel.LAYOUT_DIRECTION_LTR
+	_set_font(label, font)
+	_set_font_size(label, unselected_font_size)
+	_set_default_color(label, inactive_color)
+	label.horizontal_alignment = HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER
+	label.text = label_text
+	label.fit_content = true
+	return label
+
+
 # Update the visual display of the menu
 func _update_menu_display() -> void:
 	for i in range(menu_items.size()):
 		var item: MenuItem = menu_items[i]
 		if i == selected_index:
-			_set_font_size(item, selected_font_size)
-			_set_font_color(item, active_color)
+			_set_font_size(item.label_node, selected_font_size)
+			_set_default_color(item.label_node, active_color)
 		else:
-			_set_font_size(item, unselected_font_size)
-			_set_font_color(item, inactive_color)
+			_set_font_size(item.label_node, unselected_font_size)
+			_set_default_color(item.label_node, inactive_color)
 
 
-# Set the font size of a menu item
-func _set_font_size(item: MenuItem, font_size: int) -> void:
-	item.label_node.add_theme_font_size_override("normal_font_size", font_size)
+# Set the theme font override of a rich text label
+func _set_font(label: RichTextLabel, label_font: Font) -> void:
+	label.add_theme_font_override("normal_font", label_font)
 
 
-# Set the color of the text
-func _set_font_color(item: MenuItem, text_color: Color) -> void:
-	item.label_node.add_theme_color_override("default_color", text_color)
+# Set the theme font size override of a rich text label
+func _set_font_size(label: RichTextLabel, label_font_size: int) -> void:
+	label.add_theme_font_size_override("normal_font_size", label_font_size)
+
+
+# Set the theme default color of a rich text label
+func _set_default_color(label: RichTextLabel, default_color: Color) -> void:
+	label.add_theme_color_override("default_color", default_color)
 
 
 # Check for input to navigate the menu
