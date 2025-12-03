@@ -343,6 +343,7 @@ func _player_inventory_remove(player_num: int, item: InventoryItemType) -> void:
 
 # Table / Couch mode are two separate builds #150 #126
 func _compute_mode() -> Mode:
+	return Mode.TABLE # todo remove this
 	if OS.has_feature("couch_mode"):
 		return Mode.COUCH
 	if OS.has_feature("editor"):
