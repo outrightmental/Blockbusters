@@ -61,15 +61,15 @@ func configure(items: Array[Dictionary], title: String = "") -> void:
 	# Add menu items
 	for d in items:
 		var item  =  MenuItem.new()
-		item.label_text = d["label"]
-		item.action = d["action"]
+		item.label_text = d["label"] # String
+		item.action = d["action"] # Callable
 		var label := _create_label(item.label_text)
 		$VBoxContainer.add_child(label)
 		item.label_node = label
 		if d.has("value"):
-			item.value = d["value"]
+			item.value = d["value"] # Callable
 		if d.has("disabled"):
-			item.disabled = d["disabled"]
+			item.disabled = d["disabled"] # Callable
 		if d.has("small"):
 			item.is_small = d["small"] as bool
 		menu_items.append(item)

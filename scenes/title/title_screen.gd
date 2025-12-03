@@ -96,22 +96,24 @@ func _ready() -> void:
 
 # Setup dynamic scaling for background and menu elements
 func _setup_dynamic_scaling() -> void:
-	# Scale background to fit screen - fill entire viewport with no letterboxing
+	# Scale background to fill screen without letterboxing (keep aspect covered)
 	var bg = $TextureRect
-	if bg:
-		# Anchor to full rect (0,0 to 1,1)
-		bg.anchor_left = 0.0
-		bg.anchor_top = 0.0
-		bg.anchor_right = 1.0
-		bg.anchor_bottom = 1.0
-		# Remove all margins to fill completely
-		bg.offset_left = 0.0
-		bg.offset_top = 0.0
-		bg.offset_right = 0.0
-		bg.offset_bottom = 0.0
-		# expand_mode and stretch_mode are set in the .tscn file
-		# expand_mode = 1 (EXPAND_FIT_WIDTH_PROPORTIONAL) 
-		# stretch_mode = 6 (STRETCH_KEEP_ASPECT_COVERED) - fills screen, crops if needed
+	if bg and bg.texture:
+		var viewport_size = get_viewport_rect().size
+		var texture_size = bg.texture.get_size()
+		
+		# Calculate scale to cover the entire viewport
+		# This is "keep aspect covered" - we scale to the larger of the two ratios
+		var scale_x = viewport_size.x / texture_size.x
+		var scale_y = viewport_size.y / texture_size.y
+		var scale = max(scale_x, scale_y)
+		
+		# Apply scale
+		bg.scale = Vector2(scale, scale)
+		
+		# Center the background
+		var scaled_size = texture_size * scale
+		bg.position = (viewport_size - scaled_size) / 2.0
 	
 	# Position menu at right side of screen
 	var viewport_size = ResolutionManager.get_effective_size()
