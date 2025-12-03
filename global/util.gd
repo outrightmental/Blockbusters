@@ -21,6 +21,7 @@ func delay(seconds: float) -> Signal:
 	else:
 		return never
 
+
 # An immediate callback signal
 func callback() -> Signal:
 	return delay(0)
@@ -29,3 +30,9 @@ func callback() -> Signal:
 # Format an angle in radians to a string in degrees with one decimal place
 func fmt_angle(radians: float) -> String:
 	return "%0.1f°" % wrap(rad_to_deg(radians), 0, 360)
+
+
+# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
+func goto_scene(path: String) -> void:
+	if get_tree():
+		get_tree().call_deferred("change_scene_to_file", path)

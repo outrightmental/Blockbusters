@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://cbusqnjntcqtd"]
+[gd_scene load_steps=3 format=3 uid="uid://cghrjacphgqkh"]
 
 [ext_resource type="Script" uid="uid://clcnh5exrcm4v" path="res://models/menu/menu.gd" id="1_wqm71"]
 [ext_resource type="FontFile" uid="uid://dblvrdtyp1jsa" path="res://assets/fonts/Montserrat/static/Montserrat-Black.ttf" id="2_1xsof"]

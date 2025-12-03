@@ -29,6 +29,10 @@ func _ready() -> void:
 	# Update the heated effect visibility
 	_update_heated_effect()
 
+	# Disable shadow if not enabled in settings
+	if not (Game.is_shadow_fx_enabled and Game.is_lighting_fx_enabled):
+		$LightOccluder2D.visible = false
+
 
 # When a gem can be added
 func is_empty() -> bool:

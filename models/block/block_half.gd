@@ -3,6 +3,7 @@ extends Heatable
 
 # Whether this block has a gem
 @export var half_num: int
+
 # Cache reference to heated effect
 @onready var heated_effect: Node2D = $HeatedEffect
 
@@ -14,6 +15,10 @@ func _ready() -> void:
 
 	# Update the heated effect visibility
 	_update_heated_effect()
+
+	# Disable shadow if not enabled in settings
+	if not (Game.is_shadow_fx_enabled and Game.is_lighting_fx_enabled):
+		$LightOccluder2D.visible = false
 
 
 # Break the block half apart into two quarters

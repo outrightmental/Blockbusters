@@ -52,7 +52,7 @@ func _setup() -> void:
 
 # Show the game over banner for some time, then go back to main screen
 func _on_finished() -> void:
-	_goto_scene('res://scenes/main.tscn')
+	Util.goto_scene('res://scenes/main.tscn')
 	pass
 
 
@@ -170,12 +170,6 @@ func _get_block_spawn_candidate() -> Block:
 		# Randomly select a block to spawn a pickup in
 		return candidates[randi() % candidates.size()]
 	return null
-
-
-# Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
-func _goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().change_scene_to_file(path)
 
 
 # Show debug text

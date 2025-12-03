@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://df1c4f7bm2iro"]
+[gd_scene load_steps=9 format=3 uid="uid://bgvuuvhomj1ox"]
 
-[ext_resource type="Script" path="res://scenes/play_game.gd" id="1_s826b"]
+[ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/game/game_board_screen.gd" id="1_s826b"]
 [ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/goal.tscn" id="3_466yg"]
 [ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/hud/hud_score.tscn" id="3_bgg7l"]
 [ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_energy.tscn" id="4_sbpvv"]
