@@ -2,10 +2,10 @@ extends Node2D
 
 # Constants
 const GAME_START_DELAY_SECONDS: float = 1.0
-const OPTION_NA: String          = "n/a"
-const OPTION_BOOL_TRUE: String   = "on"
-const OPTION_BOOL_FALSE: String  = "off"
-const OPTIONS_MENU_TITLE: String = "OPTIONS"
+const OPTION_NA: String               = "n/a"
+const OPTION_BOOL_TRUE: String        = "on"
+const OPTION_BOOL_FALSE: String       = "off"
+const OPTIONS_MENU_TITLE: String      = "OPTIONS"
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -16,8 +16,8 @@ const OPTIONS_MENU_TITLE: String = "OPTIONS"
 
 # Options menu items
 @onready var OPTIONS_MENU_ITEMS: Array[Dictionary] = [
-														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value")},
-														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "disabled": Callable(self, "get_shadow_fx_disabled")},
+														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value"), "active": Callable(self, "get_lighting_fx_value")},
+														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "active": Callable(self, "get_shadow_fx_value"), "disabled": Callable(self, "get_shadow_fx_disabled")},
 														 {"label": "DONE", "action": Callable(self, "do_close_options_menu"), "small": true},
 													 ]
 
@@ -53,7 +53,7 @@ func do_toggle_shadow_fx() -> void:
 # Open the options menu
 func do_open_options_menu() -> void:
 	options_menu_container.show()
-	options_menu.reset()
+	options_menu.reset(true)
 	options_menu.call_deferred("activate")
 	main_menu.deactivate()
 
@@ -77,6 +77,16 @@ func render_shadow_fx_value() -> String:
 	return OPTION_BOOL_TRUE if Game.is_shadow_fx_enabled else OPTION_BOOL_FALSE
 
 
+# Get a boolean whether Lighting FX is enabled
+func get_lighting_fx_value() -> bool:
+	return Game.is_lighting_fx_enabled
+
+
+# Get a boolean whether Shadow FX is enabled
+func get_shadow_fx_value() -> bool:
+	return Game.is_shadow_fx_enabled
+
+
 # Determine if shadow FX option should be disabled
 func get_shadow_fx_disabled() -> bool:
 	return not Game.is_lighting_fx_enabled
@@ -88,7 +98,7 @@ func _ready() -> void:
 	main_menu.configure(MAIN_MENU_ITEMS)
 	options_menu.configure(OPTIONS_MENU_ITEMS, OPTIONS_MENU_TITLE)
 	do_close_options_menu()
-	
+
 	# Setup dynamic scaling
 	_setup_dynamic_scaling()
 	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
@@ -96,24 +106,11 @@ func _ready() -> void:
 
 # Setup dynamic scaling for background and menu elements
 func _setup_dynamic_scaling() -> void:
-	# Scale background to fill screen without letterboxing (keep aspect covered)
+	# Scale background to fit screen
 	var bg = $TextureRect
-	if bg and bg.texture:
-		var viewport_size = get_viewport_rect().size
-		var texture_size = bg.texture.get_size()
-		
-		# Calculate scale to cover the entire viewport
-		# This is "keep aspect covered" - we scale to the larger of the two ratios
-		var scale_x = viewport_size.x / texture_size.x
-		var scale_y = viewport_size.y / texture_size.y
-		var scale = max(scale_x, scale_y)
-		
-		# Apply scale
-		bg.scale = Vector2(scale, scale)
-		
-		# Center the background
-		var scaled_size = texture_size * scale
-		bg.position = (viewport_size - scaled_size) / 2.0
+	if bg:
+		bg.size = ResolutionManager.get_effective_size()
+		bg.position = ResolutionManager.get_offset()
 	
 	# Position menu at right side of screen
 	var viewport_size = ResolutionManager.get_effective_size()
