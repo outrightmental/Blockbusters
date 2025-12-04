@@ -38,27 +38,21 @@ func _ready() -> void:
 func _setup() -> void:
 	_on_viewport_size_changed()
 
-	# Setup HUD positions with dynamic scaling
-	var viewport_size: Vector2 = ResolutionManager.get_viewport_size()
-	var viewport_width: float  = viewport_size.x
-	var viewport_height: float = viewport_size.y
-	var center_y: float        = viewport_height * 0.5
-
 	match Game.mode:
 		Game.Mode.TABLE:
-			$Board/HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, center_y))
-			$Board/HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, center_y + 100))
-			$Board/HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, center_y - 200))
-			$Board/HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y))
-			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y - 100))
-			$Board/HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, center_y + 200))
-		Game.Mode.COUCH:
-			$Board/HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, center_y))
-			$Board/HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, viewport_height - 88))
+			$Board/HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
+			$Board/HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
 			$Board/HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$Board/HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(viewport_width - 31, center_y))
-			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(viewport_width - 31, viewport_height - 88))
-			$Board/HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(viewport_width - 31, 88))
+			$Board/HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
+			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
+			$Board/HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+		Game.Mode.COUCH:
+			$Board/HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
+			$Board/HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$Board/HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
+			$Board/HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
+			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$Board/HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
 
 
 # When the viewport size changes, re-center the board
