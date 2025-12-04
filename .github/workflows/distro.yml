@@ -40,10 +40,9 @@ jobs:
         run: |
           test -f scenes/tests/test_base.gd || echo "WARNING: test_base.gd missing (adjust path)."
 
-      - name: Run test suite scene
+      - name: Run test suite at default resolution of 1024x576
         run: |
-          # Use proper ordering: options first, then scene
-          godot --headless --path ${PROJECT_PATH} res://scenes/tests/test_suite.tscn
+          godot --resolution 1024x576 --headless --path ${PROJECT_PATH} --fixed-fps 30 res://scenes/tests/test_suite.tscn --quit || exit 1
 
   export-windows-table:
     needs:
