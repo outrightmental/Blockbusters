@@ -8,27 +8,26 @@ class MenuItem:
 	var action: Callable
 	var value: Callable
 	var disabled: Callable
+	var active: Callable
 	var is_small: bool = false
 
 # List of menu items
 var menu_items: Array[MenuItem] = []
 
-# Font size for selected item
-@export var selected_font_size_ratio: float = 1.25
-# Font size for items
+# Font size for selected item ratio, item, small item, and title
 @export var item_font_size: int = 40
-# Font size for small items
 @export var item_small_font_size: int = 30
-# Font size for title
+@export var selected_font_size_ratio: float = 1.25
 @export var title_font_size: int = item_small_font_size
-# Active item color
+# Colors for title, selected, disabled, and default items
+@export var inactive_selected_color: Color = Constant.PLAYER_COLORS[1][1]
+@export var active_selected_color: Color = Constant.PLAYER_COLORS[1][0]
+@export var inactive_color: Color = Color(0.4, 0.4, 0.4, 1.0)
+@export var active_color: Color = Constant.PLAYER_COLORS[2][1]
+@export var default_color: Color = Color(0.2, 0.2, 0.2, 1.0)
+@export var disabled_color: Color = Color(0.2, 0.2, 0.2, 0.3)
+@export var selected_color: Color = Constant.PLAYER_COLORS[1][0]
 @export var title_color: Color = Color(0.2, 0.2, 0.2, 1.0)
-# Active item color
-@export var active_color: Color = Constant.PLAYER_COLORS[1][0]
-# Disabled item color
-@export var disabled_color: Color = Color(0.2, 0.2, 0.2, 0.5)
-# Inactive item color
-@export var inactive_color: Color = Color(0.2, 0.2, 0.2, 1.0)
 # Item label horizontal alignment
 @export var label_h_align: HorizontalAlignment = HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER
 
@@ -65,15 +64,17 @@ func configure(items: Array[Dictionary], title: String = "") -> void:
 	# Add menu items
 	for d in items:
 		var item  =  MenuItem.new()
-		item.label_text = d["label"]
-		item.action = d["action"]
+		item.label_text = d["label"] # String
+		item.action = d["action"] # Callable
 		var label := _create_label(item.label_text)
 		$VBoxContainer.add_child(label)
 		item.label_node = label
 		if d.has("value"):
-			item.value = d["value"]
+			item.value = d["value"] # Callable
 		if d.has("disabled"):
-			item.disabled = d["disabled"]
+			item.disabled = d["disabled"] # Callable
+		if d.has("active"):
+			item.active = d["active"] # Callable
 		if d.has("small"):
 			item.is_small = d["small"] as bool
 		menu_items.append(item)
@@ -95,15 +96,25 @@ func update() -> void:
 			_set_default_color(item.label_node, disabled_color)
 		elif i == _selected_index:
 			_set_font_size(item.label_node, _selected_item_small_font_size if item.is_small else _selected_item_font_size)
-			_set_default_color(item.label_node, active_color)
+			if _get_is_item_active(item):
+				_set_default_color(item.label_node, active_selected_color)
+			elif _get_is_item_inactive(item):
+				_set_default_color(item.label_node, inactive_selected_color)
+			else:
+				_set_default_color(item.label_node, selected_color)
 		else:
 			_set_font_size(item.label_node, item_small_font_size if item.is_small else item_font_size)
-			_set_default_color(item.label_node, inactive_color)
+			if _get_is_item_active(item):
+				_set_default_color(item.label_node, active_color)
+			elif _get_is_item_inactive(item):
+				_set_default_color(item.label_node, inactive_color)
+			else:
+				_set_default_color(item.label_node, default_color)
 
 
-# Reset the menu to the first item		
-func reset() -> void:
-	_selected_index = 0
+# Reset the menu to the first (or last item)
+func reset(last: bool = false) -> void:
+	_selected_index = 0 if not last else menu_items.size() - 1
 	update()
 
 
@@ -133,7 +144,7 @@ func _create_label(label_text: String) -> RichTextLabel:
 	label.layout_direction = RichTextLabel.LAYOUT_DIRECTION_LTR
 	_set_font(label, item_font)
 	_set_font_size(label, item_font_size)
-	_set_default_color(label, inactive_color)
+	_set_default_color(label, default_color)
 	label.horizontal_alignment = label_h_align
 	label.text = label_text
 	label.fit_content = true
@@ -236,7 +247,23 @@ func _nav_up() -> void:
 
 
 # Check if a menu item is disabled		
+# meaning it has a callback with value returning boolean true
 func _get_is_item_disabled(item: MenuItem) -> bool:
 	if item.disabled != null and item.disabled.is_valid():
 		return item.disabled.call()
+	return false
+
+
+# Check if a menu item is active		
+# meaning it has a callback with value returning boolean true
+func _get_is_item_active(item: MenuItem) -> bool:
+	if item.active != null and item.active.is_valid():
+		return item.active.call()
+	return false
+
+# Check if a menu item is inactive		
+# meaning it has a callback with value returning boolean false
+func _get_is_item_inactive(item: MenuItem) -> bool:
+	if item.active != null and item.active.is_valid():
+		return not item.active.call()
 	return false

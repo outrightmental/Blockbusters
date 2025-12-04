@@ -1,9 +1,10 @@
 extends Node2D
 
 # References to player goals
-@onready var player_goal_1 = $GoalPlayer1
-@onready var player_goal_2 = $GoalPlayer2
+@onready var player_goal_1 = $Board/GoalPlayer1
+@onready var player_goal_2 = $Board/GoalPlayer2
 @onready var debug_text = $DebugText
+@onready var board = $Board
 
 # Variables
 var grid: Dictionary = {}
@@ -29,25 +30,34 @@ func _ready() -> void:
 	pass
 	# Start a new game
 	Game.start_new_game.emit()
+	# Connect to resolutio manager viewport size changes
+	ResolutionManager.viewport_size_changed.connect(_on_viewport_size_changed)
 
 
-# Setup the UI based on the current input mode		
+# Setup the UI based on the current game mode and viewport size		
 func _setup() -> void:
+	_on_viewport_size_changed()
+
 	match Game.mode:
 		Game.Mode.TABLE:
-			$HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
-			$HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
-			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
-			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
-			$HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$Board/HudPlayer1/ScoreP1.transform = Transform2D(PI/2, Vector2(31, 288))
+			$Board/HudPlayer1/EnergyP1.transform = Transform2D(PI/2, Vector2(31, 388))
+			$Board/HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
+			$Board/HudPlayer2/ScoreP2.transform = Transform2D(-PI/2, Vector2(993, 288))
+			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 188))
+			$Board/HudPlayer2/InventoryP2.transform = Transform2D(-PI/2, Vector2(993, 488))
 		Game.Mode.COUCH:
-			$HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
-			$HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
-			$HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
-			$HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
-			$HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
-			$HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
+			$Board/HudPlayer1/ScoreP1.transform = Transform2D(0, Vector2(31, 288))
+			$Board/HudPlayer1/EnergyP1.transform = Transform2D(-PI/2, Vector2(31, 488))
+			$Board/HudPlayer1/InventoryP1.transform = Transform2D(PI/2, Vector2(31, 88))
+			$Board/HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
+			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
+			$Board/HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
+
+
+# When the viewport size changes, re-center the board
+func _on_viewport_size_changed() -> void:
+	$Board.position = ResolutionManager.get_offset()
 
 
 # Show the game over banner for some time, then go back to main screen
@@ -60,11 +70,11 @@ func _on_finished() -> void:
 func _on_player_enabled(player_num: int, enabled: bool) -> void:
 	match player_num:
 		1:
-			$HudPlayer1/ScoreP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
-			$HudPlayer1/InventoryP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$Board/HudPlayer1/ScoreP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$Board/HudPlayer1/InventoryP1.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 		2:
-			$HudPlayer2/ScoreP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
-			$HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$Board/HudPlayer2/ScoreP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+			$Board/HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 
 
 # Create the board with blocks and gems, and spawn player goals, ships, and scores
@@ -78,7 +88,8 @@ func _create_board() -> void:
 	var block_count: int         = 0
 	var block_attempt_count: int = 0
 	_generate_mesh(floor(randf() * Constant.BOARD_SEED_MAX))
-	var viewport_size: Vector2         = get_viewport().get_visible_rect().size
+	# Use base resolution for logical coordinates
+	var viewport_size: Vector2         = Vector2(ResolutionManager.BASE_WIDTH, ResolutionManager.BASE_HEIGHT)
 	var player_ship_1: Ship            = _spawn_player_ship(1, Vector2(viewport_size.x * 0.1, viewport_size.y * 0.5), 0)
 	var player_ship_2: Ship            = _spawn_player_ship(2, Vector2(viewport_size.x * 0.9, viewport_size.y * 0.5), PI)
 	var goal_positions: Array[Vector2] = [player_goal_1.position, player_goal_2.position, player_ship_1.position, player_ship_2.position]
@@ -129,14 +140,14 @@ func _spawn_player_ship(num: int, start_position: Vector2, start_rotation: float
 	ship.position = start_position
 	ship.player_num = num
 	ship.rotation = start_rotation
-	self.add_child(ship)
+	board.add_child(ship)
 	return ship
 
 
 func _spawn_block(start_position: Vector2) -> Node:
 	var block: Block = ScenePreloader.block_scene.instantiate()
 	block.position = start_position
-	self.add_child(block)
+	board.add_child(block)
 	return block
 
 

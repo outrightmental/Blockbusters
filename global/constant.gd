@@ -10,7 +10,7 @@ const PLAYER_COLORS: Dictionary = {
 								  }
 #
 # Input
-const INPUT_STICK_DEADZONE: float        = 0.05
+const INPUT_STICK_DEADZONE: float                  = 0.05
 const INPUT_MENU_NAV_STICK_ACTIVE_THRESHOLD: float = 0.5
 const INPUT_MENU_NAV_STICK_RESET_THRESHOLD: float  = 0.3
 #
@@ -91,6 +91,7 @@ const HEATING_TIMEOUT_SEC: float = 0.25 # timeout after heat not applied when we
 # Board
 # Spawn blocks in a grid pattern, 32 blocks wide and 18 blocks tall, starting at (16, 16) and spaced 32 pixels apart
 # The blocks are32x32 pixels, so the grid is 1024x576 pixels
+const BOARD_ASPECT_RATIO: float        = 16.0/9.0
 const BOARD_BLOCK_ATTEMPT_MAX: int     = 1_000_000 # max attempts to place a block
 const BOARD_BLOCK_CENTER: int          = floori(BOARD_BLOCK_SIZE * 0.5)
 const BOARD_BLOCK_COUNT_MAX: int       = floori(BOARD_GRID_COUNT_MAX * BOARD_BLOCK_COUNT_RATIO)

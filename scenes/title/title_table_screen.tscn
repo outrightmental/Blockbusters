@@ -1,62 +1,66 @@
-[gd_scene load_steps=6 format=3 uid="uid://bncgid4asdcug"]
+[gd_scene load_steps=4 format=3 uid="uid://b5t2ndjhlh4c"]
 
-[ext_resource type="Script" uid="uid://6uedx8jayxeq" path="res://scenes/title/title_table_screen.gd" id="1_yvrfx"]
-[ext_resource type="Texture2D" uid="uid://cunv03sc3o40h" path="res://assets/MainScreenTitle.png" id="2_1pdfi"]
-[ext_resource type="PackedScene" uid="uid://dvo0oiws54t1m" path="res://models/player/ready.tscn" id="3_i2ihh"]
+[ext_resource type="PackedScene" uid="uid://cudgpbggtlhae" path="res://scenes/title/title_screen.tscn" id="1_fps37"]
+[ext_resource type="Script" uid="uid://d23lqkci7d18f" path="res://scenes/title/title_table_screen.gd" id="1_yvrfx"]
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tefeu"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_sugp2"]
+viewport_path = NodePath("UIViewport")
 
-[sub_resource type="VideoStreamTheora" id="VideoStreamTheora_tbgi4"]
-file = "assets/MainScreen1.ogv"
-
-[node name="Main2" type="Node2D"]
+[node name="Main" type="Node2D"]
 script = ExtResource("1_yvrfx")
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
-material = SubResource("CanvasItemMaterial_tefeu")
-offset_right = 1024.0
-offset_bottom = 576.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 1124.0
+offset_bottom = 676.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="AttractVideo" type="VideoStreamPlayer" parent="."]
+[node name="UIViewport" type="SubViewport" parent="."]
+msaa_2d = 3
+msaa_3d = 3
+screen_space_aa = 1
+mesh_lod_threshold = 0.0
+size = Vector2i(2160, 1215)
+render_target_update_mode = 4
+
+[node name="Background" type="ColorRect" parent="UIViewport"]
+z_index = -10
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_right = 1024.0
 offset_bottom = 576.0
-stream = SubResource("VideoStreamTheora_tbgi4")
-autoplay = true
-loop = true
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
-[node name="StartBG_P1" type="ColorRect" parent="."]
-offset_right = 140.0
-offset_bottom = 576.0
-color = Color(0, 0, 0, 0.862745)
+[node name="Main" parent="UIViewport" instance=ExtResource("1_fps37")]
+scale = Vector2(2.109, 2.109)
 
-[node name="StartBG_P2" type="ColorRect" parent="."]
-offset_left = 1024.0
-offset_top = 576.0
-offset_right = 1174.0
-offset_bottom = 1152.0
-rotation = 3.14159
-color = Color(0, 0, 0, 0.862745)
+[node name="CenterContainer" type="Node2D" parent="."]
+position = Vector2(512, 288)
 
-[node name="BLOCKBUSTERS_P1" type="Sprite2D" parent="."]
-position = Vector2(335, 269)
+[node name="DisplayP1" type="TextureRect" parent="CenterContainer"]
+offset_left = -187.0
+offset_top = -288.0
+offset_right = 1973.0
+offset_bottom = 927.0
 rotation = 1.5708
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("2_1pdfi")
+scale = Vector2(0.267, 0.267)
+texture = SubResource("ViewportTexture_sugp2")
 
-[node name="BLOCKBUSTERS_P2" type="Sprite2D" parent="."]
-position = Vector2(735, 268)
+[node name="DisplayP2" type="TextureRect" parent="CenterContainer"]
+offset_left = 187.0
+offset_top = 288.0
+offset_right = 2347.0
+offset_bottom = 1503.0
 rotation = -1.5708
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("2_1pdfi")
-
-[node name="ReadyP1" parent="." instance=ExtResource("3_i2ihh")]
-position = Vector2(122, 291)
-rotation = 1.5708
-player_num = 1
-
-[node name="ReadyP2" parent="." instance=ExtResource("3_i2ihh")]
-position = Vector2(906, 288)
-rotation = -1.5708
-player_num = 2
+scale = Vector2(0.267, 0.267)
+texture = SubResource("ViewportTexture_sugp2")

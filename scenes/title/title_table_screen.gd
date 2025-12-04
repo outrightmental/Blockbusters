@@ -1,18 +1,15 @@
 extends Node2D
 
-# Constants
-const GAME_START_DELAY_SECONDS: float = 1.0
+@onready var center_container: Node2D = $CenterContainer
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	Game.player_ready_updated.connect(_on_player_ready_updated)
+	# Setup dynamic scaling
+	_setup_dynamic_scaling()
+	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
 
 
-# If both players are ready, start the game
-func _on_player_ready_updated() -> void:
-	if $ReadyP1.is_ready and $ReadyP2.is_ready:
-		await Util.delay(GAME_START_DELAY_SECONDS)
-		if $ReadyP1.is_ready and $ReadyP2.is_ready:
-			Util.goto_scene("res://scenes/game/game_board_screen.tscn")
-		
+# Setup the correct screen based on game mode
+func _setup_dynamic_scaling() -> void:
+	center_container.position = ResolutionManager.get_center()

@@ -125,14 +125,15 @@ func get_inventory_item_name(item: InventoryItemType) -> String:
 # Show a banner message
 # Public for testing purposes
 func do_show_banner(player_num: int, message: String, message_2) -> Signal:
-	# Spawn the banner(s) based on mode
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	# Spawn the banner(s) based on mode, using base resolution for logical coordinates
+	var viewport_width: float  = ResolutionManager.BASE_WIDTH
+	var viewport_height: float = ResolutionManager.BASE_HEIGHT
 	match Game.mode:
 		Game.Mode.COUCH:
-			_spawn_banner(player_num, viewport_size.x / 2, viewport_size.y / 2, 0, 1, message, message_2)
+			_spawn_banner(player_num, viewport_width / 2, viewport_height / 2, 0, 1, message, message_2)
 		Game.Mode.TABLE:
-			_spawn_banner(player_num, viewport_size.x * 0.75, viewport_size.y / 2, -90, 0.6, message, message_2)
-			_spawn_banner(player_num, viewport_size.x * 0.25, viewport_size.y / 2, 90, 0.6, message, message_2)
+			_spawn_banner(player_num, viewport_width * 0.75, viewport_height / 2, -90, 0.6, message, message_2)
+			_spawn_banner(player_num, viewport_width * 0.25, viewport_height / 2, 90, 0.6, message, message_2)
 	# Pause input and slow down time during the banner display
 	Game.pause_input_tools()
 	_do_time_slow()
@@ -159,7 +160,7 @@ func toggle_shadow_fx() -> bool:
 func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float, _scale: float, message: String, message_2: String) -> void:
 	var banner: Node = ScenePreloader.banner_scene.instantiate()
 	banner.scale = Vector2(_scale, _scale)
-	banner.position = Vector2(x, y)
+	banner.position = ResolutionManager.get_offset() + Vector2(x, y)
 	banner.rotation_degrees = _rotation_degrees
 	banner.player_num = player_num
 	banner.message = message

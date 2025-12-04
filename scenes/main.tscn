@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cnw80skrxjv77" path="res://scenes/main.gd" id="1_0pxjd"]
 
-[node name="Main" type="Node2D"]
+[node name="Main2" type="Node2D"]
 script = ExtResource("1_0pxjd")
 
 [node name="ColorRect" type="ColorRect" parent="."]
