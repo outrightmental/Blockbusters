@@ -16,10 +16,10 @@ func color_at_alpha_ratio(color: Color, alpha_ratio: float) -> Color:
 
 # Delay, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func delay(seconds: float) -> Signal:
-	if get_tree():
-		return get_tree().create_timer(seconds).timeout
-	else:
+	var tree: SceneTree = get_tree()
+	if not tree:
 		return never
+	return tree.create_timer(seconds).timeout
 
 
 # An immediate callback signal
@@ -34,5 +34,7 @@ func fmt_angle(radians: float) -> String:
 
 # Goto a scene, guarding against the condition that the tree has been unloaded since the calling thread arrived here
 func goto_scene(path: String) -> void:
-	if get_tree():
-		get_tree().call_deferred("change_scene_to_file", path)
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.call_deferred("change_scene_to_file", path)

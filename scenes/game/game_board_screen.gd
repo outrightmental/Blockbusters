@@ -3,12 +3,25 @@ extends Node2D
 # References to player goals
 @onready var player_goal_1 = $Board/GoalPlayer1
 @onready var player_goal_2 = $Board/GoalPlayer2
-@onready var debug_text = $DebugText
+@onready var debug_text = $Board/DebugText
+@onready var pause_menu_container: Control = $Board/PauseMenuContainer
+@onready var pause_menu: Menu = $Board/PauseMenuContainer/PauseMenu
 @onready var board = $Board
 
 # Variables
 var grid: Dictionary = {}
 var mesh: Dictionary = {}
+
+# Menu items for the pause menu
+var PAUSE_MENU_ITEMS: Array[Dictionary] = [
+											  {"label": "ABANDON GAME", "action": Callable(self, "do_abandon_game")},
+											  {"label": "CONTINUE", "action": Callable(self, "do_continue_game"), "small": true},
+										  ]
+
+var PAUSE_MENU_TITLE: String             = "PAUSED"
+var PAUSE_MENU_CLOSE_DEBOUNCE_SEC: float = 0.1
+# Whether the pause menu is currently open
+var is_pause_menu_open: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -22,6 +35,14 @@ func _ready() -> void:
 	Game.finished.connect(_on_finished)
 	Game.spawn_gem.connect(_on_spawn_gem)
 	Game.spawn_pickup.connect(_on_spawn_pickup)
+	# Setup pause menu
+	pause_menu.configure(PAUSE_MENU_ITEMS, PAUSE_MENU_TITLE)
+	pause_menu.deactivate()
+	pause_menu_container.hide()
+	# Set process mode to always so pause menu works when game is paused
+	pause_menu_container.process_mode = Node.PROCESS_MODE_ALWAYS
+	# Connect input manager for pause menu
+	InputManager.action_pressed.connect(_on_action_pressed)
 	# Show debug text in editor only
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
@@ -30,13 +51,11 @@ func _ready() -> void:
 	pass
 	# Start a new game
 	Game.start_new_game.emit()
-	# Connect to resolutio manager viewport size changes
-	ResolutionManager.viewport_size_changed.connect(_on_viewport_size_changed)
 
 
 # Setup the UI based on the current game mode and viewport size		
 func _setup() -> void:
-	_on_viewport_size_changed()
+	$Board.position = ResolutionManager.get_offset()
 
 	match Game.mode:
 		Game.Mode.TABLE:
@@ -55,11 +74,6 @@ func _setup() -> void:
 			$Board/HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
 
 
-# When the viewport size changes, re-center the board
-func _on_viewport_size_changed() -> void:
-	$Board.position = ResolutionManager.get_offset()
-
-
 # Show the game over banner for some time, then go back to main screen
 func _on_finished() -> void:
 	Util.goto_scene('res://scenes/main.tscn')
@@ -75,6 +89,40 @@ func _on_player_enabled(player_num: int, enabled: bool) -> void:
 		2:
 			$Board/HudPlayer2/ScoreP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 			$Board/HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+
+
+# When action is pressed, check for pause action		
+func _on_action_pressed(_player_num: int, action_name: String) -> void:
+	if Game.is_couch_mode() and action_name == InputManager.INPUT_START:
+		if not is_pause_menu_open:
+			do_open_pause_menu()
+
+
+# Open the pause menu
+func do_open_pause_menu() -> void:
+	Game.pause()
+	is_pause_menu_open = true
+	print ("Opening pause menu")
+	pause_menu_container.call_deferred("show")
+	pause_menu.reset(true)
+	pause_menu.call_deferred("activate")
+
+
+# Continue the game from pause menu
+func do_continue_game() -> Signal:
+	print ("Continuing game from pause menu")
+	pause_menu.deactivate()
+	pause_menu_container.hide()
+	Game.unpause()
+	await Util.delay(PAUSE_MENU_CLOSE_DEBOUNCE_SEC)
+	is_pause_menu_open = false
+	return Util.delay(0.0)
+
+
+# Abandon the game from pause menu
+func do_abandon_game() -> void:
+	await do_continue_game()
+	Util.goto_scene('res://scenes/main.tscn')
 
 
 # Create the board with blocks and gems, and spawn player goals, ships, and scores
@@ -154,7 +202,10 @@ func _spawn_block(start_position: Vector2) -> Node:
 func _on_spawn_gem() -> void:
 	if Game.is_over:
 		return
-	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	if tree.get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
 		return
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
@@ -164,7 +215,10 @@ func _on_spawn_gem() -> void:
 func _on_spawn_pickup(type: Game.InventoryItemType) -> void:
 	if Game.is_over:
 		return
-	if get_tree().get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	if tree.get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
 		return
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
@@ -173,8 +227,11 @@ func _on_spawn_pickup(type: Game.InventoryItemType) -> void:
 
 # Get a random block that may have something added to it
 func _get_block_spawn_candidate() -> Block:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return null
 	var candidates: Array[Block]
-	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
+	for block in tree.get_nodes_in_group(Game.BLOCK_GROUP):
 		if block.is_empty():
 			candidates.append(block)
 	if candidates.size() > 0:

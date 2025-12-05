@@ -2,7 +2,7 @@ extends Node
 
 # Resolution Manager - handles dynamic display resolution adaptation
 # Provides scaling and positioning utilities for adapting game content to any display size
-signal viewport_size_changed
+
 # Base design resolution (logical coordinates)
 const BASE_WIDTH: float        = 1024.0
 const BASE_HEIGHT: float       = 576.0
@@ -61,11 +61,12 @@ func is_full_resolution() -> bool:
 
 
 # Called when the node enters the scene tree
+# Connect to window size changes
+# Do initial calculation
 func _ready() -> void:
-	# Connect to window size changes
-	# instead of the following, write an inline function that emits viewport_size_changed: get_tree().root.size_changed.connect(on_tree_root_size_changed)
-	get_tree().root.size_changed.connect(_root_size_changed)
-	# Initial calculation
+	var tree: SceneTree = get_tree()
+	if tree:
+		tree.root.size_changed.connect(_root_size_changed)
 	_root_size_changed()
 
 
@@ -111,9 +112,6 @@ func _root_size_changed() -> void:
 
 	# Debug output
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
-
-	# Emit signal for viewport size change
-	call_deferred("viewport_size_changed", "emit")
 
 
 # Get the current viewport size (physical display size)

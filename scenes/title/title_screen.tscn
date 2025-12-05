@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cujjg24dyhqja" path="res://scenes/title/title_screen.gd" id="1_iowo3"]
 [ext_resource type="Texture2D" uid="uid://dux4ikbl2687g" path="res://assets/title/TitleScreenBackground.jpg" id="2_qrms8"]
 [ext_resource type="PackedScene" uid="uid://cghrjacphgqkh" path="res://models/menu/menu.tscn" id="3_8xedo"]
-[ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://scenes/title/blur_bg.gdshader" id="4_qrms8"]
+[ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://shaders/blur_bg.gdshader" id="4_qrms8"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sugp2"]
 
@@ -12,6 +12,11 @@ shader = ExtResource("4_qrms8")
 shader_parameter/mip_level = 4.0
 shader_parameter/color_mul = 0.6
 shader_parameter/color_add = 0.4
+shader_parameter/rounded_corner_top_left = true
+shader_parameter/rounded_corner_top_right = true
+shader_parameter/rounded_corner_bottom_left = true
+shader_parameter/rounded_corner_bottom_right = true
+shader_parameter/corner_radius_ratio = 0.1
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_iowo3")
