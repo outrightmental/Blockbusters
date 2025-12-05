@@ -134,6 +134,11 @@ func activate() -> void:
 	visible = true
 
 
+# On initialization, set this node to always process, even when the game is paused
+func _init() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	InputManager.action_pressed.connect(_on_action_pressed)
@@ -263,6 +268,7 @@ func _get_is_item_active(item: MenuItem) -> bool:
 	if item.active != null and item.active.is_valid():
 		return item.active.call()
 	return false
+
 
 # Check if a menu item is inactive		
 # meaning it has a callback with value returning boolean false

@@ -18,7 +18,10 @@ var PAUSE_MENU_ITEMS: Array[Dictionary] = [
 											  {"label": "CONTINUE", "action": Callable(self, "do_continue_game"), "small": true},
 										  ]
 
-var PAUSE_MENU_TITLE: String = "PAUSED"
+var PAUSE_MENU_TITLE: String             = "PAUSED"
+var PAUSE_MENU_CLOSE_DEBOUNCE_SEC: float = 0.1
+# Whether the pause menu is currently open
+var is_pause_menu_open: bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -89,15 +92,15 @@ func _on_player_enabled(player_num: int, enabled: bool) -> void:
 # When action is pressed, check for pause action		
 func _on_action_pressed(_player_num: int, action_name: String) -> void:
 	if Game.is_couch_mode() and action_name == InputManager.INPUT_START:
-		if not pause_menu.is_visible():
+		if not is_pause_menu_open:
 			do_open_pause_menu()
-		else:
-			do_continue_game()
 
 
 # Open the pause menu
 func do_open_pause_menu() -> void:
-	Game.pause()
+	# todo Game.pause()
+	is_pause_menu_open = true
+	print ("Opening pause menu")
 	pause_menu_container.call_deferred("show")
 	pause_menu.reset(true)
 	pause_menu.call_deferred("activate")
@@ -105,9 +108,12 @@ func do_open_pause_menu() -> void:
 
 # Continue the game from pause menu
 func do_continue_game() -> void:
+	print ("Continuing game from pause menu")
 	pause_menu.deactivate()
 	pause_menu_container.hide()
 	Game.unpause()
+	await Util.delay(PAUSE_MENU_CLOSE_DEBOUNCE_SEC)
+	is_pause_menu_open = false
 
 
 # Abandon the game from pause menu
