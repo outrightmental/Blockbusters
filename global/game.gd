@@ -56,6 +56,7 @@ enum Mode {
 # Keep track of whether the game is over
 @export var is_over: bool = false
 # Whether the input is paused
+@export var is_game_paused: bool = false
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
 @export var is_lighting_fx_enabled: bool = true
@@ -90,6 +91,15 @@ func do_player_goal(player_num: int) -> void:
 		show_banner.emit(player_num, Constant.BANNER_TEXT_GOAL, "")
 
 
+# Pause the whole game
+func pause() -> void:
+	is_game_paused = true
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.paused = true
+
+
 # Pause the player input
 func pause_input() -> void:
 	is_input_movement_paused = true
@@ -101,6 +111,15 @@ func pause_input_tools() -> void:
 	is_input_tools_paused = true
 
 
+# Unpause the whole game
+func unpause() -> void:
+	is_game_paused = false
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.paused = false
+
+
 # Unpause the game
 func unpause_input() -> void:
 	is_input_movement_paused = false
@@ -110,6 +129,11 @@ func unpause_input() -> void:
 # Whether the game is in table mode
 func is_table_mode() -> bool:
 	return mode == Mode.TABLE
+
+
+# Whether the game is in couch mode
+func is_couch_mode() -> bool:
+	return mode == Mode.COUCH
 
 
 # Get the name of an inventory item
@@ -265,9 +289,12 @@ func _check_for_game_over() -> bool:
 		_do_outcome(Game.Result.DRAW)
 		return true
 
-	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return false
+	var total_gems: int                 = tree.get_node_count_in_group(Game.GEM_GROUP)
 	var total_gem_candidate_blocks: int = 0
-	var blocks: Array[Node]             = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
+	var blocks: Array[Node]             = tree.get_nodes_in_group(Game.BLOCK_GROUP)
 	for block in blocks:
 		if block.is_empty():
 			total_gem_candidate_blocks += 1

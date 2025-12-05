@@ -44,6 +44,7 @@ var p2_device_id: int = -1
 # Process input before anything else
 func _init() -> void:
 	process_priority = -10
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 # Called on app start

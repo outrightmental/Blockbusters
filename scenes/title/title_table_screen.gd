@@ -4,10 +4,12 @@ extends Node2D
 
 
 # Called when the node enters the scene tree for the first time.
+# Setup dynamic scaling
 func _ready() -> void:
-	# Setup dynamic scaling
 	_setup_dynamic_scaling()
-	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
+	var tree: SceneTree = get_tree()
+	if tree:
+		tree.root.size_changed.connect(_setup_dynamic_scaling)
 
 
 # Setup the correct screen based on game mode
