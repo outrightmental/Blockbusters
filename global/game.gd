@@ -60,7 +60,6 @@ enum Mode {
 @export var is_input_tools_paused: bool = false
 @export var is_lighting_fx_enabled: bool = true
 @export var is_shadow_fx_enabled: bool = true
-@export var is_sound_fx_enabled: bool = true
 
 # Internal variables
 var _seconds_until_next_gem: float    = 0
@@ -154,12 +153,6 @@ func toggle_lighting_fx() -> bool:
 func toggle_shadow_fx() -> bool:
 	is_shadow_fx_enabled = not is_shadow_fx_enabled
 	return is_shadow_fx_enabled
-
-
-# Toggle the sound FX
-func toggle_sound_fx() -> bool:
-	is_sound_fx_enabled = not is_sound_fx_enabled
-	return is_sound_fx_enabled
 
 
 # Spawn a banner at the given position

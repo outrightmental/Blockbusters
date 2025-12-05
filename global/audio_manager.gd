@@ -8,6 +8,7 @@ extends Node2D
 ## @tutorial: https://www.youtube.com/watch?v=Egf2jgET3nQ
 
 @export var sound_effect_dict: Dictionary[SoundEffectSetting.SOUND_EFFECT_TYPE, SoundEffectSetting] ## Stores all possible SoundEffects that can be played.
+@export var is_sound_fx_enabled: bool = true
 
 ## Stores currently playing sounds at the global level so they don't interfere with local objects simulation
 var playing_2d_audios: Dictionary[String, AudioStreamPlayer2D] = {}
@@ -15,6 +16,8 @@ var playing_2d_audios: Dictionary[String, AudioStreamPlayer2D] = {}
 
 ## Creates a sound effect at a specific location if the limit has not been reached. Pass [param location] for the global position of the audio effect, and [param type] for the SoundEffectSetting to be queued.
 func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOUND_EFFECT_TYPE, key: String = "") -> void:
+	if not is_sound_fx_enabled:
+		return
 	if sound_effect_dict.has(type):
 		var sound_effect: SoundEffectSetting = sound_effect_dict[type]
 		if sound_effect.has_open_limit():
@@ -38,6 +41,8 @@ func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOU
 
 ## Creates a sound effect if the limit has not been reached. Pass [param type] for the SoundEffectSetting to be queued.
 func create_audio(type: SoundEffectSetting.SOUND_EFFECT_TYPE) -> void:
+	if not is_sound_fx_enabled:
+		return
 	if sound_effect_dict.has(type):
 		var sound_effect: SoundEffectSetting = sound_effect_dict[type]
 		if sound_effect.has_open_limit():
@@ -55,6 +60,13 @@ func create_audio(type: SoundEffectSetting.SOUND_EFFECT_TYPE) -> void:
 		push_error("Audio Manager failed to find setting for type ", type)
 
 
+## Update the global position of a 2d audio effect by [param key] if it exists in the [member playing_sounds] dictionary.
+func update_2d_audio_global_position(key: String = "", gp: Vector2 = Vector2.ZERO) -> void:
+	if playing_2d_audios.has(key):
+		var audio_player: AudioStreamPlayer2D = playing_2d_audios[key]
+		audio_player.set_global_position(gp)
+
+
 ## Stop a 2d audio effect by [param key] if it exists in the [member playing_sounds] dictionary.
 func stop_2d_audio(key: String = "") -> void:
 	if playing_2d_audios.has(key):
@@ -62,14 +74,20 @@ func stop_2d_audio(key: String = "") -> void:
 		audio_player.stop()
 		audio_player.finished.emit()
 		playing_2d_audios.erase(key)
-	#else:
-		#push_warning("Audio Manager failed to find audio with key ", key)
 
 
-## Update the global position of a 2d audio effect by [param key] if it exists in the [member playing_sounds] dictionary.
-func update_2d_audio_global_position(key: String = "", gp: Vector2 = Vector2.ZERO) -> void:
-	if playing_2d_audios.has(key):
+# Stop all currently playing 2d audio effects
+func stop_all_2d_audio() -> void:
+	for key in playing_2d_audios.keys():
 		var audio_player: AudioStreamPlayer2D = playing_2d_audios[key]
-		audio_player.set_global_position(gp)
-	#else:
-		#push_warning("Audio Manager failed to find audio with key ", key)
+		audio_player.stop()
+		audio_player.finished.emit()
+	playing_2d_audios.clear()
+
+
+# Toggle the sound FX
+func toggle_sound_fx() -> bool:
+	is_sound_fx_enabled = not is_sound_fx_enabled
+	if not is_sound_fx_enabled:
+		stop_all_2d_audio()
+	return is_sound_fx_enabled

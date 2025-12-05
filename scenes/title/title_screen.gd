@@ -64,7 +64,7 @@ func do_toggle_shadow_fx() -> void:
 
 # Toggle sound FX
 func do_toggle_sound_fx() -> void:
-	Game.toggle_sound_fx()
+	AudioManager.toggle_sound_fx()
 	options_menu.update()
 	pass
 
@@ -103,7 +103,7 @@ func render_shadow_fx_value() -> String:
 
 # Get readable value for whether sound FX is enabled
 func render_sound_fx_value() -> String:
-	return OPTION_BOOL_TRUE if Game.is_sound_fx_enabled else OPTION_BOOL_FALSE
+	return OPTION_BOOL_TRUE if AudioManager.is_sound_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Get a boolean whether Display Resolution option is active (currently always true)
@@ -128,7 +128,7 @@ func get_shadow_fx_disabled() -> bool:
 
 # Get a boolean whether Sound FX is enabled
 func get_is_sound_fx_active() -> bool:
-	return Game.is_sound_fx_enabled
+	return AudioManager.is_sound_fx_enabled
 
 
 # Called when the node enters the scene tree for the first time.
