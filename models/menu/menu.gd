@@ -28,6 +28,8 @@ var menu_items: Array[MenuItem] = []
 @export var disabled_color: Color = Color(0.2, 0.2, 0.2, 0.3)
 @export var selected_color: Color = Constant.PLAYER_COLORS[1][0]
 @export var title_color: Color = Color(0.2, 0.2, 0.2, 1.0)
+# Width of the menu
+@export var menu_width: int = 400
 # Item label horizontal alignment
 @export var label_h_align: HorizontalAlignment = HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER
 
@@ -78,6 +80,7 @@ func configure(items: Array[Dictionary], title: String = "") -> void:
 		if d.has("small"):
 			item.is_small = d["small"] as bool
 		menu_items.append(item)
+	size = Vector2(menu_width, size.y)
 	update()
 
 

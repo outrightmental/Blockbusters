@@ -25,10 +25,13 @@ expand_mode = 5
 stretch_mode = 5
 
 [node name="MainMenu" parent="." instance=ExtResource("3_8xedo")]
-offset_left = 788.0
-offset_top = 269.0
-offset_right = 788.0
-offset_bottom = 269.0
+offset_left = 739.0
+offset_top = 279.0
+offset_right = 739.0
+offset_bottom = 279.0
+item_font_size = 30
+item_small_font_size = 20
+title_font_size = 20
 
 [node name="OptionsMenuContainer" type="Control" parent="."]
 layout_mode = 3
@@ -48,11 +51,12 @@ offset_bottom = 502.0
 
 [node name="OptionsMenu" parent="OptionsMenuContainer" instance=ExtResource("3_8xedo")]
 layout_mode = 1
-offset_left = 501.0
+offset_left = 398.0
 offset_top = 275.0
-offset_right = 501.0
+offset_right = 398.0
 offset_bottom = 275.0
 item_font_size = 30
 item_small_font_size = 20
 title_font_size = 20
+menu_width = 700
 label_h_align = 0

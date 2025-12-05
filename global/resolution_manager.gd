@@ -15,6 +15,63 @@ var _effective_size: Vector2 = Vector2.ZERO
 var _scale_factor: float     = 1.0
 var _offset: Vector2         = Vector2.ZERO
 var _center: Vector2         = Vector2.ZERO
+# Display resolution options
+enum DisplayResolution {
+	SD,
+	HD,
+	FHD,
+	Full,
+}
+# Store display resolution options in an array
+const DISPLAY_RESOLUTION_OPTIONS: Array[DisplayResolution] = [
+															 DisplayResolution.SD,
+															 DisplayResolution.HD,
+															 DisplayResolution.FHD,
+															 DisplayResolution.Full,
+															 ]
+# Store the dimensions of each display resolution value
+const DISPLAY_RESOLUTION_VALUES: Dictionary = {
+												  DisplayResolution.SD: Vector2(854, 480), # ~480p
+												  DisplayResolution.HD: Vector2(1280, 720), # ~720p
+												  DisplayResolution.FHD: Vector2(1920, 1080), # ~1080p
+												  DisplayResolution.Full: Vector2.INF, # Unlimited
+											  }
+# Store the string names of each display resolution value
+const DISPLAY_RESOLUTION_NAMES: Dictionary = {
+												 DisplayResolution.SD: "SD (~480p)",
+												 DisplayResolution.HD: "HD (~720p)",
+												 DisplayResolution.FHD: "FHD (~1080p)",
+												 DisplayResolution.Full: "Full (Unlimited)",
+											 }
+# Store display resolution
+var _current_display_resolution: DisplayResolution = DisplayResolution.Full
+
+
+# Cycle the current display resolution option
+func cycle_display_resolution() -> void:
+	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(_current_display_resolution)
+	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
+	_current_display_resolution = DISPLAY_RESOLUTION_OPTIONS[next_index]
+	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(_current_display_resolution))
+
+
+# Get the current display resolution option
+func get_display_resolution() -> DisplayResolution:
+	return _current_display_resolution
+
+
+# Get the dimensions of a display resolution option
+func get_value_of_display_resolution(resolution: DisplayResolution) -> Vector2:
+	if DISPLAY_RESOLUTION_VALUES.has(resolution):
+		return DISPLAY_RESOLUTION_VALUES[resolution]
+	return Vector2.ZERO
+
+
+# Get the string representation of a display resolution option
+func get_name_of_display_resolution(resolution: DisplayResolution) -> String:
+	if DISPLAY_RESOLUTION_NAMES.has(resolution):
+		return DISPLAY_RESOLUTION_NAMES[resolution]
+	return "Unknown"
 
 
 # Called when the node enters the scene tree
@@ -140,4 +197,3 @@ func get_table_mode_effective_size() -> Vector2:
 	var table_scale: float = min(scale_x, scale_y)
 
 	return Vector2(BASE_WIDTH, BASE_HEIGHT) * table_scale
-	
