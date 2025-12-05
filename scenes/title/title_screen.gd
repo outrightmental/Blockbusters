@@ -4,10 +4,10 @@ extends Node2D
 const GAME_START_DELAY_SECONDS: float = 1.0
 const OPTION_NA: String               = "n/a"
 const OPTION_BOOL_TRUE: String        = "on"
-const OPTION_BOOL_FALSE: String       = "off"
-const OPTIONS_MENU_TITLE: String      = "OPTIONS"
-const BG_MIP_LEVEL_RESOLUTION_FULL    = 16.0
-const BG_MIP_LEVEL_RESOLUTION_LOFI    = 4.0
+const OPTION_BOOL_FALSE: String           = "off"
+const OPTIONS_MENU_TITLE: String          = "OPTIONS"
+const BG_MIP_LEVEL_RESOLUTION_FULL: float = 16.0
+const BG_MIP_LEVEL_RESOLUTION_LOFI: float = 4.0
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -18,7 +18,7 @@ const BG_MIP_LEVEL_RESOLUTION_LOFI    = 4.0
 
 # Options menu items
 @onready var OPTIONS_MENU_ITEMS: Array[Dictionary] = [
-														 {"label": "DISPLAY RES", "action": Callable(self, "do_cycle_display_resolution"), "value": Callable(self, "render_display_resolution"), "active": Callable(self, "get_is_display_resolution_active")},
+														 {"label": "RESOLUTION", "action": Callable(self, "do_cycle_display_resolution"), "value": Callable(self, "render_display_resolution"), "active": Callable(self, "get_is_display_resolution_active")},
 														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value"), "active": Callable(self, "get_is_lighting_fx_active")},
 														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "active": Callable(self, "get_is_shadow_fx_active"), "disabled": Callable(self, "get_shadow_fx_disabled")},
 														 {"label": "DONE", "action": Callable(self, "do_close_options_menu"), "small": true},
