@@ -18,13 +18,14 @@ config/icon="uid://bdcbaun0bim03"
 
 [autoload]
 
+AudioManager="*res://global/audio_manager.tscn"
+ConfigManager="*res://global/config_manager.gd"
 Constant="*res://global/constant.gd"
 Game="*res://global/game.gd"
-Util="*res://global/util.gd"
-AudioManager="*res://global/audio_manager.tscn"
 InputManager="*res://global/input_manager.gd"
-ScenePreloader="*res://global/scene_preloader.gd"
 ResolutionManager="*res://global/resolution_manager.gd"
+ScenePreloader="*res://global/scene_preloader.gd"
+Util="*res://global/util.gd"
 
 [display]
 
