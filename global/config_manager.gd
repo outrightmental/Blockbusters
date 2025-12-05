@@ -1,4 +1,4 @@
-﻿\
+\
 extends Node
 # ConfigManager class which wraps the Godot ConfigFile functionality and persists all config-able values
 # See also: https://docs.godotengine.org/en/stable/classes/class_configfile.html
@@ -9,7 +9,7 @@ extends Node
 @export var is_lighting_fx_enabled: bool = true
 @export var is_shadow_fx_enabled: bool = true
 # Path to the config file
-const CONFIG_FILE_PATH: String = "user://config.cfg"
+const CONFIG_FILE_PATH: String = "user://blockbusters.cfg"
 # ConfigFile instance
 var _config_file: ConfigFile = ConfigFile.new()
 
@@ -19,7 +19,7 @@ var _default_config: Dictionary = {
 										  "sound_fx_enabled": true,
 									  },
 									  "graphics": {
-										  "resolution": DisplayResolution.Full,
+										  "display_resolution": DisplayResolution.Full,
 										  "lighting_fx_enabled": true,
 										  "shadow_fx_enabled": true,
 									  },
@@ -33,27 +33,30 @@ enum DisplayResolution {
 
 
 # Setter for is_sound_fx_enabled
-func set_is_sound_fx_enabled(value: bool) -> void:
+func set_sound_fx_enabled(value: bool) -> void:
 	is_sound_fx_enabled = value
-	set_config_value("audio", "enabled", value)
+	_set_config_value("audio", "sound_fx_enabled", value)
 	_save_config()
 
 
 # Setter for display resolution
 func set_display_resolution(value: DisplayResolution) -> void:
-	set_config_value("graphics", "resolution", value)
+	display_resolution = value
+	_set_config_value("graphics", "display_resolution", value)
 	_save_config()
 
 
 # Setter for lighting FX enabled
 func set_lighting_fx_enabled(value: bool) -> void:
-	set_config_value("graphics", "lighting_fx_enabled", value)
+	is_lighting_fx_enabled = value
+	_set_config_value("graphics", "lighting_fx_enabled", value)
 	_save_config()
 
 
 # Setter for shadow FX enabled
 func set_shadow_fx_enabled(value: bool) -> void:
-	set_config_value("graphics", "shadow_fx_enabled", value)
+	is_shadow_fx_enabled = value
+	_set_config_value("graphics", "shadow_fx_enabled", value)
 	_save_config()
 
 
@@ -73,16 +76,16 @@ func _parse_command_line_args() -> void:
 	var args: Array = OS.get_cmdline_args()
 	for arg in args:
 		match arg:
-			"--resolution-lofi":
+			"--display-resolution-lofi":
 				set_display_resolution(DisplayResolution.LoFi)
-			"--resolution-full":
+			"--display-resolution-full":
 				set_display_resolution(DisplayResolution.Full)
 			"--no-lighting-fx":
 				set_lighting_fx_enabled(false)
 			"--no-shadow-fx":
 				set_shadow_fx_enabled(false)
 			"--no-sound-fx":
-				set_is_sound_fx_enabled(false)
+				set_sound_fx_enabled(false)
 			_:
 				# Ignore unknown arguments
 				pass
@@ -101,11 +104,11 @@ func _save_config() -> void:
 func _get_config_value(section: String, key: String) -> Variant:
 	if _config_file.has_section_key(section, key):
 		return _config_file.get_value(section, key)
-	return null
+	return _default_config[section][key]
 
 
 # Set a configuration value
-func set_config_value(section: String, key: String, value) -> void:
+func _set_config_value(section: String, key: String, value) -> void:
 	_config_file.set_value(section, key, value)
 
 
@@ -119,20 +122,10 @@ func _save_default_config() -> void:
 
 # Apply loaded configuration values to the game settings
 func _apply_loaded_config() -> void:
-	# Audio settings
-	var audio_enabled: bool = _get_config_value("audio", "enabled")
-	if audio_enabled != null:
-		AudioManager.set_sound_fx_enabled(audio_enabled)
-	# Graphics settings
-	var resolution: int = _get_config_value("graphics", "resolution")
-	if resolution != null:
-		ResolutionManager.set_display_resolution(resolution)
-	var lighting_fx_enabled: bool = _get_config_value("graphics", "lighting_fx_enabled")
-	if lighting_fx_enabled != null:
-		Game.set_lighting_fx_enabled(lighting_fx_enabled)
-	var shadow_fx_enabled: bool = _get_config_value("graphics", "shadow_fx_enabled")
-	if shadow_fx_enabled != null:
-		Game.set_shadow_fx_enabled(shadow_fx_enabled)
+	is_sound_fx_enabled = _get_config_value("audio", "sound_fx_enabled")
+	display_resolution   = _get_config_value("graphics", "display_resolution")
+	is_lighting_fx_enabled = _get_config_value("graphics", "lighting_fx_enabled")
+	is_shadow_fx_enabled   = _get_config_value("graphics", "shadow_fx_enabled")
 
 
 # Called when the node enters the scene tree for the first time

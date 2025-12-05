@@ -148,10 +148,6 @@ func _ready() -> void:
 # Setup dynamic scaling for background and menu elements
 func _setup_dynamic_scaling() -> void:
 	# Scale background to fit screen
-	var bg = $TextureRect
-	if bg:
-		bg.size = ResolutionManager.get_viewport_size()
-		bg.position = Vector2.ZERO
 	var mip_level: float = BG_MIP_LEVEL_RESOLUTION_FULL if ResolutionManager.is_full_resolution() else BG_MIP_LEVEL_RESOLUTION_LOFI
 	options_menu_bg.material.set("shader_parameter/mip_level", mip_level)
 

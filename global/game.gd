@@ -167,13 +167,13 @@ func do_show_banner(player_num: int, message: String, message_2) -> Signal:
 
 # Toggle the lighting FX
 func toggle_lighting_fx() -> bool:
-	ConfigManager.set_is_lighting_fx_enabled(not ConfigManager.is_lighting_fx_enabled)
+	ConfigManager.set_lighting_fx_enabled(not ConfigManager.is_lighting_fx_enabled)
 	return ConfigManager.is_lighting_fx_enabled
 
 
 # Toggle the shadow FX
 func toggle_shadow_fx() -> bool:
-	ConfigManager.set_is_shadow_fx_enabled(not ConfigManager.is_shadow_fx_enabled)
+	ConfigManager.set_shadow_fx_enabled(not ConfigManager.is_shadow_fx_enabled)
 	return ConfigManager.is_shadow_fx_enabled
 
 

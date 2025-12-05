@@ -23,9 +23,12 @@ script = ExtResource("1_iowo3")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 material = SubResource("CanvasItemMaterial_sugp2")
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -104.0
+offset_right = 1024.0
+offset_bottom = 681.437
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_qrms8")
