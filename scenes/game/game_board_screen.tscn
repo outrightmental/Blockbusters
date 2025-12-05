@@ -1,17 +1,25 @@
-[gd_scene load_steps=9 format=3 uid="uid://bgvuuvhomj1ox"]
+[gd_scene load_steps=12 format=3 uid="uid://bgvuuvhomj1ox"]
 
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/game/game_board_screen.gd" id="1_s826b"]
 [ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/goal.tscn" id="3_466yg"]
 [ext_resource type="PackedScene" uid="uid://b8eby70l6c6qs" path="res://models/hud/hud_score.tscn" id="3_bgg7l"]
 [ext_resource type="PackedScene" uid="uid://rpl4j57m2rt4" path="res://models/hud/hud_energy.tscn" id="4_sbpvv"]
 [ext_resource type="FontFile" uid="uid://c70q8gaqjfaug" path="res://assets/fonts/Montserrat/static/Montserrat-Light.ttf" id="6_8rcy1"]
+[ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://scenes/title/blur_bg.gdshader" id="6_pqwmj"]
 [ext_resource type="PackedScene" uid="uid://dw5wqex1qict1" path="res://models/hud/hud_inventory.tscn" id="6_xugar"]
+[ext_resource type="PackedScene" uid="uid://cghrjacphgqkh" path="res://models/menu/menu.tscn" id="7_ycrgt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
 size = Vector2(1224, 200)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xet8o"]
 size = Vector2(200, 576)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3wyat"]
+shader = ExtResource("6_pqwmj")
+shader_parameter/mip_level = 4.0
+shader_parameter/color_mul = 0.6
+shader_parameter/color_add = 0.4
 
 [node name="PlayGame" type="Node2D"]
 script = ExtResource("1_s826b")
@@ -167,6 +175,34 @@ offset_left = 960.0
 offset_right = 1183.0
 offset_bottom = 576.0
 color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="PauseMenuContainer" type="Control" parent="Board"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Board/PauseMenuContainer"]
+material = SubResource("ShaderMaterial_3wyat")
+layout_mode = 0
+offset_left = 127.0
+offset_top = 65.0
+offset_right = 890.0
+offset_bottom = 502.0
+
+[node name="PauseMenu" parent="Board/PauseMenuContainer" instance=ExtResource("7_ycrgt")]
+layout_mode = 1
+offset_left = 398.0
+offset_top = 275.0
+offset_right = 398.0
+offset_bottom = 275.0
+item_font_size = 30
+item_small_font_size = 20
+title_font_size = 20
+menu_width = 700
+label_h_align = 0
 
 [node name="DebugText" type="RichTextLabel" parent="Board"]
 visible = false

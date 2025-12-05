@@ -4,11 +4,20 @@ extends Node2D
 @onready var player_goal_1 = $Board/GoalPlayer1
 @onready var player_goal_2 = $Board/GoalPlayer2
 @onready var debug_text = $DebugText
+@onready var pause_menu_container: Control = $PauseMenuContainer
+@onready var pause_menu: Menu = $PauseMenuContainer/PauseMenu
 @onready var board = $Board
 
 # Variables
 var grid: Dictionary = {}
 var mesh: Dictionary = {}
+
+# Menu items for the pause menu
+var PAUSE_MENU_ITEMS: Array[Dictionary] = [
+											  {"label": "ABANDON GAME", "action": Callable(self, "do_abandon_game")},
+											  {"label": "CONTINUE", "action": Callable(self, "do_continue_game"), "small": true},
+										  ]
+var PAUSE_MENU_TITLE: String = "PAUSED"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -22,6 +31,10 @@ func _ready() -> void:
 	Game.finished.connect(_on_finished)
 	Game.spawn_gem.connect(_on_spawn_gem)
 	Game.spawn_pickup.connect(_on_spawn_pickup)
+	# Setup pause menu
+	pause_menu.configure(PAUSE_MENU_ITEMS, PAUSE_MENU_TITLE)
+	# Connect input manager for pause menu
+	InputManager.action_pressed.connect(_on_action_pressed)
 	# Show debug text in editor only
 	if OS.has_feature("editor"):
 		Game.show_debug_text.connect(_on_show_debug_text)
@@ -75,6 +88,35 @@ func _on_player_enabled(player_num: int, enabled: bool) -> void:
 		2:
 			$Board/HudPlayer2/ScoreP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
 			$Board/HudPlayer2/InventoryP2.modulate.a = 1.0 if enabled else Constant.PLAYER_HUD_DISABLED_ALPHA
+
+
+# When action is pressed, check for pause action		
+func _on_action_pressed(_player_num: int, action_name: String) -> void:
+	if Game.is_couch_mode() and action_name == InputManager.INPUT_START:
+		if not pause_menu.is_visible():
+			do_open_pause_menu()
+		else:
+			do_continue_game()
+
+
+# Open the pause menu
+func do_open_pause_menu() -> void:
+	Game.pause()
+	pause_menu_container.show()
+	pause_menu.reset(true)
+	pause_menu.call_deferred("activate")
+
+
+# Continue the game from pause menu
+func do_continue_game() -> void:
+	pause_menu.deactivate()
+	pause_menu_container.hide()
+	Game.unpause()
+
+
+# Abandon the game from pause menu
+func do_abandon_game() -> void:
+	Util.goto_scene('res://scenes/main.tscn')
 
 
 # Create the board with blocks and gems, and spawn player goals, ships, and scores

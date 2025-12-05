@@ -56,6 +56,7 @@ enum Mode {
 # Keep track of whether the game is over
 @export var is_over: bool = false
 # Whether the input is paused
+@export var is_game_paused: bool = false
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
 @export var is_lighting_fx_enabled: bool = true
@@ -90,6 +91,13 @@ func do_player_goal(player_num: int) -> void:
 		show_banner.emit(player_num, Constant.BANNER_TEXT_GOAL, "")
 
 
+# Pause the whole game
+func pause() -> void:
+	is_game_paused = true
+	pause_input()
+	get_tree().paused = true
+
+
 # Pause the player input
 func pause_input() -> void:
 	is_input_movement_paused = true
@@ -101,6 +109,13 @@ func pause_input_tools() -> void:
 	is_input_tools_paused = true
 
 
+# Unpause the whole game
+func unpause() -> void:
+	is_game_paused = false
+	get_tree().paused = false
+	unpause_input()
+
+
 # Unpause the game
 func unpause_input() -> void:
 	is_input_movement_paused = false
@@ -110,6 +125,11 @@ func unpause_input() -> void:
 # Whether the game is in table mode
 func is_table_mode() -> bool:
 	return mode == Mode.TABLE
+
+
+# Whether the game is in couch mode
+func is_couch_mode() -> bool:
+	return mode == Mode.COUCH
 
 
 # Get the name of an inventory item
