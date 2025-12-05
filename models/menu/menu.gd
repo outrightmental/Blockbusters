@@ -134,14 +134,10 @@ func activate() -> void:
 	visible = true
 
 
-# On initialization, set this node to always process, even when the game is paused
-func _init() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	InputManager.action_pressed.connect(_on_action_pressed)
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
 # Create a label node for a menu item

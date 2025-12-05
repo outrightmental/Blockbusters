@@ -198,7 +198,10 @@ func _spawn_block(start_position: Vector2) -> Node:
 func _on_spawn_gem() -> void:
 	if Game.is_over:
 		return
-	if get_tree().get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	if tree.get_node_count_in_group(Game.GEM_GROUP) >= Constant.GEM_MAX_COUNT:
 		return
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
@@ -208,7 +211,10 @@ func _on_spawn_gem() -> void:
 func _on_spawn_pickup(type: Game.InventoryItemType) -> void:
 	if Game.is_over:
 		return
-	if get_tree().get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	if tree.get_node_count_in_group(Game.PICKUP_GROUP) >= Constant.PICKUP_MAX_COUNT:
 		return
 	var block: Block = _get_block_spawn_candidate()
 	if block != null:
