@@ -6,6 +6,8 @@ const OPTION_NA: String               = "n/a"
 const OPTION_BOOL_TRUE: String        = "on"
 const OPTION_BOOL_FALSE: String       = "off"
 const OPTIONS_MENU_TITLE: String      = "OPTIONS"
+const BG_MIP_LEVEL_RESOLUTION_FULL    = 16.0
+const BG_MIP_LEVEL_RESOLUTION_LOFI    = 4.0
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -22,9 +24,10 @@ const OPTIONS_MENU_TITLE: String      = "OPTIONS"
 														 {"label": "DONE", "action": Callable(self, "do_close_options_menu"), "small": true},
 													 ]
 
-@onready var main_menu = $MainMenu
-@onready var options_menu = $OptionsMenuContainer/OptionsMenu
-@onready var options_menu_container = $OptionsMenuContainer
+@onready var main_menu: Menu = $MainMenu
+@onready var options_menu: Menu = $OptionsMenuContainer/OptionsMenu
+@onready var options_menu_container: Control = $OptionsMenuContainer
+@onready var options_menu_bg: ColorRect = $OptionsMenuContainer/ColorRect
 
 
 # Start the game
@@ -119,7 +122,7 @@ func _ready() -> void:
 
 	# Setup dynamic scaling
 	_setup_dynamic_scaling()
-	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
+	ResolutionManager.viewport_size_changed.connect(_setup_dynamic_scaling)
 
 
 # Setup dynamic scaling for background and menu elements
@@ -129,6 +132,8 @@ func _setup_dynamic_scaling() -> void:
 	if bg:
 		bg.size = ResolutionManager.get_viewport_size()
 		bg.position = Vector2.ZERO
+	var mip_level: float = BG_MIP_LEVEL_RESOLUTION_FULL if ResolutionManager.is_full_resolution() else BG_MIP_LEVEL_RESOLUTION_LOFI
+	options_menu_bg.material.set("shader_parameter/mip_level", mip_level)
 
 
 # If both players are ready, start the game

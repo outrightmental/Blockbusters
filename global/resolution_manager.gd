@@ -17,30 +17,17 @@ var _offset: Vector2         = Vector2.ZERO
 var _center: Vector2         = Vector2.ZERO
 # Display resolution options
 enum DisplayResolution {
-	SD,
-	HD,
-	FHD,
+	LoFi,
 	Full,
 }
 # Store display resolution options in an array
 const DISPLAY_RESOLUTION_OPTIONS: Array[DisplayResolution] = [
-															 DisplayResolution.SD,
-															 DisplayResolution.HD,
-															 DisplayResolution.FHD,
+															 DisplayResolution.LoFi,
 															 DisplayResolution.Full,
 															 ]
-# Store the dimensions of each display resolution value
-const DISPLAY_RESOLUTION_VALUES: Dictionary = {
-												  DisplayResolution.SD: Vector2(854, 480), # ~480p
-												  DisplayResolution.HD: Vector2(1280, 720), # ~720p
-												  DisplayResolution.FHD: Vector2(1920, 1080), # ~1080p
-												  DisplayResolution.Full: Vector2.INF, # Unlimited
-											  }
 # Store the string names of each display resolution value
 const DISPLAY_RESOLUTION_NAMES: Dictionary = {
-												 DisplayResolution.SD: "SD (~480p)",
-												 DisplayResolution.HD: "HD (~720p)",
-												 DisplayResolution.FHD: "FHD (~1080p)",
+												 DisplayResolution.LoFi: "LoFi (~580p)",
 												 DisplayResolution.Full: "Full (Unlimited)",
 											 }
 # Store display resolution
@@ -53,18 +40,12 @@ func cycle_display_resolution() -> void:
 	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
 	_current_display_resolution = DISPLAY_RESOLUTION_OPTIONS[next_index]
 	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(_current_display_resolution))
+	_root_size_changed()
 
 
 # Get the current display resolution option
 func get_display_resolution() -> DisplayResolution:
 	return _current_display_resolution
-
-
-# Get the dimensions of a display resolution option
-func get_value_of_display_resolution(resolution: DisplayResolution) -> Vector2:
-	if DISPLAY_RESOLUTION_VALUES.has(resolution):
-		return DISPLAY_RESOLUTION_VALUES[resolution]
-	return Vector2.ZERO
 
 
 # Get the string representation of a display resolution option
@@ -74,18 +55,28 @@ func get_name_of_display_resolution(resolution: DisplayResolution) -> String:
 	return "Unknown"
 
 
+# Check if current display resolution is Full
+func is_full_resolution() -> bool:
+	return _current_display_resolution == DisplayResolution.Full
+
+
 # Called when the node enters the scene tree
 func _ready() -> void:
 	# Connect to window size changes
 	# instead of the following, write an inline function that emits viewport_size_changed: get_tree().root.size_changed.connect(on_tree_root_size_changed)
-	get_tree().root.size_changed.connect(func() -> void: viewport_size_changed.emit())
-	viewport_size_changed.connect(_calculate_scaling)
+	get_tree().root.size_changed.connect(_root_size_changed)
 	# Initial calculation
-	_calculate_scaling()
+	_root_size_changed()
 
 
 # Calculate scaling factors and effective viewport size
-func _calculate_scaling() -> void:
+func _root_size_changed() -> void:
+	if _current_display_resolution == DisplayResolution.Full:
+		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	else:
+		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_VIEWPORT
+
+	# Get current viewport size
 	_viewport_size = get_viewport().get_visible_rect().size
 
 	# Calculate scale factor to fit base resolution in viewport
@@ -115,7 +106,14 @@ func _calculate_scaling() -> void:
 	# Calculate center point
 	_center = _offset + (_effective_size * 0.5)
 
+	# Set the window's content scale factor
+	get_window().content_scale_factor = 1/_scale_factor
+
+	# Debug output
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
+
+	# Emit signal for viewport size change
+	call_deferred("viewport_size_changed", "emit")
 
 
 # Get the current viewport size (physical display size)
