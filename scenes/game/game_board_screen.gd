@@ -39,6 +39,8 @@ func _ready() -> void:
 	pause_menu.configure(PAUSE_MENU_ITEMS, PAUSE_MENU_TITLE)
 	pause_menu.deactivate()
 	pause_menu_container.hide()
+	# Set process mode to always so pause menu works when game is paused
+	pause_menu_container.process_mode = Node.PROCESS_MODE_ALWAYS
 	# Connect input manager for pause menu
 	InputManager.action_pressed.connect(_on_action_pressed)
 	# Show debug text in editor only
@@ -98,7 +100,7 @@ func _on_action_pressed(_player_num: int, action_name: String) -> void:
 
 # Open the pause menu
 func do_open_pause_menu() -> void:
-	# todo Game.pause()
+	Game.pause()
 	is_pause_menu_open = true
 	print ("Opening pause menu")
 	pause_menu_container.call_deferred("show")
@@ -107,17 +109,19 @@ func do_open_pause_menu() -> void:
 
 
 # Continue the game from pause menu
-func do_continue_game() -> void:
+func do_continue_game() -> Signal:
 	print ("Continuing game from pause menu")
 	pause_menu.deactivate()
 	pause_menu_container.hide()
 	Game.unpause()
 	await Util.delay(PAUSE_MENU_CLOSE_DEBOUNCE_SEC)
 	is_pause_menu_open = false
+	return Util.delay(0.0)
 
 
 # Abandon the game from pause menu
 func do_abandon_game() -> void:
+	await do_continue_game()
 	Util.goto_scene('res://scenes/main.tscn')
 
 

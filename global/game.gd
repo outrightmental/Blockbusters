@@ -94,7 +94,6 @@ func do_player_goal(player_num: int) -> void:
 # Pause the whole game
 func pause() -> void:
 	is_game_paused = true
-	pause_input()
 	var tree: SceneTree = get_tree()
 	if not tree:
 		return
@@ -119,7 +118,6 @@ func unpause() -> void:
 	if not tree:
 		return
 	tree.paused = false
-	unpause_input()
 
 
 # Unpause the game
