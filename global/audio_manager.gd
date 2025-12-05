@@ -8,7 +8,6 @@ extends Node2D
 ## @tutorial: https://www.youtube.com/watch?v=Egf2jgET3nQ
 
 @export var sound_effect_dict: Dictionary[SoundEffectSetting.SOUND_EFFECT_TYPE, SoundEffectSetting] ## Stores all possible SoundEffects that can be played.
-@export var is_sound_fx_enabled: bool = true
 
 ## Stores currently playing sounds at the global level so they don't interfere with local objects simulation
 var playing_2d_audios: Dictionary[String, AudioStreamPlayer2D] = {}
@@ -16,7 +15,7 @@ var playing_2d_audios: Dictionary[String, AudioStreamPlayer2D] = {}
 
 ## Creates a sound effect at a specific location if the limit has not been reached. Pass [param location] for the global position of the audio effect, and [param type] for the SoundEffectSetting to be queued.
 func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOUND_EFFECT_TYPE, key: String = "") -> void:
-	if not is_sound_fx_enabled:
+	if not ConfigManager.is_sound_fx_enabled:
 		return
 	if sound_effect_dict.has(type):
 		var sound_effect: SoundEffectSetting = sound_effect_dict[type]
@@ -41,7 +40,7 @@ func create_2d_audio_at_location(location: Vector2, type: SoundEffectSetting.SOU
 
 ## Creates a sound effect if the limit has not been reached. Pass [param type] for the SoundEffectSetting to be queued.
 func create_audio(type: SoundEffectSetting.SOUND_EFFECT_TYPE) -> void:
-	if not is_sound_fx_enabled:
+	if not ConfigManager.is_sound_fx_enabled:
 		return
 	if sound_effect_dict.has(type):
 		var sound_effect: SoundEffectSetting = sound_effect_dict[type]
@@ -87,7 +86,7 @@ func stop_all_2d_audio() -> void:
 
 # Toggle the sound FX
 func toggle_sound_fx() -> bool:
-	is_sound_fx_enabled = not is_sound_fx_enabled
-	if not is_sound_fx_enabled:
+	ConfigManager.set_sound_fx_enabled(not ConfigManager.is_sound_fx_enabled)
+	if not ConfigManager.is_sound_fx_enabled:
 		stop_all_2d_audio()
-	return is_sound_fx_enabled
+	return ConfigManager.is_sound_fx_enabled

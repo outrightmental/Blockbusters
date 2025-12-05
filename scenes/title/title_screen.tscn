@@ -21,18 +21,23 @@ shader_parameter/corner_radius_ratio = 0.1
 [node name="Main" type="Node2D"]
 script = ExtResource("1_iowo3")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Container" type="Node2D" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="Container"]
 material = SubResource("CanvasItemMaterial_sugp2")
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -104.0
+offset_right = 1024.0
+offset_bottom = 681.437
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_qrms8")
 expand_mode = 5
 stretch_mode = 5
 
-[node name="MainMenu" parent="." instance=ExtResource("3_8xedo")]
+[node name="MainMenu" parent="Container" instance=ExtResource("3_8xedo")]
 offset_left = 739.0
 offset_top = 279.0
 offset_right = 739.0
@@ -41,7 +46,7 @@ item_font_size = 30
 item_small_font_size = 20
 title_font_size = 20
 
-[node name="OptionsMenuContainer" type="Control" parent="."]
+[node name="OptionsMenuContainer" type="Control" parent="Container"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,7 +54,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="OptionsMenuContainer"]
+[node name="ColorRect" type="ColorRect" parent="Container/OptionsMenuContainer"]
 material = SubResource("ShaderMaterial_8xedo")
 layout_mode = 0
 offset_left = 127.0
@@ -57,7 +62,7 @@ offset_top = 65.0
 offset_right = 890.0
 offset_bottom = 502.0
 
-[node name="OptionsMenu" parent="OptionsMenuContainer" instance=ExtResource("3_8xedo")]
+[node name="OptionsMenu" parent="Container/OptionsMenuContainer" instance=ExtResource("3_8xedo")]
 layout_mode = 1
 offset_left = 398.0
 offset_top = 275.0

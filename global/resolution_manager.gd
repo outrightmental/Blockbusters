@@ -15,41 +15,29 @@ var _effective_size: Vector2 = Vector2.ZERO
 var _scale_factor: float     = 1.0
 var _offset: Vector2         = Vector2.ZERO
 var _center: Vector2         = Vector2.ZERO
-# Display resolution options
-enum DisplayResolution {
-	LoFi,
-	Full,
-}
 # Store display resolution options in an array
-const DISPLAY_RESOLUTION_OPTIONS: Array[DisplayResolution] = [
-															 DisplayResolution.LoFi,
-															 DisplayResolution.Full,
+const DISPLAY_RESOLUTION_OPTIONS: Array[ConfigManager.DisplayResolution] = [
+															 ConfigManager.DisplayResolution.LoFi,
+															 ConfigManager.DisplayResolution.Full,
 															 ]
 # Store the string names of each display resolution value
 const DISPLAY_RESOLUTION_NAMES: Dictionary = {
-												 DisplayResolution.LoFi: "LoFi (~580p)",
-												 DisplayResolution.Full: "Full (Unlimited)",
+												 ConfigManager.DisplayResolution.LoFi: "LoFi (~580p)",
+												 ConfigManager.DisplayResolution.Full: "Full (Unlimited)",
 											 }
-# Store display resolution
-var _current_display_resolution: DisplayResolution = DisplayResolution.Full
 
 
 # Cycle the current display resolution option
 func cycle_display_resolution() -> void:
-	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(_current_display_resolution)
+	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(ConfigManager.display_resolution)
 	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
-	_current_display_resolution = DISPLAY_RESOLUTION_OPTIONS[next_index]
-	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(_current_display_resolution))
+	ConfigManager.set_display_resolution(DISPLAY_RESOLUTION_OPTIONS[next_index])
+	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(ConfigManager.display_resolution))
 	_root_size_changed()
 
 
-# Get the current display resolution option
-func get_display_resolution() -> DisplayResolution:
-	return _current_display_resolution
-
-
 # Get the string representation of a display resolution option
-func get_name_of_display_resolution(resolution: DisplayResolution) -> String:
+func get_name_of_display_resolution(resolution: ConfigManager.DisplayResolution) -> String:
 	if DISPLAY_RESOLUTION_NAMES.has(resolution):
 		return DISPLAY_RESOLUTION_NAMES[resolution]
 	return "Unknown"
@@ -57,7 +45,7 @@ func get_name_of_display_resolution(resolution: DisplayResolution) -> String:
 
 # Check if current display resolution is Full
 func is_full_resolution() -> bool:
-	return _current_display_resolution == DisplayResolution.Full
+	return ConfigManager.display_resolution == ConfigManager.DisplayResolution.Full
 
 
 # Called when the node enters the scene tree
@@ -72,7 +60,7 @@ func _ready() -> void:
 
 # Calculate scaling factors and effective viewport size
 func _root_size_changed() -> void:
-	if _current_display_resolution == DisplayResolution.Full:
+	if is_full_resolution():
 		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	else:
 		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_VIEWPORT
