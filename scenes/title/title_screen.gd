@@ -21,6 +21,7 @@ const BG_MIP_LEVEL_RESOLUTION_LOFI: float = 4.0
 														 {"label": "RESOLUTION", "action": Callable(self, "do_cycle_display_resolution"), "value": Callable(self, "render_display_resolution"), "active": Callable(self, "get_is_display_resolution_active")},
 														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value"), "active": Callable(self, "get_is_lighting_fx_active")},
 														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "active": Callable(self, "get_is_shadow_fx_active"), "disabled": Callable(self, "get_shadow_fx_disabled")},
+														 {"label": "SOUND FX", "action": Callable(self, "do_toggle_sound_fx"), "value": Callable(self, "render_sound_fx_value"), "active": Callable(self, "get_is_sound_fx_active")},
 														 {"label": "DONE", "action": Callable(self, "do_close_options_menu"), "small": true},
 													 ]
 
@@ -61,6 +62,13 @@ func do_toggle_shadow_fx() -> void:
 	pass
 
 
+# Toggle sound FX
+func do_toggle_sound_fx() -> void:
+	Game.toggle_sound_fx()
+	options_menu.update()
+	pass
+
+
 # Open the options menu
 func do_open_options_menu() -> void:
 	options_menu_container.show()
@@ -93,6 +101,11 @@ func render_shadow_fx_value() -> String:
 	return OPTION_BOOL_TRUE if Game.is_shadow_fx_enabled else OPTION_BOOL_FALSE
 
 
+# Get readable value for whether sound FX is enabled
+func render_sound_fx_value() -> String:
+	return OPTION_BOOL_TRUE if Game.is_sound_fx_enabled else OPTION_BOOL_FALSE
+
+
 # Get a boolean whether Display Resolution option is active (currently always true)
 func get_is_display_resolution_active() -> bool:
 	return true
@@ -111,6 +124,11 @@ func get_is_shadow_fx_active() -> bool:
 # Determine if shadow FX option should be disabled
 func get_shadow_fx_disabled() -> bool:
 	return not Game.is_lighting_fx_enabled
+
+
+# Get a boolean whether Sound FX is enabled
+func get_is_sound_fx_active() -> bool:
+	return Game.is_sound_fx_enabled
 
 
 # Called when the node enters the scene tree for the first time.
