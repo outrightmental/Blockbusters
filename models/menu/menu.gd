@@ -165,8 +165,8 @@ func _set_font_size(label: RichTextLabel, label_font_size: int) -> void:
 
 
 # Set the theme default color of a rich text label
-func _set_default_color(label: RichTextLabel, default_color: Color) -> void:
-	label.add_theme_color_override("default_color", default_color)
+func _set_default_color(label: RichTextLabel, color: Color) -> void:
+	label.add_theme_color_override("default_color", color)
 
 
 # Check for input to navigate the menu
