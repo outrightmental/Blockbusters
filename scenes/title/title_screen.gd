@@ -4,8 +4,10 @@ extends Node2D
 const GAME_START_DELAY_SECONDS: float = 1.0
 const OPTION_NA: String               = "n/a"
 const OPTION_BOOL_TRUE: String        = "on"
-const OPTION_BOOL_FALSE: String       = "off"
-const OPTIONS_MENU_TITLE: String      = "OPTIONS"
+const OPTION_BOOL_FALSE: String           = "off"
+const OPTIONS_MENU_TITLE: String          = "OPTIONS"
+const BG_MIP_LEVEL_RESOLUTION_FULL: float = 16.0
+const BG_MIP_LEVEL_RESOLUTION_LOFI: float = 4.0
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -16,14 +18,16 @@ const OPTIONS_MENU_TITLE: String      = "OPTIONS"
 
 # Options menu items
 @onready var OPTIONS_MENU_ITEMS: Array[Dictionary] = [
-														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value"), "active": Callable(self, "get_lighting_fx_value")},
-														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "active": Callable(self, "get_shadow_fx_value"), "disabled": Callable(self, "get_shadow_fx_disabled")},
+														 {"label": "RESOLUTION", "action": Callable(self, "do_cycle_display_resolution"), "value": Callable(self, "render_display_resolution"), "active": Callable(self, "get_is_display_resolution_active")},
+														 {"label": "LIGHTING FX", "action": Callable(self, "do_toggle_lighting_fx"), "value": Callable(self, "render_lighting_fx_value"), "active": Callable(self, "get_is_lighting_fx_active")},
+														 {"label": "SHADOW FX", "action": Callable(self, "do_toggle_shadow_fx"), "value": Callable(self, "render_shadow_fx_value"), "active": Callable(self, "get_is_shadow_fx_active"), "disabled": Callable(self, "get_shadow_fx_disabled")},
 														 {"label": "DONE", "action": Callable(self, "do_close_options_menu"), "small": true},
 													 ]
 
-@onready var main_menu = $MainMenu
-@onready var options_menu = $OptionsMenuContainer/OptionsMenu
-@onready var options_menu_container = $OptionsMenuContainer
+@onready var main_menu: Menu = $MainMenu
+@onready var options_menu: Menu = $OptionsMenuContainer/OptionsMenu
+@onready var options_menu_container: Control = $OptionsMenuContainer
+@onready var options_menu_bg: ColorRect = $OptionsMenuContainer/ColorRect
 
 
 # Start the game
@@ -34,6 +38,13 @@ func do_start() -> void:
 # Exit the game
 func do_exit() -> void:
 	get_tree().quit()
+
+
+# Toggle display resolution
+func do_cycle_display_resolution() -> void:
+	ResolutionManager.cycle_display_resolution()
+	options_menu.update()
+	pass
 
 
 # Toggle lighting FX
@@ -70,6 +81,11 @@ func render_lighting_fx_value() -> String:
 	return OPTION_BOOL_TRUE if Game.is_lighting_fx_enabled else OPTION_BOOL_FALSE
 
 
+# Get readable value for current display resolution	
+func render_display_resolution() -> String:
+	return ResolutionManager.get_name_of_display_resolution(ResolutionManager.get_display_resolution())
+
+
 # Get readable value for whether shadow FX is enabled
 func render_shadow_fx_value() -> String:
 	if not Game.is_lighting_fx_enabled:
@@ -77,13 +93,18 @@ func render_shadow_fx_value() -> String:
 	return OPTION_BOOL_TRUE if Game.is_shadow_fx_enabled else OPTION_BOOL_FALSE
 
 
+# Get a boolean whether Display Resolution option is active (currently always true)
+func get_is_display_resolution_active() -> bool:
+	return true
+
+
 # Get a boolean whether Lighting FX is enabled
-func get_lighting_fx_value() -> bool:
+func get_is_lighting_fx_active() -> bool:
 	return Game.is_lighting_fx_enabled
 
 
 # Get a boolean whether Shadow FX is enabled
-func get_shadow_fx_value() -> bool:
+func get_is_shadow_fx_active() -> bool:
 	return Game.is_shadow_fx_enabled
 
 
@@ -101,7 +122,7 @@ func _ready() -> void:
 
 	# Setup dynamic scaling
 	_setup_dynamic_scaling()
-	get_tree().root.size_changed.connect(_setup_dynamic_scaling)
+	ResolutionManager.viewport_size_changed.connect(_setup_dynamic_scaling)
 
 
 # Setup dynamic scaling for background and menu elements
@@ -110,21 +131,9 @@ func _setup_dynamic_scaling() -> void:
 	var bg = $TextureRect
 	if bg:
 		bg.size = ResolutionManager.get_viewport_size()
-		bg.position = Vector2.ZERO 
-	
-	# Position menu at right side of screen
-	var viewport_size = ResolutionManager.get_effective_size()
-	if main_menu:
-		main_menu.position = Vector2(viewport_size.x * 0.77, viewport_size.y * 0.47) + ResolutionManager.get_offset()
-	
-	# Position options menu container
-	if options_menu_container:
-		options_menu_container.size = viewport_size
-		options_menu_container.position = ResolutionManager.get_offset()
-		
-	# Position options menu
-	if options_menu:
-		options_menu.position = Vector2(viewport_size.x * 0.49, viewport_size.y * 0.48)
+		bg.position = Vector2.ZERO
+	var mip_level: float = BG_MIP_LEVEL_RESOLUTION_FULL if ResolutionManager.is_full_resolution() else BG_MIP_LEVEL_RESOLUTION_LOFI
+	options_menu_bg.material.set("shader_parameter/mip_level", mip_level)
 
 
 # If both players are ready, start the game

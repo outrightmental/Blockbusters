@@ -15,20 +15,68 @@ var _effective_size: Vector2 = Vector2.ZERO
 var _scale_factor: float     = 1.0
 var _offset: Vector2         = Vector2.ZERO
 var _center: Vector2         = Vector2.ZERO
+# Display resolution options
+enum DisplayResolution {
+	LoFi,
+	Full,
+}
+# Store display resolution options in an array
+const DISPLAY_RESOLUTION_OPTIONS: Array[DisplayResolution] = [
+															 DisplayResolution.LoFi,
+															 DisplayResolution.Full,
+															 ]
+# Store the string names of each display resolution value
+const DISPLAY_RESOLUTION_NAMES: Dictionary = {
+												 DisplayResolution.LoFi: "LoFi (~580p)",
+												 DisplayResolution.Full: "Full (Unlimited)",
+											 }
+# Store display resolution
+var _current_display_resolution: DisplayResolution = DisplayResolution.Full
+
+
+# Cycle the current display resolution option
+func cycle_display_resolution() -> void:
+	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(_current_display_resolution)
+	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
+	_current_display_resolution = DISPLAY_RESOLUTION_OPTIONS[next_index]
+	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(_current_display_resolution))
+	_root_size_changed()
+
+
+# Get the current display resolution option
+func get_display_resolution() -> DisplayResolution:
+	return _current_display_resolution
+
+
+# Get the string representation of a display resolution option
+func get_name_of_display_resolution(resolution: DisplayResolution) -> String:
+	if DISPLAY_RESOLUTION_NAMES.has(resolution):
+		return DISPLAY_RESOLUTION_NAMES[resolution]
+	return "Unknown"
+
+
+# Check if current display resolution is Full
+func is_full_resolution() -> bool:
+	return _current_display_resolution == DisplayResolution.Full
 
 
 # Called when the node enters the scene tree
 func _ready() -> void:
 	# Connect to window size changes
 	# instead of the following, write an inline function that emits viewport_size_changed: get_tree().root.size_changed.connect(on_tree_root_size_changed)
-	get_tree().root.size_changed.connect(func() -> void: viewport_size_changed.emit())
-	viewport_size_changed.connect(_calculate_scaling)
+	get_tree().root.size_changed.connect(_root_size_changed)
 	# Initial calculation
-	_calculate_scaling()
+	_root_size_changed()
 
 
 # Calculate scaling factors and effective viewport size
-func _calculate_scaling() -> void:
+func _root_size_changed() -> void:
+	if _current_display_resolution == DisplayResolution.Full:
+		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	else:
+		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_VIEWPORT
+
+	# Get current viewport size
 	_viewport_size = get_viewport().get_visible_rect().size
 
 	# Calculate scale factor to fit base resolution in viewport
@@ -58,7 +106,14 @@ func _calculate_scaling() -> void:
 	# Calculate center point
 	_center = _offset + (_effective_size * 0.5)
 
+	# Set the window's content scale factor
+	get_window().content_scale_factor = 1/_scale_factor
+
+	# Debug output
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
+
+	# Emit signal for viewport size change
+	call_deferred("viewport_size_changed", "emit")
 
 
 # Get the current viewport size (physical display size)
@@ -140,4 +195,3 @@ func get_table_mode_effective_size() -> Vector2:
 	var table_scale: float = min(scale_x, scale_y)
 
 	return Vector2(BASE_WIDTH, BASE_HEIGHT) * table_scale
-	
