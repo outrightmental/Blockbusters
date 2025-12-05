@@ -26,6 +26,9 @@ The game supports the following command line arguments:
 ```
   --no-lighting-fx         Disable all lighting effects (including shadows)
   --no-shadow-fx           Disable all shadow effects
+  --no-sound-fx            Disable all sound effects
+  --resolution-lofi        Low resolution mode (320x180)
+  --resolution-full        Full resolution mode (1920x1080)
 ```
 
 ## Continuous Integration

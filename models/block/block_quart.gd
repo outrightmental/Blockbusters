@@ -14,7 +14,7 @@ func _ready() -> void:
 	_update_heated_effect()
 
 	# Disable shadow if not enabled in settings
-	if not (Game.is_shadow_fx_enabled and Game.is_lighting_fx_enabled):
+	if not (ConfigManager.is_shadow_fx_enabled and ConfigManager.is_lighting_fx_enabled):
 		$LightOccluder2D.visible = false
 
 

@@ -59,8 +59,6 @@ enum Mode {
 @export var is_game_paused: bool = false
 @export var is_input_movement_paused: bool = false
 @export var is_input_tools_paused: bool = false
-@export var is_lighting_fx_enabled: bool = true
-@export var is_shadow_fx_enabled: bool = true
 
 # Internal variables
 var _seconds_until_next_gem: float    = 0
@@ -169,14 +167,14 @@ func do_show_banner(player_num: int, message: String, message_2) -> Signal:
 
 # Toggle the lighting FX
 func toggle_lighting_fx() -> bool:
-	is_lighting_fx_enabled = not is_lighting_fx_enabled
-	return is_lighting_fx_enabled
+	ConfigManager.set_is_lighting_fx_enabled(not ConfigManager.is_lighting_fx_enabled)
+	return ConfigManager.is_lighting_fx_enabled
 
 
 # Toggle the shadow FX
 func toggle_shadow_fx() -> bool:
-	is_shadow_fx_enabled = not is_shadow_fx_enabled
-	return is_shadow_fx_enabled
+	ConfigManager.set_is_shadow_fx_enabled(not ConfigManager.is_shadow_fx_enabled)
+	return ConfigManager.is_shadow_fx_enabled
 
 
 # Spawn a banner at the given position
@@ -191,15 +189,6 @@ func _spawn_banner(player_num: int, x: float, y: float, _rotation_degrees: float
 	banner.message_2 = message_2
 	banner.z_index = 1000
 	self.add_child(banner)
-
-
-# Get the command line arguments on init
-func _init() -> void:
-	for arg in OS.get_cmdline_args():
-		if arg == "--no-lighting-fx":
-			is_lighting_fx_enabled = false
-		if arg == "--no-shadow-fx":
-			is_shadow_fx_enabled = false
 
 
 func _ready() -> void:

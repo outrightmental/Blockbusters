@@ -25,22 +25,15 @@ const DISPLAY_RESOLUTION_NAMES: Dictionary = {
 												 ConfigManager.DisplayResolution.LoFi: "LoFi (~580p)",
 												 ConfigManager.DisplayResolution.Full: "Full (Unlimited)",
 											 }
-# Store display resolution
-var _current_display_resolution: ConfigManager.DisplayResolution = ConfigManager.DisplayResolution.Full
 
 
 # Cycle the current display resolution option
 func cycle_display_resolution() -> void:
-	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(_current_display_resolution)
+	var current_index: int = DISPLAY_RESOLUTION_OPTIONS.find(ConfigManager.display_resolution)
 	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
-	_current_display_resolution = DISPLAY_RESOLUTION_OPTIONS[next_index]
-	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(_current_display_resolution))
+	ConfigManager.set_display_resolution(DISPLAY_RESOLUTION_OPTIONS[next_index])
+	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(ConfigManager.display_resolution))
 	_root_size_changed()
-
-
-# Get the current display resolution option
-func get_display_resolution() -> ConfigManager.DisplayResolution:
-	return _current_display_resolution
 
 
 # Get the string representation of a display resolution option
@@ -52,7 +45,7 @@ func get_name_of_display_resolution(resolution: ConfigManager.DisplayResolution)
 
 # Check if current display resolution is Full
 func is_full_resolution() -> bool:
-	return _current_display_resolution == ConfigManager.DisplayResolution.Full
+	return ConfigManager.display_resolution == ConfigManager.DisplayResolution.Full
 
 
 # Called when the node enters the scene tree
@@ -67,7 +60,7 @@ func _ready() -> void:
 
 # Calculate scaling factors and effective viewport size
 func _root_size_changed() -> void:
-	if _current_display_resolution == ConfigManager.DisplayResolution.Full:
+	if is_full_resolution():
 		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	else:
 		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_VIEWPORT

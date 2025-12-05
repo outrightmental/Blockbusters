@@ -1,8 +1,13 @@
-﻿extends Node
+﻿\
+extends Node
 # ConfigManager class which wraps the Godot ConfigFile functionality and persists all config-able values
 # See also: https://docs.godotengine.org/en/stable/classes/class_configfile.html
 
-class_name ConfigManager
+# Configurable properties
+@export var is_sound_fx_enabled: bool = true
+@export var display_resolution: DisplayResolution = DisplayResolution.Full
+@export var is_lighting_fx_enabled: bool = true
+@export var is_shadow_fx_enabled: bool = true
 # Path to the config file
 const CONFIG_FILE_PATH: String = "user://config.cfg"
 # ConfigFile instance
@@ -11,7 +16,7 @@ var _config_file: ConfigFile = ConfigFile.new()
 # Default configuration values
 var _default_config: Dictionary = {
 									  "audio": {
-										  "enabled": true,
+										  "sound_fx_enabled": true,
 									  },
 									  "graphics": {
 										  "resolution": DisplayResolution.Full,
@@ -27,8 +32,33 @@ enum DisplayResolution {
 }
 
 
+# Setter for is_sound_fx_enabled
+func set_is_sound_fx_enabled(value: bool) -> void:
+	is_sound_fx_enabled = value
+	set_config_value("audio", "enabled", value)
+	_save_config()
+
+
+# Setter for display resolution
+func set_display_resolution(value: DisplayResolution) -> void:
+	set_config_value("graphics", "resolution", value)
+	_save_config()
+
+
+# Setter for lighting FX enabled
+func set_lighting_fx_enabled(value: bool) -> void:
+	set_config_value("graphics", "lighting_fx_enabled", value)
+	_save_config()
+
+
+# Setter for shadow FX enabled
+func set_shadow_fx_enabled(value: bool) -> void:
+	set_config_value("graphics", "shadow_fx_enabled", value)
+	_save_config()
+
+
 # Load the configuration from file or create default if not present
-func load_config() -> void:
+func _load_config() -> void:
 	var err: int = _config_file.load(CONFIG_FILE_PATH)
 	if err != OK:
 		print("[ConfigManager] No existing config file found. Creating default config.")
@@ -38,8 +68,28 @@ func load_config() -> void:
 		_apply_loaded_config()
 
 
+# Parse command line arguments to override config settings
+func _parse_command_line_args() -> void:
+	var args: Array = OS.get_cmdline_args()
+	for arg in args:
+		match arg:
+			"--resolution-lofi":
+				set_display_resolution(DisplayResolution.LoFi)
+			"--resolution-full":
+				set_display_resolution(DisplayResolution.Full)
+			"--no-lighting-fx":
+				set_lighting_fx_enabled(false)
+			"--no-shadow-fx":
+				set_shadow_fx_enabled(false)
+			"--no-sound-fx":
+				set_is_sound_fx_enabled(false)
+			_:
+				# Ignore unknown arguments
+				pass
+
+
 # Save the current configuration to file
-func save_config() -> void:
+func _save_config() -> void:
 	var err: int = _config_file.save(CONFIG_FILE_PATH)
 	if err != OK:
 		print("[ConfigManager] Error saving config file: %s" % err)
@@ -48,7 +98,7 @@ func save_config() -> void:
 
 
 # Get a configuration value
-func get_config_value(section: String, key: String) -> Variant:
+func _get_config_value(section: String, key: String) -> Variant:
 	if _config_file.has_section_key(section, key):
 		return _config_file.get_value(section, key)
 	return null
@@ -64,27 +114,28 @@ func _save_default_config() -> void:
 	for section in _default_config.keys():
 		for key in _default_config[section].keys():
 			_config_file.set_value(section, key, _default_config[section][key])
-	save_config()
+	_save_config()
 
 
 # Apply loaded configuration values to the game settings
 func _apply_loaded_config() -> void:
 	# Audio settings
-	var audio_enabled: bool = get_config_value("audio", "enabled")
+	var audio_enabled: bool = _get_config_value("audio", "enabled")
 	if audio_enabled != null:
 		AudioManager.set_sound_fx_enabled(audio_enabled)
 	# Graphics settings
-	var resolution: int = get_config_value("graphics", "resolution")
+	var resolution: int = _get_config_value("graphics", "resolution")
 	if resolution != null:
 		ResolutionManager.set_display_resolution(resolution)
-	var lighting_fx_enabled: bool = get_config_value("graphics", "lighting_fx_enabled")
+	var lighting_fx_enabled: bool = _get_config_value("graphics", "lighting_fx_enabled")
 	if lighting_fx_enabled != null:
 		Game.set_lighting_fx_enabled(lighting_fx_enabled)
-	var shadow_fx_enabled: bool = get_config_value("graphics", "shadow_fx_enabled")
+	var shadow_fx_enabled: bool = _get_config_value("graphics", "shadow_fx_enabled")
 	if shadow_fx_enabled != null:
 		Game.set_shadow_fx_enabled(shadow_fx_enabled)
 
 
 # Called when the node enters the scene tree for the first time
 func _ready() -> void:
-	load_config()
+	_load_config()
+	_parse_command_line_args()

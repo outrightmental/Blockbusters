@@ -10,7 +10,7 @@ func _ready() -> void:
 	add_to_group(Game.GEM_GROUP)
 
 	# Disable lighting if not enabled in settings
-	if not Game.is_lighting_fx_enabled:
+	if not ConfigManager.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 
 

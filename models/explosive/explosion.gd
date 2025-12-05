@@ -37,7 +37,7 @@ func _ready() -> void:
 	AudioManager.create_2d_audio_at_location(global_position, SoundEffectSetting.SOUND_EFFECT_TYPE.PROJECTILE_IMPACT)
 
 	# Disable lighting if not enabled in settings
-	if not Game.is_lighting_fx_enabled:
+	if not ConfigManager.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 
 

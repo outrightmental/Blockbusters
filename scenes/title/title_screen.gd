@@ -89,24 +89,24 @@ func do_close_options_menu() -> void:
 
 # Get readable value for whether lighting FX is enabled
 func render_lighting_fx_value() -> String:
-	return OPTION_BOOL_TRUE if Game.is_lighting_fx_enabled else OPTION_BOOL_FALSE
+	return OPTION_BOOL_TRUE if ConfigManager.is_lighting_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Get readable value for current display resolution	
 func render_display_resolution() -> String:
-	return ResolutionManager.get_name_of_display_resolution(ResolutionManager.get_display_resolution())
+	return ResolutionManager.get_name_of_display_resolution(ConfigManager.display_resolution)
 
 
 # Get readable value for whether shadow FX is enabled
 func render_shadow_fx_value() -> String:
-	if not Game.is_lighting_fx_enabled:
+	if not ConfigManager.is_lighting_fx_enabled:
 		return OPTION_NA
-	return OPTION_BOOL_TRUE if Game.is_shadow_fx_enabled else OPTION_BOOL_FALSE
+	return OPTION_BOOL_TRUE if ConfigManager.is_shadow_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Get readable value for whether sound FX is enabled
 func render_sound_fx_value() -> String:
-	return OPTION_BOOL_TRUE if AudioManager.is_sound_fx_enabled else OPTION_BOOL_FALSE
+	return OPTION_BOOL_TRUE if ConfigManager.is_sound_fx_enabled else OPTION_BOOL_FALSE
 
 
 # Get a boolean whether Display Resolution option is active (currently always true)
@@ -116,22 +116,22 @@ func get_is_display_resolution_active() -> bool:
 
 # Get a boolean whether Lighting FX is enabled
 func get_is_lighting_fx_active() -> bool:
-	return Game.is_lighting_fx_enabled
+	return ConfigManager.is_lighting_fx_enabled
 
 
 # Get a boolean whether Shadow FX is enabled
 func get_is_shadow_fx_active() -> bool:
-	return Game.is_shadow_fx_enabled
+	return ConfigManager.is_shadow_fx_enabled
 
 
 # Determine if shadow FX option should be disabled
 func get_shadow_fx_disabled() -> bool:
-	return not Game.is_lighting_fx_enabled
+	return not ConfigManager.is_lighting_fx_enabled
 
 
 # Get a boolean whether Sound FX is enabled
 func get_is_sound_fx_active() -> bool:
-	return AudioManager.is_sound_fx_enabled
+	return ConfigManager.is_sound_fx_enabled
 
 
 # Called when the node enters the scene tree for the first time.

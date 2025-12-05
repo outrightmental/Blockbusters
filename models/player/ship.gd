@@ -34,7 +34,7 @@ var forcefield_position_previous: Vector2 = Vector2.ZERO
 
 # Called when the ship is disabled
 func do_disable() -> void:
-	if Game.is_lighting_fx_enabled:
+	if ConfigManager.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 	is_disabled = true
 	heatable = false
@@ -49,7 +49,7 @@ func do_disable() -> void:
 
 # Called when the ship is re-enabled
 func do_enable() -> void:
-	if Game.is_lighting_fx_enabled:
+	if ConfigManager.is_lighting_fx_enabled:
 		$PointLight2D.enabled = true
 	is_disabled = false
 	heatable = true
@@ -118,12 +118,12 @@ func _ready() -> void:
 	Game.outcome.connect(_on_game_outcome)
 
 	# Disable lighting if not enabled in settings
-	if not Game.is_lighting_fx_enabled:
+	if not ConfigManager.is_lighting_fx_enabled:
 		$PointLight2D.enabled = false
 		$LightOccluder2D.visible = false
 		
 	# Disable shadow if not enabled in settings
-	if not (Game.is_shadow_fx_enabled and Game.is_lighting_fx_enabled):
+	if not (ConfigManager.is_shadow_fx_enabled and ConfigManager.is_lighting_fx_enabled):
 		$LightOccluder2D.visible = false
 
 # Set the colors of the ship based on player_num
