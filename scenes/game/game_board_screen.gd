@@ -3,9 +3,9 @@ extends Node2D
 # References to player goals
 @onready var player_goal_1 = $Board/GoalPlayer1
 @onready var player_goal_2 = $Board/GoalPlayer2
-@onready var debug_text = $DebugText
-@onready var pause_menu_container: Control = $PauseMenuContainer
-@onready var pause_menu: Menu = $PauseMenuContainer/PauseMenu
+@onready var debug_text = $Board/DebugText
+@onready var pause_menu_container: Control = $Board/PauseMenuContainer
+@onready var pause_menu: Menu = $Board/PauseMenuContainer/PauseMenu
 @onready var board = $Board
 
 # Variables
@@ -18,7 +18,7 @@ var PAUSE_MENU_ITEMS: Array[Dictionary] = [
 											  {"label": "CONTINUE", "action": Callable(self, "do_continue_game"), "small": true},
 										  ]
 
-var PAUSE_MENU_TITLE: String            = "PAUSED"
+var PAUSE_MENU_TITLE: String = "PAUSED"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -34,6 +34,8 @@ func _ready() -> void:
 	Game.spawn_pickup.connect(_on_spawn_pickup)
 	# Setup pause menu
 	pause_menu.configure(PAUSE_MENU_ITEMS, PAUSE_MENU_TITLE)
+	pause_menu.deactivate()
+	pause_menu_container.hide()
 	# Connect input manager for pause menu
 	InputManager.action_pressed.connect(_on_action_pressed)
 	# Show debug text in editor only
@@ -96,7 +98,7 @@ func _on_action_pressed(_player_num: int, action_name: String) -> void:
 # Open the pause menu
 func do_open_pause_menu() -> void:
 	Game.pause()
-	pause_menu_container.show()
+	pause_menu_container.call_deferred("show")
 	pause_menu.reset(true)
 	pause_menu.call_deferred("activate")
 
