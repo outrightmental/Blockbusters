@@ -112,9 +112,6 @@ func _root_size_changed() -> void:
 	# Debug output
 	print("[ResolutionManager] Viewport: %s, Scale: %.2f, Effective: %s, Offset: %s" % [_viewport_size, _scale_factor, _effective_size, _offset])
 
-	# Emit signal for viewport size change
-	call_deferred("viewport_size_changed", "emit")
-
 
 # Get the current viewport size (physical display size)
 func get_viewport_size() -> Vector2:
