@@ -1,9 +1,9 @@
 extends Node2D
 
 # Constants
-const GAME_START_DELAY_SECONDS: float = 1.0
-const OPTION_NA: String               = "n/a"
-const OPTION_BOOL_TRUE: String        = "on"
+const GAME_START_DELAY_SECONDS: float     = 1.0
+const OPTION_NA: String                   = "n/a"
+const OPTION_BOOL_TRUE: String            = "on"
 const OPTION_BOOL_FALSE: String           = "off"
 const OPTIONS_MENU_TITLE: String          = "OPTIONS"
 const BG_MIP_LEVEL_RESOLUTION_FULL: float = 16.0
@@ -122,7 +122,6 @@ func _ready() -> void:
 
 	# Setup dynamic scaling
 	_setup_dynamic_scaling()
-	ResolutionManager.viewport_size_changed.connect(_setup_dynamic_scaling)
 
 
 # Setup dynamic scaling for background and menu elements

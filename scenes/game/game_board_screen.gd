@@ -17,7 +17,8 @@ var PAUSE_MENU_ITEMS: Array[Dictionary] = [
 											  {"label": "ABANDON GAME", "action": Callable(self, "do_abandon_game")},
 											  {"label": "CONTINUE", "action": Callable(self, "do_continue_game"), "small": true},
 										  ]
-var PAUSE_MENU_TITLE: String = "PAUSED"
+
+var PAUSE_MENU_TITLE: String            = "PAUSED"
 
 
 # Called when the node enters the scene tree for the first time.
@@ -43,13 +44,11 @@ func _ready() -> void:
 	pass
 	# Start a new game
 	Game.start_new_game.emit()
-	# Connect to resolutio manager viewport size changes
-	ResolutionManager.viewport_size_changed.connect(_on_viewport_size_changed)
 
 
 # Setup the UI based on the current game mode and viewport size		
 func _setup() -> void:
-	_on_viewport_size_changed()
+	$Board.position = ResolutionManager.get_offset()
 
 	match Game.mode:
 		Game.Mode.TABLE:
@@ -66,11 +65,6 @@ func _setup() -> void:
 			$Board/HudPlayer2/ScoreP2.transform = Transform2D(0, Vector2(993, 288))
 			$Board/HudPlayer2/EnergyP2.transform = Transform2D(-PI/2, Vector2(993, 488))
 			$Board/HudPlayer2/InventoryP2.transform = Transform2D(PI/2, Vector2(1, -1), 0, Vector2(993, 88))
-
-
-# When the viewport size changes, re-center the board
-func _on_viewport_size_changed() -> void:
-	$Board.position = ResolutionManager.get_offset()
 
 
 # Show the game over banner for some time, then go back to main screen

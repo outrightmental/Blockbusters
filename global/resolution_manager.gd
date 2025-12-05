@@ -2,7 +2,7 @@ extends Node
 
 # Resolution Manager - handles dynamic display resolution adaptation
 # Provides scaling and positioning utilities for adapting game content to any display size
-signal viewport_size_changed
+
 # Base design resolution (logical coordinates)
 const BASE_WIDTH: float        = 1024.0
 const BASE_HEIGHT: float       = 576.0
