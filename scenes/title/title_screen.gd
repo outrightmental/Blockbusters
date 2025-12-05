@@ -37,7 +37,10 @@ func do_start() -> void:
 
 # Exit the game
 func do_exit() -> void:
-	get_tree().quit()
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.quit()
 
 
 # Toggle display resolution

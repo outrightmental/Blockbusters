@@ -32,13 +32,21 @@ func _test_explosion() -> Signal:
 
 # Assert that at least the given number of block halves exist in the scene
 func assert_block_halves_at_least(expected_num: int) -> void:
-	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_HALF_GROUP).size()
+	var tree: SceneTree = get_tree()
+	if not tree:
+		_fail("Scene tree is not available")
+		return
+	var actual_num: int = tree.get_nodes_in_group(Game.BLOCK_HALF_GROUP).size()
 	assert_ge(actual_num, expected_num, "BlockHalves")
 
 
 # Assert that at least the given number of block quarters exist in the scene
 func assert_block_quarts_at_least(expected_num: int) -> void:
-	var actual_num: int = get_tree().get_nodes_in_group(Game.BLOCK_QUART_GROUP).size()
+	var tree: SceneTree = get_tree()
+	if not tree:
+		_fail("Scene tree is not available")
+		return
+	var actual_num: int = tree.get_nodes_in_group(Game.BLOCK_QUART_GROUP).size()
 	assert_ge(actual_num, expected_num, "BlockQuarts")
 
 

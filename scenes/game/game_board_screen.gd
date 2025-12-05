@@ -223,8 +223,11 @@ func _on_spawn_pickup(type: Game.InventoryItemType) -> void:
 
 # Get a random block that may have something added to it
 func _get_block_spawn_candidate() -> Block:
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return null
 	var candidates: Array[Block]
-	for block in get_tree().get_nodes_in_group(Game.BLOCK_GROUP):
+	for block in tree.get_nodes_in_group(Game.BLOCK_GROUP):
 		if block.is_empty():
 			candidates.append(block)
 	if candidates.size() > 0:

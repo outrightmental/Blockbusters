@@ -95,7 +95,10 @@ func do_player_goal(player_num: int) -> void:
 func pause() -> void:
 	is_game_paused = true
 	pause_input()
-	get_tree().paused = true
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.paused = true
 
 
 # Pause the player input
@@ -112,7 +115,10 @@ func pause_input_tools() -> void:
 # Unpause the whole game
 func unpause() -> void:
 	is_game_paused = false
-	get_tree().paused = false
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return
+	tree.paused = false
 	unpause_input()
 
 
@@ -285,9 +291,12 @@ func _check_for_game_over() -> bool:
 		_do_outcome(Game.Result.DRAW)
 		return true
 
-	var total_gems: int                 = get_tree().get_node_count_in_group(Game.GEM_GROUP)
+	var tree: SceneTree = get_tree()
+	if not tree:
+		return false
+	var total_gems: int                 = tree.get_node_count_in_group(Game.GEM_GROUP)
 	var total_gem_candidate_blocks: int = 0
-	var blocks: Array[Node]             = get_tree().get_nodes_in_group(Game.BLOCK_GROUP)
+	var blocks: Array[Node]             = tree.get_nodes_in_group(Game.BLOCK_GROUP)
 	for block in blocks:
 		if block.is_empty():
 			total_gem_candidate_blocks += 1
