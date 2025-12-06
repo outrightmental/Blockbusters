@@ -1,31 +1,30 @@
-[gd_scene load_steps=7 format=3 uid="uid://cudgpbggtlhae"]
+[gd_scene load_steps=8 format=3 uid="uid://cudgpbggtlhae"]
 
 [ext_resource type="Script" uid="uid://cujjg24dyhqja" path="res://scenes/title/title_screen.gd" id="1_iowo3"]
 [ext_resource type="Texture2D" uid="uid://dux4ikbl2687g" path="res://assets/title/TitleScreenBackground.jpg" id="2_qrms8"]
 [ext_resource type="PackedScene" uid="uid://cghrjacphgqkh" path="res://models/menu/menu.tscn" id="3_8xedo"]
-[ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://shaders/blur_bg.gdshader" id="4_qrms8"]
+[ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://shaders/menu_backdrop_bg.gdshader" id="4_qrms8"]
+[ext_resource type="Script" uid="uid://cu500fopvdf0g" path="res://models/menu/menu_backdrop.gd" id="5_8xedo"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sugp2"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8xedo"]
 shader = ExtResource("4_qrms8")
 shader_parameter/mip_level = 4.0
-shader_parameter/color_mul = 0.6
-shader_parameter/color_add = 0.4
+shader_parameter/color_mul = 0.317
+shader_parameter/color_add = 0.604
 shader_parameter/rounded_corner_top_left = true
 shader_parameter/rounded_corner_top_right = true
 shader_parameter/rounded_corner_bottom_left = true
 shader_parameter/rounded_corner_bottom_right = true
-shader_parameter/corner_radius_ratio = 0.1
+shader_parameter/corner_radius = 0.05
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_iowo3")
 
-[node name="Container" type="Node2D" parent="."]
-
-[node name="TextureRect" type="TextureRect" parent="Container"]
+[node name="Background" type="TextureRect" parent="."]
 material = SubResource("CanvasItemMaterial_sugp2")
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -104.0
@@ -36,6 +35,8 @@ grow_vertical = 2
 texture = ExtResource("2_qrms8")
 expand_mode = 5
 stretch_mode = 5
+
+[node name="Container" type="Node2D" parent="."]
 
 [node name="MainMenu" parent="Container" instance=ExtResource("3_8xedo")]
 offset_left = 739.0
@@ -61,6 +62,9 @@ offset_left = 127.0
 offset_top = 65.0
 offset_right = 890.0
 offset_bottom = 502.0
+script = ExtResource("5_8xedo")
+mip_level_at_full_resolution = 16.0
+lighten_amount = 1.0
 
 [node name="OptionsMenu" parent="Container/OptionsMenuContainer" instance=ExtResource("3_8xedo")]
 layout_mode = 1
@@ -70,6 +74,7 @@ offset_right = 398.0
 offset_bottom = 275.0
 item_font_size = 30
 item_small_font_size = 20
+selected_font_size_ratio = 1.0
 title_font_size = 20
 menu_width = 700
 label_h_align = 0
