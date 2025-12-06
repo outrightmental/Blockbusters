@@ -3,6 +3,8 @@ extends Node
 # Resolution Manager - handles dynamic display resolution adaptation
 # Provides scaling and positioning utilities for adapting game content to any display size
 
+# Signal for after the display resolution changes
+signal display_resolution_changed
 # Base design resolution (logical coordinates)
 const BASE_WIDTH: float        = 1024.0
 const BASE_HEIGHT: float       = 576.0
@@ -17,9 +19,9 @@ var _offset: Vector2         = Vector2.ZERO
 var _center: Vector2         = Vector2.ZERO
 # Store display resolution options in an array
 const DISPLAY_RESOLUTION_OPTIONS: Array[ConfigManager.DisplayResolution] = [
-															 ConfigManager.DisplayResolution.LoFi,
-															 ConfigManager.DisplayResolution.Full,
-															 ]
+																		   ConfigManager.DisplayResolution.LoFi,
+																		   ConfigManager.DisplayResolution.Full,
+																		   ]
 # Store the string names of each display resolution value
 const DISPLAY_RESOLUTION_NAMES: Dictionary = {
 												 ConfigManager.DisplayResolution.LoFi: "LoFi (~580p)",
@@ -33,7 +35,7 @@ func cycle_display_resolution() -> void:
 	var next_index: int    = (current_index + 1) % DISPLAY_RESOLUTION_OPTIONS.size()
 	ConfigManager.set_display_resolution(DISPLAY_RESOLUTION_OPTIONS[next_index])
 	print("[ResolutionManager] Display resolution set to: %s" % get_name_of_display_resolution(ConfigManager.display_resolution))
-	_root_size_changed()
+	_setup_then_broadcast()
 
 
 # Get the string representation of a display resolution option
@@ -54,12 +56,18 @@ func is_full_resolution() -> bool:
 func _ready() -> void:
 	var tree: SceneTree = get_tree()
 	if tree:
-		tree.root.size_changed.connect(_root_size_changed)
-	_root_size_changed()
+		tree.root.size_changed.connect(_setup_then_broadcast)
+	_setup_then_broadcast()
 
 
 # Calculate scaling factors and effective viewport size
-func _root_size_changed() -> void:
+func _setup_then_broadcast() -> void:
+	_setup()
+	display_resolution_changed.emit()
+
+
+# Calculate scaling factors and effective viewport size
+func _setup() -> void:
 	if is_full_resolution():
 		get_window().content_scale_mode = Window.ContentScaleMode.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	else:

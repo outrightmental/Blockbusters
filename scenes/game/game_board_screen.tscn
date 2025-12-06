@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bgvuuvhomj1ox"]
+[gd_scene load_steps=13 format=3 uid="uid://bgvuuvhomj1ox"]
 
 [ext_resource type="Script" uid="uid://b3ywa5gtd7j2q" path="res://scenes/game/game_board_screen.gd" id="1_s826b"]
 [ext_resource type="PackedScene" uid="uid://cxjls2n6gleb4" path="res://models/player/goal.tscn" id="3_466yg"]
@@ -7,6 +7,7 @@
 [ext_resource type="FontFile" uid="uid://c70q8gaqjfaug" path="res://assets/fonts/Montserrat/static/Montserrat-Light.ttf" id="6_8rcy1"]
 [ext_resource type="Shader" uid="uid://dj75pwobmy0h0" path="res://shaders/blur_bg.gdshader" id="6_pqwmj"]
 [ext_resource type="PackedScene" uid="uid://dw5wqex1qict1" path="res://models/hud/hud_inventory.tscn" id="6_xugar"]
+[ext_resource type="Script" uid="uid://cu500fopvdf0g" path="res://models/menu/menu_backdrop.gd" id="7_3wyat"]
 [ext_resource type="PackedScene" uid="uid://cghrjacphgqkh" path="res://models/menu/menu.tscn" id="7_ycrgt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4dcan"]
@@ -198,7 +199,8 @@ offset_left = 258.0
 offset_top = 147.0
 offset_right = 759.0
 offset_bottom = 420.0
-color = Color(0.654232, 0.654232, 0.654232, 1)
+color = Color(0.223529, 0.223529, 0.223529, 1)
+script = ExtResource("7_3wyat")
 
 [node name="PauseMenu" parent="Board/PauseMenuContainer" instance=ExtResource("7_ycrgt")]
 z_index = 802

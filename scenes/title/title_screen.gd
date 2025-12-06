@@ -6,8 +6,6 @@ const OPTION_NA: String                   = "n/a"
 const OPTION_BOOL_TRUE: String            = "on"
 const OPTION_BOOL_FALSE: String           = "off"
 const OPTIONS_MENU_TITLE: String          = "OPTIONS"
-const BG_MIP_LEVEL_RESOLUTION_FULL: float = 16.0
-const BG_MIP_LEVEL_RESOLUTION_LOFI: float = 4.0
 
 # Main menu items
 @onready var MAIN_MENU_ITEMS: Array[Dictionary] = [
@@ -145,8 +143,5 @@ func _ready() -> void:
 
 # Setup dynamic scaling for background and menu elements
 func _setup() -> void:
-	# Scale background to fit screen
-	var mip_level: float = BG_MIP_LEVEL_RESOLUTION_FULL if ResolutionManager.is_full_resolution() else BG_MIP_LEVEL_RESOLUTION_LOFI
-	options_menu_bg.material.set("shader_parameter/mip_level", mip_level)
 	$Container.position = ResolutionManager.get_offset()
 	
