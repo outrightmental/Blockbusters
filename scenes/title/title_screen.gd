@@ -27,6 +27,7 @@ const OPTIONS_MENU_TITLE: String          = "OPTIONS"
 @onready var options_menu: Menu = $Container/OptionsMenuContainer/OptionsMenu
 @onready var options_menu_container: Control = $Container/OptionsMenuContainer
 @onready var options_menu_bg: ColorRect = $Container/OptionsMenuContainer/ColorRect
+@onready var bg = $Background
 
 
 # Start the game
@@ -143,5 +144,8 @@ func _ready() -> void:
 
 # Setup dynamic scaling for background and menu elements
 func _setup() -> void:
+	if bg:
+		bg.size = ResolutionManager.get_viewport_size()
 	$Container.position = ResolutionManager.get_offset()
+	print("[TitleScreen] Setup complete with viewport size=%s, offset=%s" % [ResolutionManager.get_viewport_size(), ResolutionManager.get_offset()])
 	
